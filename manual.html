@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MWinPOS User Manual</title>
+    <!-- External Fonts and Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <!-- Highlight.js for code block styling -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --card-bg: #ffffff;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --border-color: #e2e8f0;
+            --code-bg: #f1f5f9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Nav Header */
+        .header {
+            width: 100%;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .header .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), #60a5fa);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .header .controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .lang-btn:hover {
+            background: var(--border-color);
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Container */
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin-top: 100px;
+            margin-bottom: 60px;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Markdown Styles */
+        .markdown-body {
+            font-family: inherit;
+        }
+
+        .markdown-body h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: #0f172a;
+        }
+
+        .markdown-body h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            color: #1e293b;
+        }
+
+        .markdown-body h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: #334155;
+        }
+
+        .markdown-body p {
+            margin-bottom: 16px;
+            color: #475569;
+        }
+
+        .markdown-body a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .markdown-body a:hover {
+            text-decoration: underline;
+        }
+
+        .markdown-body ul, .markdown-body ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+            color: #475569;
+        }
+
+        .markdown-body li {
+            margin-bottom: 4px;
+        }
+
+        .markdown-body blockquote {
+            border-left: 4px solid var(--primary);
+            padding-left: 16px;
+            margin-left: 0;
+            margin-right: 0;
+            margin-bottom: 16px;
+            color: var(--text-muted);
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .markdown-body code {
+            background-color: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            color: #ef4444;
+        }
+
+        .markdown-body pre {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+
+        .markdown-body pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .markdown-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 16px 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .markdown-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+
+        .markdown-body th, .markdown-body td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .markdown-body th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+
+        /* Loading Spinner */
+        .loader-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 0;
+        }
+
+        .loader {
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50%;
+            border-top: 3px solid var(--primary);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            color: #ef4444;
+            text-align: center;
+            padding: 40px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px;
+                margin-top: 80px;
+            }
+            .header {
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="logo-area">
+            <div class="logo">M</div>
+            <h1>MWinPOS</h1>
+        </a>
+        <div class="controls">
+            <a href="?lang=en" id="btn-en" class="lang-btn">English</a>
+            <a href="?lang=th" id="btn-th" class="lang-btn">ภาษาไทย</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="content" class="markdown-body">
+            <div class="loader-wrapper">
+                <div class="loader"></div>
+                <p style="color: var(--text-muted)">Loading Manual...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js for Code syntax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Setup Marked
+            marked.setOptions({
+                highlight: function(code, lang) {
+                    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                    return hljs.highlight(code, { language }).value;
+                },
+                gfm: true,
+                breaks: true
+            });
+
+            const contentDiv = document.getElementById('content');
+            const btnEn = document.getElementById('btn-en');
+            const btnTh = document.getElementById('btn-th');
+
+            // Determine language from URL (?lang=th)
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang') || 'en';
+
+            // Set active button
+            if (lang === 'th') {
+                btnTh.classList.add('active');
+            } else {
+                btnEn.classList.add('active');
+            }
+
+            // Fetch the corresponding markdown file using the correct IIS mapped path
+            const mdFileUrl = '/erpnext/' + (lang === 'th' ? 'USER_MANUAL_TH.md' : 'USER_MANUAL.md');
+
+            fetch(mdFileUrl + '?t=' + new Date().getTime())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to load ${mdFileUrl} (HTTP ${response.status})`);
+                    }
+                    return response.text();
+                })
+                .then(markdown => {
+                    // Render to HTML
+                    contentDiv.innerHTML = marked.parse(markdown);
+                })
+                .catch(error => {
+                    console.error(error);
+                    contentDiv.innerHTML = `
+                        <div class="error-message">
+                            <h3>Oops! Could not load the manual.</h3>
+                            <p>${error.message}</p>
+                            <p>Please make sure the file <strong>${mdFile}</strong> is uploaded to the server.</p>
+                            <a href="index.html" style="display: inline-block; margin-top: 16px; color: var(--primary);">Return to Download Page</a>
+                        </div>
+                    `;
+                });
+        });
+    </script>
+</body>
+</html>

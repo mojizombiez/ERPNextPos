@@ -153,11 +153,10 @@ const MainLayout: React.FC<MainLayoutProps> = () => {
         };
     }, [appMode]);
 
-    // 3. Scanner Polling
+    // 3. Initial Scanner Check
     useEffect(() => {
+        // Only check for a hardware scanner once during application boot
         updateScannerStatus();
-        const interval = setInterval(updateScannerStatus, 15000);
-        return () => clearInterval(interval);
     }, []);
 
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {

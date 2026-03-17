@@ -6,3 +6,4 @@ frontend/dist
 sync_log.txt
 *.log
 .DS_Store
+.env

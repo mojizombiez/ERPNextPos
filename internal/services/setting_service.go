@@ -96,7 +96,7 @@ func (s *SettingService) InitSettings() {
 	s.ensureSetting(SettingUseSamePrinter, "false", DataTypeBOOLEAN)
 	s.ensureSetting(SettingActiveTheme, "theme-midnight", DataTypeSTRING)
 	s.ensureSetting(SettingAppMode, "online", DataTypeSTRING)
-	s.ensureSetting(SettingUpdateUrl, "https://raw.githubusercontent.com/atisarit/molto-updates/main/update.json", DataTypeSTRING)
+	s.ensureSetting(SettingUpdateUrl, "https://nuget.moltothailand.com/erpnext/windows/update.json", DataTypeSTRING)
 	s.ensureSetting(SettingEnableCustomerDisplay, "false", DataTypeBOOLEAN)
 	s.ensureSetting(SettingSkipUpdateCheck, "false", DataTypeBOOLEAN)
 	s.ensureSetting(SettingFullScreenMode, "false", DataTypeBOOLEAN)

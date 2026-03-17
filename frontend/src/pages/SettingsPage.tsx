@@ -57,6 +57,11 @@ const SettingsPage = () => {
     const [priceLists, setPriceLists] = useState<string[]>([]);
     const [priceList, setPriceList] = useState('');
     const [isFetchingPriceLists, setIsFetchingPriceLists] = useState(false);
+    const [currentAppVersion, setCurrentAppVersion] = useState<string>('');
+    const [latestUpdate, setLatestUpdate] = useState<any>(null);
+    const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+    const [isUpdatingApp, setIsUpdatingApp] = useState(false);
+    const [updateMessage, setUpdateMessage] = useState<{ text: string, type: 'success' | 'error' | 'info' | null }>({ text: '', type: null });
 
     const themes = [
         // Dark Themes
@@ -110,7 +115,7 @@ const SettingsPage = () => {
             setPassword(pwd);
             const skipUpd = await window.go.main.App.GetSetting('SkipUpdateCheck');
             setSkipUpdateCheck(skipUpd === 'true');
-            setUpdateUrl(upUrl || 'https://raw.githubusercontent.com/atisarit/molto-updates/main/update.json');
+            setUpdateUrl(upUrl || 'https://nuget.moltothailand.com/erpnext/windows/update.json');
             const isSame = await window.go.main.App.GetSetting('UseSamePrinter');
             setCashierPrinter(cpName || oldPrinter || '');
             setKitchenPrinter(kpName || '');
@@ -135,6 +140,8 @@ const SettingsPage = () => {
             setWriteOffAccount(woa || '');
             const pList = await window.go.main.App.GetSetting('Cached_PriceList');
             setPriceList(pList || 'Standard Selling');
+            const version = await (window.go.main.App as any).GetAppVersion();
+            setCurrentAppVersion(version || 'Unknown');
         } catch (err) {
             console.error("Failed to load settings", err);
         } finally {
@@ -428,6 +435,37 @@ const SettingsPage = () => {
             console.error("Failed to fetch POS profiles", err);
         } finally {
             setIsFetchingProfiles(false);
+        }
+    };
+
+    const checkForUpdates = async () => {
+        setIsCheckingUpdate(true);
+        setUpdateMessage({ text: 'Checking for updates...', type: 'info' });
+        try {
+            const info = await (window.go.main.App as any).CheckForUpdate();
+            if (info && info.version) {
+                setLatestUpdate(info);
+                setUpdateMessage({ text: `Update available: v${info.version}`, type: 'success' });
+            } else {
+                setLatestUpdate(null);
+                setUpdateMessage({ text: 'You are on the latest version.', type: 'success' });
+            }
+        } catch (err: any) {
+            setUpdateMessage({ text: 'Update check failed: ' + err.toString(), type: 'error' });
+        } finally {
+            setIsCheckingUpdate(false);
+        }
+    };
+
+    const installUpdate = async () => {
+        if (!latestUpdate || !latestUpdate.url) return;
+        setIsUpdatingApp(true);
+        setUpdateMessage({ text: 'Downloading update... Please wait. The app will restart automatically.', type: 'info' });
+        try {
+            await (window.go.main.App as any).DownloadAndInstallUpdate(latestUpdate.url);
+        } catch (err: any) {
+            setUpdateMessage({ text: 'Failed to install update: ' + err.toString(), type: 'error' });
+            setIsUpdatingApp(false);
         }
     };
 
@@ -805,6 +843,53 @@ const SettingsPage = () => {
                                                     }}
                                                 />
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Manual Update Check */}
+                                    <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '2rem', padding: '1.5rem 0', borderBottom: '1px solid var(--border-color)' }}>
+                                        <div className="flex flex-col">
+                                            <span style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.8 }}>Current Version</span>
+                                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>MWinPOS v{currentAppVersion}</span>
+                                        </div>
+                                        <div className="flex flex-col gap-4">
+                                            <div className="flex items-center gap-4">
+                                                <button 
+                                                    onClick={checkForUpdates}
+                                                    disabled={isCheckingUpdate || isUpdatingApp}
+                                                    className="btn flex items-center gap-2"
+                                                    style={{ padding: '0.8rem 1.5rem', borderRadius: '12px', width: 'fit-content' }}
+                                                >
+                                                    <RefreshCw size={18} className={isCheckingUpdate ? 'animate-spin' : ''} />
+                                                    {isCheckingUpdate ? 'Checking...' : 'Check for Updates'}
+                                                </button>
+                                                
+                                                {updateMessage.text && (
+                                                    <span className={`text-sm font-semibold flex items-center gap-2 ${
+                                                        updateMessage.type === 'success' ? 'text-emerald-500' :
+                                                        updateMessage.type === 'error' ? 'text-rose-500' : 'text-blue-500'
+                                                    }`}>
+                                                        {updateMessage.type === 'success' ? <CheckCircle size={16} /> :
+                                                         updateMessage.type === 'error' ? <AlertCircle size={16} /> : null}
+                                                        {updateMessage.text}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {latestUpdate && latestUpdate.version && latestUpdate.version !== currentAppVersion && (
+                                                <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 shadow-inner">
+                                                    <h4 className="font-bold text-lg mb-1 text-blue-600 dark:text-blue-400">Version {latestUpdate.version} is available!</h4>
+                                                    <p className="text-sm opacity-80 mb-4">{latestUpdate.description || 'A new update is ready to be installed.'}</p>
+                                                    <button 
+                                                        onClick={installUpdate}
+                                                        disabled={isUpdatingApp}
+                                                        className="btn border-none shadow-lg text-white"
+                                                        style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', padding: '0.8rem 1.5rem', borderRadius: '12px' }}
+                                                    >
+                                                        {isUpdatingApp ? 'Installing Update...' : 'Download & Install Now'}
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 

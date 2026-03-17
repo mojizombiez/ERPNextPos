@@ -9,10 +9,11 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"syscall"
 	"time"
 )
 
-const AppVersion = "1.0.0"
+const AppVersion = "1.0.9"
 
 type UpdateInfo struct {
 	Version         string   `json:"version"`
@@ -129,6 +130,7 @@ del "%%~f0"
 		}
 
 		cmd := exec.Command("cmd", "/c", "start", "/b", updaterPath)
+		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: 0x08000000}
 		err = cmd.Start()
 		if err != nil {
 			return err

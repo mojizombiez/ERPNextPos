@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -30,7 +31,8 @@ func (s *PrintService) OpenCashDrawer(printerName string) error {
 
 func (s *PrintService) GetPrinters() ([]string, error) {
 	// Use powershell to list printers for Windows
-	cmd := exec.Command("powershell", "-Command", "Get-Printer | Select-Object -ExpandProperty Name")
+	cmd := exec.Command("powershell", "-WindowStyle", "Hidden", "-Command", "Get-Printer | Select-Object -ExpandProperty Name")
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: 0x08000000}
 	output, err := cmd.Output()
 	if err != nil {
 		return nil, err
@@ -54,7 +56,8 @@ func (s *PrintService) CheckPrinterStatus(printerName string) (string, error) {
 	// Use powershell to get printer status
 	// Status numbers: 0=Normal, 1=Paused, 2=Error, 3=Pending Deletion, 4=Paper Jam,
 	// 5=Paper Out, 6=Manual Feed, 7=Paper Problem, 8=Offline, 9=IO Active, 10=Busy, etc.
-	cmd := exec.Command("powershell", "-Command", fmt.Sprintf("(Get-Printer -Name '%s').PrinterStatus", printerName))
+	cmd := exec.Command("powershell", "-WindowStyle", "Hidden", "-Command", fmt.Sprintf("(Get-Printer -Name '%s').PrinterStatus", printerName))
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: 0x08000000}
 	output, err := cmd.Output()
 	if err != nil {
 		return "Offline", nil

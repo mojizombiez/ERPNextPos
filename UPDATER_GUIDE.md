@@ -31,20 +31,22 @@ wails build -platform windows/amd64
 wails build -platform linux/amd64
 ```
 
-### Step B: Host the Binaries
-Upload the built files to a public file server, GitHub Release, S3 bucket, or your Own VPS. 
-*Example URL*: `https://your-domain.com/downloads/molto-pos-v1.0.1.exe`
+### Step B: Build and Upload Automatically
+A PowerShell script is provided to automate the build, upload, and generation of `update.json`. Ensure you have populated your `.env` file with the correct FTP credentials, then run:
 
-### Step C: Update the `update.json`
-Point your app's **Update URL** setting to this JSON file. The file structure must look like this:
-
-```json
-{
-  "version": "1.0.1",
-  "url": "https://your-domain.com/downloads/molto-pos-v1.0.1.exe",
-  "description": "Critical bug fixes and performance improvements."
-}
+```powershell
+# From the project root
+.\scripts\deploy_update.ps1 -Description "Critical bug fixes and performance improvements."
 ```
+This script will:
+1. Parse `AppVersion` from `internal/services/update_service.go`
+2. Build the Windows executable
+3. Upload `MWinPOS-vX.X.X.exe` via FTP
+4. Generate `update.json` locally and upload it via FTP
+
+### Customizing the Download URL
+If the publicly accessible HTTP URL is different from `https://{FTP_HOST}{FTP_DIR}`, you can define `DOWNLOAD_BASE_URL` in your `.env` file, for example:
+`DOWNLOAD_BASE_URL=https://nuget.moltothailand.com/erpnext`
 
 > [!IMPORTANT]
 > The `version` string in the JSON must be higher than the current version defined in your Go code (check `AppVersion` in `app.go`) for the app to trigger the update notification.

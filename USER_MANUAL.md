@@ -85,6 +85,9 @@ The main selling screen. It is divided into three panels:
 | **Remaining amount row** | Click to add a payment method |
 | **Pay Now** | Finalise the order (disabled until fully paid) |
 
+### 3.4 Product Bundles
+MWinPOS fully supports ERPNext **Product Bundles**. Products that are packaged together will show a "Bundle" badge. When added to the cart, the system correctly tracks it as a bundle and automatically handles the underlying component deduction when the invoice syncs to the server.
+
 After a successful checkout, the system navigates to the **Final Process** screen showing the change amount and optionally printing a receipt.
 
 ---
@@ -100,6 +103,12 @@ Click the **Remaining Amount** row (or the **＋ Payment** area) to open the pay
 | Card | 💳 |
 | QR / PromptPay | 📱 |
 | Other (from POS Profile) | Custom |
+
+### Gift Cards & Vouchers
+MWinPOS natively supports ERPNext Gift Cards and Cash Vouchers. 
+1. Select **Gift Card** as the payment method.
+2. Enter or scan the **Gift Card Code**.
+3. The system will ping the ERPNext server to validate the card and automatically apply the available balance to your remaining total.
 
 ### Split Payments
 You can apply **multiple payment methods** to a single order:
@@ -220,6 +229,12 @@ Navigate to **Admin** from the sidebar. Requires a **Manager PIN** to enter.
 
 ### Dashboard (Admin)
 - Quick summary of today's sales, order count, and top-selling items.
+
+### Data Management & Maintenance
+The Admin panel includes advanced utility tools to keep your local database healthy without needing to reinstall the app:
+- **Clean Duplicates:** Automatically scans and resolves any duplicate products or customers synced from ERPNext.
+- **Wipe Local Unsynced:** Safely clears corrupted unsynced orders if they become stuck and cannot be pushed to the server.
+- **Database Statistics:** View your local database storage footprint, including row counts for products, customers, and active orders.
 
 ---
 

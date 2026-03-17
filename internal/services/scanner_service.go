@@ -3,6 +3,7 @@ package services
 import (
 	"os/exec"
 	"strings"
+	"syscall"
 )
 
 type ScannerService struct{}
@@ -22,7 +23,8 @@ func (s *ScannerService) CheckScannerPresence() bool {
 	// 2. Devices from known manufacturers (Symbol, Zebra, Honeywell, Datalogic)
 	// 3. POS Barcode specific classes
 
-	cmd := exec.Command("powershell", "-Command", "Get-PnpDevice -Class HIDClass, Keyboard, POS | Select-Object FriendlyName, Caption | Out-String")
+	cmd := exec.Command("powershell", "-WindowStyle", "Hidden", "-Command", "Get-PnpDevice -Class HIDClass, Keyboard, POS | Select-Object FriendlyName, Caption | Out-String")
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: 0x08000000}
 	output, err := cmd.Output()
 	if err != nil {
 		return false
