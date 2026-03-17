@@ -1,0 +1,8 @@
+build/bin
+node_modules
+frontend/dist
+*.exe
+*.db
+sync_log.txt
+*.log
+.DS_Store

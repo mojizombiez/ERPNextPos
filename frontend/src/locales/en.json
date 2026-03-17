@@ -1,0 +1,265 @@
+{
+    "common": {
+        "save": "Save All Changes",
+        "loading": "Loading...",
+        "success": "Success",
+        "error": "Error",
+        "search": "Search...",
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+    },
+    "settings": {
+        "title": "Settings",
+        "subtitle": "Configure POS identity, connectivity and security",
+        "tabs": {
+            "general": "General",
+            "security": "Security",
+            "devices": "Devices",
+            "appearance": "Appearance & Display"
+        },
+        "display": {
+            "title": "Customer Display",
+            "subtitle": "Configure secondary monitor for customer information",
+            "monitor_list": "Detected Monitors",
+            "monitor_desc": "Monitors currently connected to this device",
+            "launch": "Launch Customer Display",
+            "launch_desc": "Open the customer view in a new window",
+            "enable": "Enable Customer Display",
+            "enable_desc": "Automatically launch customer display on startup",
+            "no_monitors": "No secondary monitors detected"
+        },
+        "scanner": {
+            "title": "Hardware Pulse",
+            "subtitle": "Test and monitor your barcode scanner connection",
+            "test_area": "Scanner Test Area",
+            "test_desc": "Click below and scan any barcode to test detection speed",
+            "scan_log": "Scan Activity Log",
+            "no_logs": "No scan activity detected yet"
+        },
+        "language": {
+            "title": "Language Settings",
+            "subtitle": "Select your preferred language",
+            "label": "Language",
+            "regions": {
+                "global": "Global",
+                "asia": "Asia"
+            },
+            "languages": {
+                "en": "English",
+                "th": "Thai"
+            }
+        },
+        "identity": {
+            "title": "POS Identity",
+            "subtitle": "Basic identification for this terminal",
+            "branch_id": "Branch ID",
+            "branch_id_desc": "Unique identifier for this location",
+            "branch_name": "Branch Name",
+            "branch_name_desc": "Display name for this branch (Local Override)",
+            "mode": "Operation Mode",
+            "mode_desc": "Choose between cloud sync or local management",
+            "online": "Online (Sync)",
+            "online_desc": "Automated cloud syncing",
+            "standalone": "Standalone (Local)",
+            "standalone_desc": "Independent local management"
+        },
+        "updates": {
+            "title": "Application Updates",
+            "endpoint": "Update Endpoint",
+            "endpoint_desc": "Remote URL for application updates"
+        },
+        "danger_zone": {
+            "title": "Danger Zone",
+            "reset_button": "Hard Reset System",
+            "reset_desc": "Wipe all local data (Orders, Settings, Database) and exit the app.",
+            "confirm_title": "Hard Reset Confirmation",
+            "confirm_msg": "Are you absolutely sure? This will delete all local data and the application will close. This action cannot be undone.",
+            "resetting": "Resetting System..."
+        }
+    },
+    "sidebar": {
+        "dashboard": "Dashboard",
+        "checkout": "Checkout",
+        "orders": "Orders",
+        "stock": "Stock",
+        "customers": "Customers",
+        "campaigns": "Campaigns",
+        "admin": "Admin",
+        "staff": "Staff Management",
+        "settings": "Settings",
+        "logout": "Logout",
+        "pos_system": "POS System"
+    },
+    "header": {
+        "auto_lock": "Auto Lock",
+        "scanner_ready": "Scanner Ready",
+        "no_scanner": "No Scanner",
+        "sync_now": "Sync Now",
+        "offline": "Offline",
+        "cashier": "Cashier",
+        "no_user": "No User"
+    },
+    "checkout": {
+        "title": "Checkout",
+        "all_products": "All Products",
+        "current_order": "Current Order",
+        "clear_cart": "Clear Cart",
+        "clear_cart_msg": "Are you sure you want to clear the entire cart? This action cannot be undone.",
+        "cart_empty": "Cart Empty",
+        "subtotal": "Subtotal",
+        "vat": "VAT (7%)",
+        "total": "Total Amount",
+        "loyalty_discount": "Loyalty Discount",
+        "redeem_points": "Redeem Points",
+        "points_available": "Points Available: {{points}}",
+        "cash_received": "Cash Received...",
+        "change": "Change",
+        "pay_now": "Pay Now",
+        "product_not_found": "Product Not Found",
+        "product_not_found_msg": "Barcode \"{{code}}\" does not exist. Would you like to add it to the inventory?",
+        "cancel_order": "Cancel Order",
+        "cancel_order_msg": "Are you sure you want to cancel and remove \"{{name}}\"? This will delete the items in this cart.",
+        "clear": "Clear",
+        "order_session": "Order {{id}}",
+        "print_kitchen": "Kitchen",
+        "cash": "Cash",
+        "card": "Card",
+        "qr": "QR Code",
+        "remaining": "Remaining",
+        "applied_payments": "Applied Payments",
+        "menu": "Menu",
+        "discover_cuisine": "Discover Cuisine",
+        "tray_empty": "Tray is empty",
+        "items_selected": "ITEMS SELECTED",
+        "total_due": "Total Due",
+        "settled": "Settled",
+        "submit_protocol": "Submit Protocol",
+        "remove": "Remove",
+        "amount": "Amount",
+        "apply_payment": "Apply Payment",
+        "cancel_action": "Cancel Action",
+        "digital_receipt": "Digital Receipt",
+        "email_placeholder": "customer@email.com",
+        "sms_placeholder": "08x-xxx-xxxx",
+        "sent_success": "Receipt sent successfully!",
+        "send_failed": "Error: "
+    },
+    "orders": {
+        "title": "Order History",
+        "period": "Period",
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "custom": "Custom Range",
+        "sync": "Sync",
+        "order_no": "Order #",
+        "date_time": "Date/Time",
+        "cashier": "Cashier",
+        "total": "Total",
+        "actions": "Actions",
+        "details": "Details",
+        "reprint_slip": "Slip",
+        "reprint_kitchen": "Kitchen",
+        "reprint_both": "Both",
+        "no_orders": "No orders found for this period.",
+        "refund": "Refund",
+        "refund_confirm": "Are you sure you want to refund this order?",
+        "refund_success": "Order refunded successfully."
+    },
+    "help": {
+        "pin": {
+            "title": "PIN Login",
+            "content": "Enter your 6-digit staff PIN to unlock the POS. The PIN is automatically submitted when the 6th digit is entered. Manager operations require a separate Manager PIN."
+        },
+        "checkout_products": {
+            "title": "Products & Categories",
+            "content": "Browse items by category using the left sidebar. Click a product card to add it to the cart. Use the ✖ button on a card to mark it as Sold Out temporarily."
+        },
+        "checkout_cart": {
+            "title": "Order Cart",
+            "content": "Adjust item quantities with +/- buttons. Remove an item with the trash icon (requires Manager PIN). Print a kitchen bill or clear the cart using the header buttons."
+        },
+        "payment": {
+            "title": "Payment",
+            "content": "Click the Remaining row to add a payment. Supports Cash, Card, QR, and split payments. Change is shown in green when cash paid exceeds the total."
+        },
+        "sessions": {
+            "title": "Order Sessions",
+            "content": "Manage multiple tables or orders at once. Click a numbered tab to switch. Use + to add a new order session and ✖ to cancel one."
+        },
+        "orders": {
+            "title": "Order History",
+            "content": "View past orders. Filter by date range or status. You can reprint a receipt, issue a refund, or force-sync a specific order to ERPNext."
+        },
+        "drawer": {
+            "title": "Cash Drawer",
+            "content": "Open the drawer at the start of each shift with a starting balance. Close it at end of shift by counting cash. The system syncs a POS Opening/Closing Entry to ERPNext."
+        },
+        "stock": {
+            "title": "Stock Management",
+            "content": "Add, edit, or delete products. Upload product images, set barcodes, toggle availability, and print price tags. In Online mode, products sync automatically from ERPNext."
+        },
+        "customers": {
+            "title": "Customer Management",
+            "content": "View, add, edit, or delete customers. Customers sync from ERPNext in Online mode. Assign a customer to an order during checkout."
+        },
+        "campaigns": {
+            "title": "Campaigns & Promotions",
+            "content": "Define promotional rules including discounts and bundle deals. Promotions apply automatically when cart conditions are met."
+        },
+        "admin_staff": {
+            "title": "Staff Management",
+            "content": "Add staff with a Name, Nickname, 6-digit PIN, and Role (Cashier or Manager). Managers can approve restricted operations. Deactivate accounts to block login without deleting."
+        },
+        "settings_general": {
+            "title": "General Settings",
+            "content": "Set your language, ERPNext Company, Warehouse, POS Profile, and operation mode (Online or Standalone). Online mode syncs to ERPNext; Standalone mode is fully local."
+        },
+        "settings_connection": {
+            "title": "ERPNext Connection",
+            "content": "Enter your ERPNext URL and API credentials. Use Test to verify the URL and Login to authenticate. Set sync interval and batch size for background sync."
+        },
+        "settings_security": {
+            "title": "Security",
+            "content": "The Master PIN is a universal override code — change it from the default (123456) immediately. Auto-Lock timeout controls how long before the screen locks after inactivity."
+        },
+        "settings_printers": {
+            "title": "Printers",
+            "content": "Select your cashier receipt printer and kitchen printer. Use Detect to auto-discover Windows printers. Check Status to verify a printer is online. Open Cash Drawer triggers via the receipt printer."
+        },
+        "settings_appearance": {
+            "title": "Appearance",
+            "content": "Choose from 21 themes (dark and light). Themes preview live. Changes take effect after saving."
+        },
+        "settings_scanner": {
+            "title": "Barcode Scanner",
+            "content": "Test your USB barcode scanner here. The system distinguishes scanner input from manual keyboard input using keystroke timing. The log shows the last 10 scans."
+        },
+        "settings_display": {
+            "title": "Customer Display",
+            "content": "Enable a second screen for customers showing the current cart and totals. Select which monitor to use and launch or close the customer display window from here."
+        },
+        "stock_modal": {
+            "title": "Refine Product",
+            "subtitle": "Product details and stock information",
+            "product_id": "Product ID / Code",
+            "barcode": "Barcode",
+            "name_th": "Name (Thai)",
+            "name_en": "Name (English)",
+            "price": "Selling Price (฿)",
+            "cost": "Base Cost (฿)",
+            "stock": "Current Stock",
+            "category": "Category",
+            "availability": "Availability",
+            "pos_service": "POS Module",
+            "vat_status": "VAT Status",
+            "ready_sale": "Ready Sale",
+            "pos_permitted": "POS Permitted",
+            "vat_inclusive": "VAT Inclusive",
+            "discard": "Discard Changes",
+            "commit": "Commit Data",
+            "image_editor": "Product Picture",
+            "upload_image": "Upload Image",
+            "remove_image": "Remove Image"
+        }
+    }
+}
