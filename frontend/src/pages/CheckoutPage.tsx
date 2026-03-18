@@ -700,7 +700,7 @@ const CheckoutPage = () => {
                                             <div className="text-4xl opacity-30">☕</div>
                                         )}
                                         {!isAvailable && (
-                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm">
+                                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
                                                 <span className="bg-white text-slate-900 px-3 py-1 rounded-full font-black text-sm uppercase tracking-[0.1em] shadow-lg">SOLD OUT</span>
                                             </div>
                                         )}

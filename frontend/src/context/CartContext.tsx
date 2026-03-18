@@ -75,11 +75,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     useEffect(() => {
-        localStorage.setItem('orderSessions', JSON.stringify(sessions));
+        const data = JSON.stringify(sessions);
+        localStorage.setItem('orderSessions', data);
+        if ((window as any).runtime?.EventsEmit) {
+            (window as any).runtime.EventsEmit('sync-sessions', data);
+        }
     }, [sessions]);
 
     useEffect(() => {
         localStorage.setItem('activeSessionId', activeSessionId);
+        if ((window as any).runtime?.EventsEmit) {
+            (window as any).runtime.EventsEmit('sync-active-session', activeSessionId);
+        }
     }, [activeSessionId]);
 
     // Cross-window synchronization for Customer Display
@@ -99,7 +106,29 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
 
         window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
+
+        // Instant sync via Wails Events for low-performance PCs
+        if ((window as any).runtime?.EventsOn) {
+            (window as any).runtime.EventsOn('sync-sessions', (data: string) => {
+                try {
+                    const newSessions = JSON.parse(data);
+                    setSessions(newSessions);
+                } catch (err) {
+                    console.error("Failed to parse sync-sessions", err);
+                }
+            });
+            (window as any).runtime.EventsOn('sync-active-session', (id: string) => {
+                setActiveSessionId(id);
+            });
+        }
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            if ((window as any).runtime?.EventsOff) {
+                (window as any).runtime.EventsOff('sync-sessions');
+                (window as any).runtime.EventsOff('sync-active-session');
+            }
+        };
     }, []);
 
     const activeSession = sessions.find(s => s.id === activeSessionId) || sessions[0];

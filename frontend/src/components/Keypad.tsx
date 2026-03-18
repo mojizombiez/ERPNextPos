@@ -126,8 +126,7 @@ const Keypad: React.FC<KeypadProps> = ({
                             alignItems: 'center',
                             justifyContent: 'center',
                             cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            backdropFilter: 'blur(10px)'
+                            transition: 'all 0.2s'
                         }}
                     >
                         {num}
@@ -174,8 +173,7 @@ const Keypad: React.FC<KeypadProps> = ({
                         alignItems: 'center',
                         justifyContent: 'center',
                         cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        backdropFilter: 'blur(10px)'
+                        transition: 'all 0.2s'
                     }}
                 >
                     0
@@ -217,7 +215,6 @@ const Keypad: React.FC<KeypadProps> = ({
                             color: 'var(--text-primary)',
                             cursor: 'pointer',
                             transition: 'all 0.2s',
-                            backdropFilter: 'blur(10px)',
                             gridColumn: '1',
                             display: mode === 'numeric' ? 'flex' : 'none',
                             alignItems: 'center',

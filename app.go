@@ -4,6 +4,7 @@ import (
 	"MWinPOS/internal/models"
 	"MWinPOS/internal/services"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -561,4 +562,76 @@ func (a *App) SelectAndSaveImage() (string, error) {
 	}
 
 	return fileName, nil
+}
+func (a *App) ExportSettings() error {
+	// 1. Get all settings
+	settings, err := a.settingService.GetAllSettings()
+	if err != nil {
+		return err
+	}
+
+	// 2. Open Save File Dialog
+	selection, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Title:           "Export Settings",
+		DefaultFilename: "mwinpos_settings.json",
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "JSON Files (*.json)",
+				Pattern:     "*.json",
+			},
+		},
+	})
+	if err != nil {
+		return err
+	}
+	if selection == "" {
+		return nil // Cancelled
+	}
+
+	// 3. Serialize to JSON
+	data, err := json.MarshalIndent(settings, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	// 4. Write to file
+	return os.WriteFile(selection, data, 0644)
+}
+
+func (a *App) ImportSettings() (string, error) {
+	// 1. Open File Dialog
+	selection, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "Import Settings",
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "JSON Files (*.json)",
+				Pattern:     "*.json",
+			},
+		},
+	})
+	if err != nil {
+		return "", err
+	}
+	if selection == "" {
+		return "", nil // Cancelled
+	}
+
+	// 2. Read File
+	data, err := os.ReadFile(selection)
+	if err != nil {
+		return "", err
+	}
+
+	// 3. Parse JSON
+	var settings []models.PosSettings
+	if err := json.Unmarshal(data, &settings); err != nil {
+		return "", fmt.Errorf("invalid settings file: %v", err)
+	}
+
+	// 4. Batch Save
+	if err := a.settingService.BatchSaveSettings(settings); err != nil {
+		return "", err
+	}
+
+	return "Settings imported successfully. Please restart the application to apply all changes.", nil
 }

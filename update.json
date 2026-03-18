@@ -1,5 +1,27 @@
 {
-    "url":  "https://nuget.moltothailand.com/erpnext/windows/MWinPOS-v1.0.9.exe",
-    "description":  "v1.0.9 - Final verification of Manual Update UI and Popup fixes",
-    "version":  "1.0.9"
+    "history":  [
+                    {
+                        "date":  "2026-03-17 14:55:54",
+                        "description":  "v1.1.0 - Added Settings Import/Export (Backup \u0026 Restore) and fixed UI bugs",
+                        "version":  "1.1.0"
+                    },
+                    {
+                        "date":  "2026-03-18 16:07:20",
+                        "description":  "v1.1.1 - Added Update History (Changelog) and Controlled Release control",
+                        "version":  "1.1.1"
+                    },
+                    {
+                        "date":  "2026-03-18 16:29:44",
+                        "description":  "Fix stock fetching bug and use direct Bin query",
+                        "version":  "1.1.2"
+                    },
+                    {
+                        "date":  "2026-03-18 16:48:02",
+                        "description":  "Frontend performance optimization for low-end PCs (removed backdrop-filter and blur effects)",
+                        "version":  "1.1.3"
+                    }
+                ],
+    "url":  "https://nuget.moltothailand.com/erpnext/windows/MWinPOS-v1.1.4.exe",
+    "description":  "UI refinement for user profile block in sidebar",
+    "version":  "1.1.4"
 }

@@ -165,7 +165,7 @@ const DashboardPage = () => {
                                     <p className="text-sm font-bold opacity-70 uppercase tracking-widest italic">Growth vs Yesterday</p>
                                 </div>
                             </div>
-                            <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-md mt-6">
+                            <div className="bg-white/30 p-4 rounded-2xl mt-6">
                                 <p className="text-sm leading-relaxed font-medium">
                                     Your POS is currently performing {yesterdayComparison >= 0 ? 'better' : 'lower'} than yesterday.
                                     {stats?.topProducts?.[0] ? ` ${stats.topProducts[0].name} is currently your best performing item.` : ''}

@@ -207,3 +207,22 @@ func (s *SettingService) GetRunningNumber() int {
 	s.SaveSetting(SettingRunningNumber, strconv.Itoa(newVal), DataTypeINT)
 	return newVal
 }
+func (s *SettingService) GetAllSettings() ([]models.PosSettings, error) {
+	var settings []models.PosSettings
+	err := s.db.Find(&settings).Error
+	return settings, err
+}
+
+func (s *SettingService) BatchSaveSettings(settings []models.PosSettings) error {
+	return s.db.Transaction(func(tx *gorm.DB) error {
+		for _, setting := range settings {
+			if err := tx.Clauses(clause.OnConflict{
+				Columns:   []clause.Column{{Name: "name"}},
+				DoUpdates: clause.AssignmentColumns([]string{"value", "json_value", "data_type"}),
+			}).Create(&setting).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}

@@ -235,7 +235,7 @@ const StockPage = () => {
                             >
                                 {/* Management Actions - Top Center Absolute */}
                                 <div className="absolute -top-3 inset-x-0 flex justify-center w-full z-[999] pointer-events-none">
-                                    <div className={`flex flex-row gap-1 opacity-100 transition-all duration-300 pointer-events-auto bg-white/80 backdrop-blur-md p-1.5 rounded-full shadow-lg border border-slate-200 ${!available ? 'ring-2 ring-slate-100' : ''}`}>
+                                    <div className={`flex flex-row gap-1 opacity-100 transition-all duration-300 pointer-events-auto bg-white p-1.5 rounded-full shadow-lg border border-slate-200 ${!available ? 'ring-2 ring-slate-100' : ''}`}>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); handlePrintTag(p); }}
                                             className="w-8 h-8 flex items-center justify-center bg-white hover:bg-slate-50 text-slate-700 shadow-sm rounded-full transition-all border border-slate-200"
@@ -287,7 +287,7 @@ const StockPage = () => {
 
                                         {!available && (
                                             <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none text-center">
-                                                <span className="bg-slate-800 text-white px-5 py-2 rounded-full font-black text-sm uppercase tracking-[0.2em] shadow-2xl backdrop-blur-sm">SOLD OUT</span>
+                                                <span className="bg-slate-800 text-white px-5 py-2 rounded-full font-black text-sm uppercase tracking-[0.2em] shadow-2xl">SOLD OUT</span>
                                             </div>
                                         )}
                                     </div>

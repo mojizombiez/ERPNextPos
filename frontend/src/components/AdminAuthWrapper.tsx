@@ -54,8 +54,7 @@ const AdminAuthWrapper = ({ children }: AdminAuthWrapperProps) => {
             <div className={activeTheme} style={{
                 position: 'fixed',
                 inset: 0,
-                backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                backdropFilter: 'blur(20px)',
+                backgroundColor: 'rgba(15, 23, 42, 0.95)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

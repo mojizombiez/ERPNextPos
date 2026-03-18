@@ -198,19 +198,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onSwitchUser, isCollapsed, onToggle }
                 {/* User Profile Section */}
                 <div style={{
                     backgroundColor: 'rgba(255,255,255,0.03)',
-                    padding: isCollapsed ? '0.5rem' : '1rem',
-                    borderRadius: '20px',
+                    padding: isCollapsed ? '0.4rem' : '0.6rem 0.8rem',
+                    borderRadius: '16px',
                     border: '1px solid var(--border-color)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: isCollapsed ? 'center' : 'flex-start',
-                    gap: '0.75rem',
-                    width: '100%'
+                    gap: '0.6rem',
+                    width: 'auto',
+                    margin: '0 0.25rem'
                 }} title={isCollapsed ? (currentUser?.nickName || currentUser?.name || 'Guest') : undefined}>
                     <div style={{
-                        width: '36px',
-                        height: '36px',
-                        borderRadius: '10px',
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '8px',
                         backgroundColor: currentUser?.role === 'Manager' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(139, 92, 246, 0.1)',
                         color: currentUser?.role === 'Manager' ? '#f59e0b' : 'var(--accent-primary)',
                         display: 'flex',
@@ -218,14 +219,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onSwitchUser, isCollapsed, onToggle }
                         justifyContent: 'center',
                         flexShrink: 0
                     }}>
-                        <User size={18} strokeWidth={2.5} />
+                        <User size={16} strokeWidth={2.5} />
                     </div>
                     {!isCollapsed && (
                         <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {currentUser?.nickName || currentUser?.name || 'Guest'}
                             </div>
-                            <div style={{ fontSize: '9px', fontWeight: 800, color: 'var(--text-secondary)', opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <div style={{ fontSize: '8px', fontWeight: 800, color: 'var(--text-secondary)', opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                 {currentUser?.role || 'Staff'}
                             </div>
                         </div>
@@ -237,7 +238,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onSwitchUser, isCollapsed, onToggle }
                     flexDirection: isCollapsed ? 'column' : undefined,
                     gridTemplateColumns: isCollapsed ? undefined : '1fr 1fr',
                     gap: '0.5rem',
-                    width: '100%'
+                    width: 'auto',
+                    margin: '0 0.25rem'
                 }}>
                     <button
                         onClick={onSwitchUser}

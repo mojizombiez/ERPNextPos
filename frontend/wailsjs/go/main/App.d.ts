@@ -40,6 +40,8 @@ export function DeleteStaff(arg1:number):Promise<void>;
 
 export function DownloadAndInstallUpdate(arg1:string):Promise<void>;
 
+export function ExportSettings():Promise<void>;
+
 export function GetAccounts():Promise<Array<Record<string, string>>>;
 
 export function GetAppMode():Promise<string>;
@@ -105,6 +107,8 @@ export function GetWarehouses():Promise<Array<Record<string, string>>>;
 export function Greet(arg1:string):Promise<string>;
 
 export function HardReset():Promise<void>;
+
+export function ImportSettings():Promise<string>;
 
 export function LoadProducts():Promise<Array<models.Product>>;
 

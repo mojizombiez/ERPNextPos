@@ -150,7 +150,7 @@ const CampaignPage = () => {
                                     position: 'relative'
                                 }}>
                                     <h2 className="text-3xl font-black tracking-tighter mb-1">{promo.name}</h2>
-                                    <div className="bg-white/20 backdrop-blur-md px-4 py-1 rounded-full text-sm font-bold border border-white/20">
+                                    <div className="bg-white/30 px-4 py-1 rounded-full text-sm font-bold border border-white/20">
                                         CODE: {promo.code || 'AUTO'}
                                     </div>
                                     <div className="absolute top-4 right-4 bg-green-500 text-white p-1 rounded-full shadow-lg">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Globe, RefreshCw, CheckCircle, AlertCircle, Lock, Palette, Printer, Barcode, Languages, Monitor, Trash2 } from 'lucide-react';
+import { Globe, RefreshCw, CheckCircle, AlertCircle, Lock, Palette, Printer, Barcode, Languages, Monitor, Trash2, Database, Download, Upload } from 'lucide-react';
 import AdminAuthWrapper from '../components/AdminAuthWrapper';
 import { useModal } from '../context/ModalContext';
 import { useTranslation } from 'react-i18next';
@@ -62,6 +62,7 @@ const SettingsPage = () => {
     const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
     const [isUpdatingApp, setIsUpdatingApp] = useState(false);
     const [updateMessage, setUpdateMessage] = useState<{ text: string, type: 'success' | 'error' | 'info' | null }>({ text: '', type: null });
+    const [showHistory, setShowHistory] = useState(false);
 
     const themes = [
         // Dark Themes
@@ -539,7 +540,7 @@ const SettingsPage = () => {
                 </header>
 
                 {/* Tab Bar */}
-                <div className="flex gap-4 p-2 bg-[var(--glass-bg)] backdrop-blur-xl rounded-[24px] border border-[var(--border-color)] self-start shadow-xl">
+                <div className="flex gap-4 p-2 bg-[var(--glass-bg)] rounded-[24px] border border-[var(--border-color)] self-start shadow-xl">
                     <button
                         onClick={() => setActiveTab('general')}
                         className={`px-10 py-5 rounded-full font-black text-lg transition-all duration-300 ${activeTab === 'general' ? 'bg-[var(--accent-gradient)] text-white shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)] scale-105' : 'text-gray-500 hover:bg-white/50 hover:text-[var(--text-primary)]'}`}
@@ -570,7 +571,7 @@ const SettingsPage = () => {
                     {activeTab === 'general' && (
                         <div className="flex flex-col gap-6">
                             {/* Language Selection Card */}
-                            <div className="card flex flex-col p-8 bg-[var(--glass-bg)] backdrop-blur-xl border-[var(--border-color)] shadow-xl rounded-[32px]">
+                            <div className="card flex flex-col p-8 bg-[var(--glass-bg)] border-[var(--border-color)] shadow-xl rounded-[32px]">
                                 <div className="flex items-center gap-4 mb-6">
                                     <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600">
                                         <Languages size={24} />
@@ -611,7 +612,7 @@ const SettingsPage = () => {
                                 </div>
                             </div>
 
-                            <div className="card flex flex-col p-8 bg-[var(--glass-bg)] backdrop-blur-xl border-[var(--border-color)] shadow-xl rounded-[32px]">
+                            <div className="card flex flex-col p-8 bg-[var(--glass-bg)] border-[var(--border-color)] shadow-xl rounded-[32px]">
                                 <div className="flex items-center gap-4 mb-6">
                                     <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-600">
                                         <Globe size={24} />
@@ -864,6 +865,16 @@ const SettingsPage = () => {
                                                     {isCheckingUpdate ? 'Checking...' : 'Check for Updates'}
                                                 </button>
                                                 
+                                                <button 
+                                                    onClick={() => setShowHistory(true)}
+                                                    disabled={!latestUpdate || !latestUpdate.history}
+                                                    className="btn btn-secondary flex items-center gap-2"
+                                                    style={{ padding: '0.8rem 1.5rem', borderRadius: '12px', width: 'fit-content' }}
+                                                >
+                                                    <Lock size={18} />
+                                                    View History
+                                                </button>
+
                                                 {updateMessage.text && (
                                                     <span className={`text-sm font-semibold flex items-center gap-2 ${
                                                         updateMessage.type === 'success' ? 'text-emerald-500' :
@@ -1668,6 +1679,139 @@ const SettingsPage = () => {
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Backup & Restore Section */}
+                    <div className="card mt-8" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '1.5rem', padding: '2rem', marginBottom: '4rem' }}>
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600">
+                                <Database size={24} />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold">Backup & Restore</h2>
+                                <p className="text-sm text-gray-400">Export or import your application configuration</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="flex flex-col gap-2 p-6 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 hover:border-amber-500/50 transition-colors">
+                                <h3 className="font-bold text-lg">Export Settings</h3>
+                                <p className="text-sm text-gray-400 mb-4">Save all your current settings to a JSON file for backup or migration.</p>
+                                <button 
+                                    onClick={async () => {
+                                        try {
+                                            await (window as any).go.main.App.ExportSettings();
+                                        } catch (err: any) {
+                                            console.error("Export failed:", err);
+                                        }
+                                    }}
+                                    className="btn btn-secondary flex items-center justify-center gap-2 w-full"
+                                >
+                                    <Download size={18} />
+                                    Export to JSON
+                                </button>
+                            </div>
+
+                            <div className="flex flex-col gap-2 p-6 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 hover:border-amber-500/50 transition-colors">
+                                <h3 className="font-bold text-lg">Import Settings</h3>
+                                <p className="text-sm text-gray-400 mb-4">Restore settings from a JSON file. (Requires Restart)</p>
+                                <button 
+                                    onClick={async () => {
+                                        try {
+                                            const res = await (window as any).go.main.App.ImportSettings();
+                                            if (res) {
+                                                alert(res);
+                                            }
+                                        } catch (err: any) {
+                                            alert("Import failed: " + err);
+                                        }
+                                    }}
+                                    className="btn btn-primary flex items-center justify-center gap-2 w-full"
+                                >
+                                    <Upload size={18} />
+                                    Import from JSON
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {/* Update History Modal */}
+                    {showHistory && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                            <div className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-white/10 flex flex-col max-h-[80vh]">
+                                <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-slate-800/50">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                                            <RefreshCw size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-bold">Update History</h3>
+                                            <p className="text-sm opacity-60">Past versions and changelogs</p>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        onClick={() => setShowHistory(false)}
+                                        className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition-colors"
+                                    >
+                                        <Trash2 size={20} className="rotate-45" />
+                                    </button>
+                                </div>
+                                <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
+                                    <div className="flex flex-col gap-6 relative">
+                                        {/* Current/Latest */}
+                                        {latestUpdate && (
+                                            <div className="flex gap-4 relative">
+                                                <div className="flex flex-col items-center">
+                                                    <div className="w-4 h-4 rounded-full bg-blue-500 ring-4 ring-blue-500/20" />
+                                                    <div className="w-0.5 h-full bg-gray-200 dark:bg-gray-800 mt-2" />
+                                                </div>
+                                                <div className="flex-1 pb-2">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="font-bold text-lg">v{latestUpdate.version}</span>
+                                                        <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 text-xs font-bold uppercase tracking-wider">Latest</span>
+                                                    </div>
+                                                    <p className="text-sm opacity-80 leading-relaxed">{latestUpdate.description}</p>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Historical Entries */}
+                                        {latestUpdate?.history?.slice().reverse().map((entry: any, idx: number) => (
+                                            <div key={idx} className="flex gap-4 relative">
+                                                <div className="flex flex-col items-center">
+                                                    <div className="w-4 h-4 rounded-full bg-gray-300 dark:bg-gray-700" />
+                                                    {idx !== latestUpdate.history.length - 1 && (
+                                                        <div className="w-0.5 h-full bg-gray-200 dark:bg-gray-800 mt-2" />
+                                                    )}
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="font-bold text-lg">v{entry.version}</span>
+                                                        <span className="text-xs opacity-50">{entry.date}</span>
+                                                    </div>
+                                                    <p className="text-sm opacity-80 leading-relaxed">{entry.description}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        {!latestUpdate?.history && (
+                                            <div className="text-center py-10 opacity-50">
+                                                No historical data available.
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="p-6 border-t border-gray-100 dark:border-gray-800 flex justify-end">
+                                    <button 
+                                        onClick={() => setShowHistory(false)}
+                                        className="btn btn-secondary px-8"
+                                    >
+                                        Close
+                                    </button>
                                 </div>
                             </div>
                         </div>

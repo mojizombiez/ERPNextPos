@@ -74,6 +74,10 @@ export function DownloadAndInstallUpdate(arg1) {
   return window['go']['main']['App']['DownloadAndInstallUpdate'](arg1);
 }
 
+export function ExportSettings() {
+  return window['go']['main']['App']['ExportSettings']();
+}
+
 export function GetAccounts() {
   return window['go']['main']['App']['GetAccounts']();
 }
@@ -204,6 +208,10 @@ export function Greet(arg1) {
 
 export function HardReset() {
   return window['go']['main']['App']['HardReset']();
+}
+
+export function ImportSettings() {
+  return window['go']['main']['App']['ImportSettings']();
 }
 
 export function LoadProducts() {

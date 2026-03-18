@@ -378,12 +378,17 @@ func (s *ApiService) GetProducts(priceList string) ([]models.Product, error) {
 
 func (s *ApiService) GetStockLevel(itemCode, warehouse string) (float64, error) {
 	query := url.Values{}
-	query.Set("item_code", itemCode)
+	query.Set("fields", `["actual_qty"]`)
+	
+	filterStr := fmt.Sprintf(`[["item_code", "=", "%s"]`, itemCode)
 	if warehouse != "" {
-		query.Set("warehouse", warehouse)
+		filterStr += fmt.Sprintf(`, ["warehouse", "=", "%s"]`, warehouse)
 	}
+	filterStr += `]`
+	query.Set("filters", filterStr)
+	query.Set("limit_page_length", "1")
 
-	resp, err := s.doRequest(http.MethodGet, "/api/method/frappe.stock.utils.get_latest_stock_balance", nil, query)
+	resp, err := s.doRequest(http.MethodGet, "/api/resource/Bin", nil, query)
 	if err != nil {
 		return 0, err
 	}
@@ -394,13 +399,19 @@ func (s *ApiService) GetStockLevel(itemCode, warehouse string) (float64, error) 
 	}
 
 	var res struct {
-		Message float64 `json:"message"`
+		Data []struct {
+			ActualQty float64 `json:"actual_qty"`
+		} `json:"data"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return 0, err
 	}
 
-	return res.Message, nil
+	if len(res.Data) > 0 {
+		return res.Data[0].ActualQty, nil
+	}
+
+	return 0, nil
 }
 
 func (s *ApiService) GetProductBundles() (map[string][]models.BundleItem, error) {

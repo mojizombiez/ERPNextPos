@@ -1,7 +1,8 @@
 param (
     [string]$Description = "Auto-deployed update with bug fixes and improvements.",
     [ValidateSet("windows", "linux")]
-    [string]$TargetOS = "windows"
+    [string]$TargetOS = "windows",
+    [switch]$OnlyPublish = $false
 )
 
 $ErrorActionPreference = "Stop"
@@ -32,19 +33,21 @@ if ([string]::IsNullOrWhiteSpace($version)) {
 
 Write-Host "Detected version: v$version" -ForegroundColor Cyan
 
-# 2. Build the application
-Write-Host "Building application via Wails..." -ForegroundColor Yellow
-$process = Start-Process -FilePath "wails" -ArgumentList "build","-platform","windows/amd64" -NoNewWindow -Wait -PassThru
+# 2. Build the application (unless OnlyPublish is set)
+if (!$OnlyPublish) {
+    Write-Host "Building application via Wails..." -ForegroundColor Yellow
+    $process = Start-Process -FilePath "wails" -ArgumentList "build","-platform","windows/amd64" -NoNewWindow -Wait -PassThru
 
-if ($process.ExitCode -ne 0) {
-   Write-Host "ERROR: Build failed with Exit Code $($process.ExitCode)." -ForegroundColor Red
-   exit 1
-}
+    if ($process.ExitCode -ne 0) {
+       Write-Host "ERROR: Build failed with Exit Code $($process.ExitCode)." -ForegroundColor Red
+       exit 1
+    }
 
-$buildBinary = Join-Path $projectRoot "build\bin\GoProject.exe"
-if (!(Test-Path $buildBinary)) {
-    Write-Host "ERROR: Build binary not found at $buildBinary." -ForegroundColor Red
-    exit 1
+    $buildBinary = Join-Path $projectRoot "build\bin\GoProject.exe"
+    if (!(Test-Path $buildBinary)) {
+        Write-Host "ERROR: Build binary not found at $buildBinary." -ForegroundColor Red
+        exit 1
+    }
 }
 
 # 3. Load FTP Credentials from .env
@@ -101,50 +104,86 @@ try {
     # It might already exist, which is fine
 }
 
-# 4. Upload the Binary
-if ($TargetOS -eq "windows") {
-    $uploadFileName = "MWinPOS-v$version.exe"
+# 4. Upload the Binary (if not OnlyPublish)
+if (!$OnlyPublish) {
+    if ($TargetOS -eq "windows") {
+        $uploadFileName = "MWinPOS-v$version.exe"
+    } else {
+        $uploadFileName = "MWinPOS-v$version-linux"
+    }
+
+    $ftpUrlBinary = "ftp://$ftpHost${ftpDir}$uploadFileName"
+
+    Write-Host "Uploading binary to $ftpUrlBinary..." -ForegroundColor Yellow
+
+    $webClient = New-Object System.Net.WebClient
+    $webClient.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
+
+    try {
+        $webClient.UploadFile($ftpUrlBinary, $buildBinary)
+        Write-Host "Binary uploaded successfully." -ForegroundColor Green
+    } catch {
+        Write-Host "ERROR uploading binary: $_" -ForegroundColor Red
+        exit 1
+    }
 } else {
-    $uploadFileName = "MWinPOS-v$version-linux"
+    $uploadFileName = "MWinPOS-v$version.exe"
+    if ($TargetOS -ne "windows") { $uploadFileName = "MWinPOS-v$version-linux" }
 }
 
-$ftpUrlBinary = "ftp://$ftpHost${ftpDir}$uploadFileName"
+# 5. Fetch existing update.json to maintain history
+$updateJsonPath = Join-Path $projectRoot "update.json"
+$ftpUrlJson = "ftp://$ftpHost${ftpDir}update.json"
+$history = @()
 
-Write-Host "Uploading binary to $ftpUrlBinary..." -ForegroundColor Yellow
-
+Write-Host "Checking for existing update.json on server..." -ForegroundColor Yellow
 $webClient = New-Object System.Net.WebClient
 $webClient.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
-
 try {
-    $webClient.UploadFile($ftpUrlBinary, $buildBinary)
-    Write-Host "Binary uploaded successfully." -ForegroundColor Green
+    $existingJsonData = $webClient.DownloadString($ftpUrlJson)
+    $existingJson = $existingJsonData | ConvertFrom-Json
+    
+    if ($existingJson.history) {
+        $history = $existingJson.history
+    }
+    
+    # Check if this version is already the current one to avoid duplicate history on multi-runs
+    if ($existingJson.version -ne $version) {
+        # Add the CURRENT (now becoming old) version to history before we overwrite
+        $historyEntry = @{
+            version = $existingJson.version
+            date = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+            description = $existingJson.description
+        }
+        $history += $historyEntry
+    }
 } catch {
-    Write-Host "ERROR uploading binary: $_" -ForegroundColor Red
-    exit 1
+    Write-Host "No existing update.json found or failed to download. Starting fresh." -ForegroundColor Gray
 }
 
-# 5. Create and Upload update.json
-$updateJsonPath = Join-Path $projectRoot "update.json"
+# 6. Prepare new update.json
 $downloadUrl = "$downloadBaseUrl/$uploadFileName"
-
 $updateData = @{
     version = $version
     url = $downloadUrl
     description = $Description
+    history = $history
 }
 
-$jsonString = $updateData | ConvertTo-Json
+$jsonString = $updateData | ConvertTo-Json -Depth 10
 [System.IO.File]::WriteAllText($updateJsonPath, $jsonString)
 
-$ftpUrlJson = "ftp://$ftpHost${ftpDir}update.json"
-Write-Host "Uploading update.json to $ftpUrlJson..." -ForegroundColor Yellow
-
-try {
-    $webClient.UploadFile($ftpUrlJson, $updateJsonPath)
-    Write-Host "update.json uploaded successfully." -ForegroundColor Green
-} catch {
-    Write-Host "ERROR uploading update.json: $_" -ForegroundColor Red
-    exit 1
+# 7. Release Decision
+$choice = Read-Host "Binary is ready on server. Release v$version now? (Y/N)"
+if ($choice -eq 'y' -or $choice -eq 'Y') {
+    Write-Host "Uploading update.json to $ftpUrlJson..." -ForegroundColor Yellow
+    try {
+        $webClient.UploadFile($ftpUrlJson, $updateJsonPath)
+        Write-Host "update.json uploaded successfully. Version v$version is now LIVE." -ForegroundColor Green
+    } catch {
+        Write-Host "ERROR uploading update.json: $_" -ForegroundColor Red
+        exit 1
+    }
+} else {
+    Write-Host "Update.json NOT uploaded. v$version is STAGED but NOT LIVE." -ForegroundColor Cyan
 }
-
-Write-Host "Deployment completed successfully! Version v$version is now live." -ForegroundColor Green

@@ -13,14 +13,21 @@ import (
 	"time"
 )
 
-const AppVersion = "1.0.9"
+const AppVersion = "1.1.4"
+
+type UpdateHistoryEntry struct {
+	Version     string `json:"version"`
+	Date        string `json:"date"`
+	Description string `json:"description"`
+}
 
 type UpdateInfo struct {
-	Version         string   `json:"version"`
-	URL             string   `json:"url"`
-	Description     string   `json:"description"`
-	IncludeBranches []string `json:"includeBranches"` // Optional: only these branches (strings to match SettingBranchId)
-	ExcludeBranches []string `json:"excludeBranches"` // Optional: skip these branches
+	Version         string               `json:"version"`
+	URL             string               `json:"url"`
+	Description     string               `json:"description"`
+	IncludeBranches []string             `json:"includeBranches"` // Optional: only these branches
+	ExcludeBranches []string             `json:"excludeBranches"` // Optional: skip these branches
+	History         []UpdateHistoryEntry `json:"history"`         // Historical updates
 }
 
 type UpdateService struct {

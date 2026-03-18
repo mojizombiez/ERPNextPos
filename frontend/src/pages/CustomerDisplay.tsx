@@ -29,8 +29,8 @@ const CustomerDisplay: React.FC = () => {
                 <div className="relative z-10 flex flex-col items-center p-16 text-center animate-in fade-in zoom-in duration-1000">
                     {/* Animated Logo Container */}
                     <div className="mb-16 relative">
-                        <div className="absolute inset-0 bg-[var(--accent-primary)]/20 rounded-full blur-3xl animate-pulse" />
-                        <div className="relative p-12 rounded-[40px] bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl border border-white/20 shadow-[0_0_100px_rgba(139,92,246,0.3)]">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle,var(--accent-primary)_0%,transparent_70%)] opacity-20 rounded-full animate-pulse" />
+                        <div className="relative p-12 rounded-[40px] bg-gradient-to-br from-white/10 to-white/5 border border-white/20 shadow-[0_0_100px_rgba(139,92,246,0.3)]">
                             <Store size={120} className="text-[var(--accent-primary)] drop-shadow-2xl" strokeWidth={1.5} />
                         </div>
                     </div>
@@ -48,7 +48,7 @@ const CustomerDisplay: React.FC = () => {
                     </div>
 
                     {/* Time Display */}
-                    <div className="mt-12 flex items-center gap-4 text-3xl font-mono text-[var(--accent-primary)] bg-black/30 px-10 py-5 rounded-[28px] backdrop-blur-xl border border-white/10 shadow-2xl">
+                    <div className="mt-12 flex items-center gap-4 text-3xl font-mono text-[var(--accent-primary)] bg-black/50 px-10 py-5 rounded-[28px] border border-white/10 shadow-2xl">
                         <Clock size={32} className="animate-pulse" />
                         <span className="font-black tracking-wider">
                             {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
@@ -66,12 +66,12 @@ const CustomerDisplay: React.FC = () => {
     return (
         <div className="flex h-screen bg-primary text-[var(--text-primary)] overflow-hidden font-sans">
             {/* Left Side: Cart Items */}
-            <div className="flex-1 flex flex-col bg-gradient-to-br from-[var(--bg-secondary)]/80 to-[var(--bg-primary)]/80 backdrop-blur-3xl relative">
+            <div className="flex-1 flex flex-col bg-[var(--bg-secondary)] relative">
                 {/* Decorative Background */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.1),transparent_50%)] pointer-events-none" />
 
                 {/* Header */}
-                <header className="relative px-10 py-8 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--bg-primary)]/90 backdrop-blur-xl">
+                <header className="relative px-10 py-8 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--bg-primary)]">
                     <div className="flex items-center gap-5">
                         <div className="p-4 bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] rounded-2xl shadow-lg shadow-[var(--accent-primary)]/30">
                             <ShoppingCart size={32} className="text-white" strokeWidth={2.5} />
@@ -132,7 +132,7 @@ const CustomerDisplay: React.FC = () => {
             {/* Right Side: Totals & Summary */}
             <aside className="w-[500px] bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-primary)] flex flex-col relative z-20 shadow-2xl border-l border-[var(--border-color)]">
                 {/* Background Glow */}
-                <div className="absolute top-0 right-0 -z-10 w-[600px] h-[600px] bg-[var(--accent-primary)]/15 rounded-full blur-[150px] pointer-events-none" />
+                <div className="absolute top-0 right-0 -z-10 w-[600px] h-[600px] bg-[radial-gradient(circle,var(--accent-primary)_0%,transparent_60%)] opacity-15 rounded-full pointer-events-none" />
 
                 <div className="flex-1 p-12 flex flex-col justify-end">
                     {/* Summary Lines */}

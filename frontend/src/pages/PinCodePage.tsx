@@ -61,14 +61,13 @@ const PinCodePage = () => {
             zIndex: 999999
         }}>
             {/* Background decorative elements */}
-            <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', backgroundColor: 'rgba(139, 92, 246, 0.1)', filter: 'blur(120px)', borderRadius: '9999px' }} />
-            <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', backgroundColor: 'rgba(99, 102, 241, 0.1)', filter: 'blur(120px)', borderRadius: '9999px' }} />
+            <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', background: 'radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%)', borderRadius: '9999px' }} />
+            <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', background: 'radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%)', borderRadius: '9999px' }} />
 
             <div style={{
                 width: '100%',
                 maxWidth: '400px',
-                backgroundColor: 'var(--glass-bg)',
-                backdropFilter: 'blur(20px)',
+                backgroundColor: 'var(--bg-primary)',
                 padding: '2.5rem',
                 borderRadius: '40px',
                 boxShadow: '0 32px 64px -16px rgba(0,0,0,0.4)',
