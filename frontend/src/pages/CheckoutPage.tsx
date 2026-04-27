@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, Plus, Minus, CreditCard, ChevronRight, ShoppingCart, ListChecks, PlusCircle, X, Printer, Search, Wallet, Banknote, Smartphone, History, RotateCcw, Check, UserPlus, Users, Ticket, Star } from 'lucide-react';
+import { Trash2, Plus, Minus, CreditCard, ChevronRight, ShoppingCart, ListChecks, PlusCircle, X, Printer, Search, Wallet, Banknote, Smartphone, History, RotateCcw, Check, UserPlus, Users, Ticket, Star, Tag } from 'lucide-react';
 import HelpTooltip from '../components/HelpTooltip';
 import { useModal } from '../context/ModalContext';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +24,6 @@ const CheckoutPage = () => {
         updateCashReceived,
         updatePayments,
         updateCustomer,
-        updateRedemption,
         updateRedemption,
         applyCoupon,
         removeCoupon,

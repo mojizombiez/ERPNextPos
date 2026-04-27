@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/joho/godotenv"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -19,6 +20,9 @@ import (
 var assets embed.FS
 
 func main() {
+	// Load environment variables from .env file
+	_ = godotenv.Load()
+
 	database.InitDB()
 
 	// Parse flags for customer display mode

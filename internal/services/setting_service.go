@@ -1,6 +1,7 @@
 package services
 
 import (
+	"MWinPOS/internal/config"
 	"MWinPOS/internal/database"
 	"MWinPOS/internal/models"
 	"encoding/json"
@@ -81,9 +82,9 @@ func (s *SettingService) InitSettings() {
 	s.ensureSetting(SettingStaffs, "", DataTypeJSON)
 	s.ensureSetting(SettingCustomerScreenNumber, "", DataTypeSTRING)
 	s.ensureSetting(SettingBackendUrl, "", DataTypeSTRING)
-	s.ensureSetting(SettingApiUrl, "", DataTypeSTRING)
-	s.ensureSetting(SettingUserName, "", DataTypeSTRING)
-	s.ensureSetting(SettingPassword, "", DataTypeSTRING)
+	s.ensureSetting(SettingApiUrl, config.GetEnvWithDefault(config.EnvErpApiUrl, ""), DataTypeSTRING)
+	s.ensureSetting(SettingUserName, config.GetEnvWithDefault(config.EnvErpApiKey, ""), DataTypeSTRING)
+	s.ensureSetting(SettingPassword, config.GetEnvWithDefault(config.EnvErpApiSecret, ""), DataTypeSTRING)
 	s.ensureSetting(SettingRunningNumber, "0", DataTypeINT)
 	s.ensureSetting(SettingCurrentDate, time.Now().Format(time.RFC3339), DataTypeDATETIME)
 	s.ensureSetting(SettingSyncIntervalSeconds, "5", DataTypeINT)
@@ -96,7 +97,7 @@ func (s *SettingService) InitSettings() {
 	s.ensureSetting(SettingUseSamePrinter, "false", DataTypeBOOLEAN)
 	s.ensureSetting(SettingActiveTheme, "theme-midnight", DataTypeSTRING)
 	s.ensureSetting(SettingAppMode, "online", DataTypeSTRING)
-	s.ensureSetting(SettingUpdateUrl, "https://nuget.moltothailand.com/erpnext/windows/update.json", DataTypeSTRING)
+	s.ensureSetting(SettingUpdateUrl, config.GetEnvWithDefault(config.EnvUpdateUrl, "https://nuget.moltothailand.com/erpnext/windows/update.json"), DataTypeSTRING)
 	s.ensureSetting(SettingEnableCustomerDisplay, "false", DataTypeBOOLEAN)
 	s.ensureSetting(SettingSkipUpdateCheck, "false", DataTypeBOOLEAN)
 	s.ensureSetting(SettingFullScreenMode, "false", DataTypeBOOLEAN)

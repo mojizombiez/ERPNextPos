@@ -1,6 +1,7 @@
 package services
 
 import (
+	"MWinPOS/internal/config"
 	"MWinPOS/internal/database"
 	"MWinPOS/internal/models"
 	"encoding/json"
@@ -42,9 +43,9 @@ func NewSyncService() *SyncService {
 	ss.ensureSetting(SettingWarehouse, "", DataTypeSTRING)
 	ss.ensureSetting(SettingCompany, "", DataTypeSTRING)
 
-	apiUrl := ss.GetString("ApiUrl")
-	username := ss.GetString("UserName")
-	password := ss.GetString("Password")
+	apiUrl := config.GetEnvWithDefault(config.EnvErpApiUrl, ss.GetString("ApiUrl"))
+	username := config.GetEnvWithDefault(config.EnvErpApiKey, ss.GetString("UserName"))
+	password := config.GetEnvWithDefault(config.EnvErpApiSecret, ss.GetString("Password"))
 
 	api := NewApiService(apiUrl)
 	api.SetCredentials(username, password)
@@ -251,8 +252,11 @@ func (s *SyncService) SyncAllData() error {
 	}
 
 	// Always refresh credentials before a sync in case they were updated in Settings
-	s.api.baseUrl = s.setting.GetString("ApiUrl")
-	s.api.SetCredentials(s.setting.GetString("UserName"), s.setting.GetString("Password"))
+	s.api.baseUrl = config.GetEnvWithDefault(config.EnvErpApiUrl, s.setting.GetString("ApiUrl"))
+	s.api.SetCredentials(
+		config.GetEnvWithDefault(config.EnvErpApiKey, s.setting.GetString("UserName")),
+		config.GetEnvWithDefault(config.EnvErpApiSecret, s.setting.GetString("Password")),
+	)
 
 	posProfile := s.setting.GetString(SettingPosProfile)
 	fmt.Printf("Starting SyncAllData for POS Profile: %s at %s\n", posProfile, time.Now().Format(time.RFC822))
