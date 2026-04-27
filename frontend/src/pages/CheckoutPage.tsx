@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useCart } from '../context/CartContext';
 import NumericKeypad from '../components/NumericKeypad';
 import { useManagerAuth } from '../hooks/useManagerAuth';
+import DiscountModal from '../components/DiscountModal';
 
 const CheckoutPage = () => {
     const { t } = useTranslation();
@@ -24,8 +25,11 @@ const CheckoutPage = () => {
         updatePayments,
         updateCustomer,
         updateRedemption,
+        updateRedemption,
         applyCoupon,
         removeCoupon,
+        applyManualDiscount,
+        removeManualDiscount,
         clearActiveCart
     } = useCart();
     const { checkManager, ManagerAuthModal } = useManagerAuth();
@@ -267,7 +271,8 @@ const CheckoutPage = () => {
     const baseTotal = subtotal + vat;
     const couponDiscount = activeSession?.couponDiscount || 0;
     const loyaltyDiscount = activeSession?.redeemedAmount || 0;
-    const discountAmount = couponDiscount + loyaltyDiscount;
+    const manualDiscount = activeSession?.manualDiscount || 0;
+    const discountAmount = couponDiscount + loyaltyDiscount + manualDiscount;
     const total = Math.max(0, baseTotal - discountAmount);
     const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
     const remainingAmount = Math.max(0, total - totalPaid);
@@ -292,6 +297,27 @@ const CheckoutPage = () => {
             hideFooter: true,
             maxWidthClass: 'max-w-[640px]',
             compactMode: true
+        });
+    };
+
+    const openDiscountModal = () => {
+        checkManager(() => {
+            showModal({
+                title: 'Manual Discount',
+                message: (
+                    <DiscountModal
+                        subtotal={baseTotal}
+                        initialAmount={manualDiscount}
+                        initialReason={activeSession?.discountReason}
+                        onApply={(amount, reason) => applyManualDiscount(amount, reason)}
+                        onClose={() => hideModal()}
+                    />
+                ),
+                type: 'info',
+                hideFooter: true,
+                maxWidthClass: 'max-w-[440px]',
+                compactMode: true
+            });
         });
     };
 
@@ -922,6 +948,37 @@ const CheckoutPage = () => {
                                     className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${!couponInput || isApplyingCoupon ? 'text-slate-300' : 'bg-slate-900 text-white hover:bg-black active:scale-95'}`}
                                 >
                                     {isApplyingCoupon ? '...' : 'Apply'}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Manual Discount Row */}
+                    <div className="mx-5 mb-2 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${activeSession?.manualDiscount ? 'bg-red-500 text-white shadow-red-premium' : 'bg-white text-slate-300'}`}>
+                            <Tag size={16} strokeWidth={2.5} />
+                        </div>
+                        {activeSession?.manualDiscount ? (
+                            <div className="flex-1 flex items-center justify-between">
+                                <div className="min-w-0">
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Manual Discount</p>
+                                    <h4 className="font-black text-slate-900 tracking-tight text-sm uppercase truncate">{activeSession.discountReason || 'Discount'}</h4>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-sm font-black text-red-500">-฿{activeSession.manualDiscount?.toLocaleString()}</span>
+                                    <button onClick={removeManualDiscount} className="text-slate-300 hover:text-red-500 transition-colors">
+                                        <X size={14} strokeWidth={3} />
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex-1 flex justify-between items-center">
+                                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Add Manual Discount</span>
+                                <button
+                                    onClick={openDiscountModal}
+                                    className="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-black active:scale-95 transition-all"
+                                >
+                                    Modify
                                 </button>
                             </div>
                         )}

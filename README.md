@@ -1,19 +1,49 @@
-# README
+# ERPNext POS (MWinPOS)
 
-## About
+A premium, high-performance Point of Sale (POS) application designed for seamless integration with **ERPNext**. Built with an offline-first architecture to ensure business continuity even during network outages.
 
-This is the official Wails React-TS template.
+## 🚀 Overview
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+MWinPOS leverages the power of **Wails (Go)** for backend system operations and **React (TypeScript)** for a stunning, glassmorphism-inspired user interface. It provides a robust, fast, and modern checkout experience tailored for retail and hospitality environments.
 
-## Live Development
+## ✨ Key Features
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+- **Offline-First Resilience**: Process sales and manage data without an active internet connection.
+- **ERPNext Integration**: Real-time synchronization of products, prices, customers, and stock levels.
+- **Premium Aesthetics**: Modern, dynamic design with high-quality micro-animations and themes.
+- **Advanced Cart Engine**: Supports bundles, manual discounts (manager-authorized), and coupon codes.
+- **Loyalty Program**: Full support for customer point redemption and membership tracking.
+- **Hardware Integration**: Integrated support for barcode scanners, thermal receipt printers, and cash drawers.
+- **Multi-Method Payments**: Flexible payment options including Cash, QR, Credit, and split payments.
 
-## Building
+## 🛠 Tech Stack
 
-To build a redistributable, production mode package, use `wails build`.
+- **Backend**: Go (Golang)
+- **Frontend**: React, TypeScript, TailwindCSS, Lucide Icons
+- **Framework**: [Wails](https://wails.io)
+- **Database**: SQLite (Local storage)
+
+## 🏗 Setup & Development
+
+### Prerequisites
+- Go 1.20+
+- Node.js & NPM
+- Wails CLI (`go install github.com/wailsapp/wails/v2/cmd/wails@latest`)
+
+### Run Development Mode
+```bash
+wails dev
+```
+This will start the Vite dev server and the Go application with Hot Reloading.
+
+### Build Production
+```bash
+wails build
+```
+The compiled executable will be located in the `build/bin` directory.
+
+## 📝 Configuration
+Project settings are managed via `wails.json` and environmental variables in the `.env` file (see `.env.example` for details).
+
+---
+*Created and maintained by [mojizombiez](https://github.com/mojizombiez)*

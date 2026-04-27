@@ -35,6 +35,8 @@ export interface OrderSession {
     redeemedAmount?: number;
     couponCode?: string;
     couponDiscount?: number;
+    manualDiscount?: number;
+    discountReason?: string;
 }
 
 interface CartContextType {
@@ -51,6 +53,8 @@ interface CartContextType {
     updateRedemption: (points: number, amount: number) => void;
     applyCoupon: (code: string, discount: number) => void;
     removeCoupon: () => void;
+    applyManualDiscount: (amount: number, reason: string) => void;
+    removeManualDiscount: () => void;
     clearActiveCart: () => void;
 }
 
@@ -66,7 +70,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 console.error("Failed to parse order sessions", e);
             }
         }
-        return [{ id: '1', name: 'Order 1', cart: [], cashReceived: '', payments: [], customerName: '', customerPhone: '', customerPoints: 0, redeemedPoints: 0, redeemedAmount: 0, couponCode: '', couponDiscount: 0 }];
+        return [{ id: '1', name: 'Order 1', cart: [], cashReceived: '', payments: [], customerName: '', customerPhone: '', customerPoints: 0, redeemedPoints: 0, redeemedAmount: 0, couponCode: '', couponDiscount: 0, manualDiscount: 0, discountReason: '' }];
     });
 
     const [activeSessionId, setActiveSessionId] = useState<string>(() => {
@@ -147,7 +151,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             redeemedPoints: 0,
             redeemedAmount: 0,
             couponCode: '',
-            couponDiscount: 0
+            couponDiscount: 0,
+            manualDiscount: 0,
+            discountReason: ''
         };
         setSessions([...sessions, newSession]);
         setActiveSessionId(newId);
@@ -204,9 +210,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ));
     };
 
+    const applyManualDiscount = (amount: number, reason: string) => {
+        setSessions(prev => prev.map(s =>
+            s.id === activeSessionId ? { ...s, manualDiscount: amount, discountReason: reason } : s
+        ));
+    };
+
+    const removeManualDiscount = () => {
+        setSessions(prev => prev.map(s =>
+            s.id === activeSessionId ? { ...s, manualDiscount: 0, discountReason: '' } : s
+        ));
+    };
+
     const clearActiveCart = () => {
         setSessions(prev => prev.map(s =>
-            s.id === activeSessionId ? { ...s, cart: [], cashReceived: '', payments: [], customerName: '', customerPhone: '', customerPoints: 0, redeemedPoints: 0, redeemedAmount: 0, couponCode: '', couponDiscount: 0 } : s
+            s.id === activeSessionId ? { ...s, cart: [], cashReceived: '', payments: [], customerName: '', customerPhone: '', customerPoints: 0, redeemedPoints: 0, redeemedAmount: 0, couponCode: '', couponDiscount: 0, manualDiscount: 0, discountReason: '' } : s
         ));
     };
 
@@ -225,6 +243,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             updateRedemption,
             applyCoupon,
             removeCoupon,
+            applyManualDiscount,
+            removeManualDiscount,
             clearActiveCart
         }}>
             {children}
