@@ -97,8 +97,8 @@ button {
   --z-sidebar: 200;
   --z-modal-base: 1000;
   --z-overlay: 2000;
-  --z-auth: 10000;
-  --z-modal-global: 20000;
+  --z-modal-global: 10000;
+  --z-auth: 20000;
 
   /* Radius System */
   --radius-sm: 8px;
