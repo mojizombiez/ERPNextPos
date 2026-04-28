@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global Reset for POS Hardware Consistency */
+button, input, optgroup, select, textarea {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+button {
+  cursor: pointer;
+}
+
 :root {
   --font-sans: 'Inter', system-ui, sans-serif;
 
@@ -658,23 +678,35 @@ body {
 }
 
 .text-xs {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
 }
 
 .text-sm {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
 }
 
 .text-lg {
-  font-size: 1.125rem;
-}
-
-.text-xl {
   font-size: 1.25rem;
 }
 
-.text-2xl {
+.text-xl {
   font-size: 1.5rem;
+}
+
+.text-2xl {
+  font-size: 1.75rem;
+}
+
+.text-3xl {
+  font-size: 2rem;
+}
+
+.text-4xl {
+  font-size: 2.5rem;
+}
+
+.text-5xl {
+  font-size: 3.5rem;
 }
 
 .font-bold {
@@ -2299,6 +2331,32 @@ input[type="time"] {
   background: #10b981;
   color: white;
   border-color: #10b981;
+}
+
+.btn-stock-refresh {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  color: #94a3b8;
+  border: 1px solid #f1f5f9;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.btn-stock-refresh:hover {
+  background: #f8fafc;
+  color: #3b82f6;
+  border-color: #dbeafe;
+}
+
+.btn-stock-refresh:active {
+  transform: scale(0.9);
 }
 
 .order-tray-wrapper {

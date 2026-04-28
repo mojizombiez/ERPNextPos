@@ -101,6 +101,7 @@
     },
     "checkout": {
         "title": "สั่งซื้อสินค้า",
+        "order": "ออเดอร์",
         "all_products": "สินค้าทั้งหมด",
         "current_order": "รายการสั่งซื้อปัจจุบัน",
         "clear_cart": "ล้างตะกร้า",
@@ -142,7 +143,15 @@
         "email_placeholder": "customer@email.com",
         "sms_placeholder": "08x-xxx-xxxx",
         "sent_success": "ส่งใบเสร็จสำเร็จแล้ว!",
-        "send_failed": "ไม่สามารถส่งใบเสร็จได้"
+        "send_failed": "ไม่สามารถส่งใบเสร็จได้",
+        "customer_label": "ลูกค้า / สมาชิก",
+        "customer_placeholder": "เลือกหรือสร้างข้อมูลลูกค้า...",
+        "apply": "นำไปใช้",
+        "modify": "แก้ไข",
+        "manual_discount": "เพิ่มส่วนลดด้วยตนเอง",
+        "discount_applied": "ส่วนลด: -฿",
+        "out_of_stock": "สินค้าหมด",
+        "stock_remaining": "คงเหลือ"
     },
     "orders": {
         "title": "ประวัติรายการ",
@@ -261,5 +270,11 @@
             "upload_image": "อัปโหลดรูปภาพ",
             "remove_image": "ลบรูปภาพ"
         }
+    },
+    "stock": {
+        "add_product": "เพิ่มสินค้า",
+        "scanning": "กำลังสแกนฐานข้อมูล...",
+        "no_items": "ไม่พบรายการสินค้า",
+        "adjust_filters": "ลองปรับเปลี่ยนเงื่อนไขการค้นหา"
     }
 }

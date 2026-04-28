@@ -101,6 +101,7 @@
     },
     "checkout": {
         "title": "Checkout",
+        "order": "Order",
         "all_products": "All Products",
         "current_order": "Current Order",
         "clear_cart": "Clear Cart",
@@ -142,7 +143,15 @@
         "email_placeholder": "customer@email.com",
         "sms_placeholder": "08x-xxx-xxxx",
         "sent_success": "Receipt sent successfully!",
-        "send_failed": "Error: "
+        "send_failed": "Error: ",
+        "customer_label": "Customer / Member",
+        "customer_placeholder": "Select or Create...",
+        "apply": "Apply",
+        "modify": "Modify",
+        "manual_discount": "Add Manual Discount",
+        "discount_applied": "Discount: -฿",
+        "out_of_stock": "Out of Stock",
+        "stock_remaining": "Stock:"
     },
     "orders": {
         "title": "Order History",
@@ -261,5 +270,11 @@
             "upload_image": "Upload Image",
             "remove_image": "Remove Image"
         }
+    },
+    "stock": {
+        "add_product": "Add Product",
+        "scanning": "Scanning Matrix...",
+        "no_items": "No Items Identified",
+        "adjust_filters": "Try adjusting your search filters"
     }
 }

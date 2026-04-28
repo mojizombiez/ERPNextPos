@@ -211,7 +211,7 @@ const StockPage = () => {
                         className="btn py-3 px-8 rounded-[16px] flex items-center gap-2 shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all text-sm"
                     >
                         <Plus size={18} strokeWidth={3} />
-                        Add Product
+                        {t('stock.add_product')}
                     </button>
                 </div>
             </header>
@@ -240,14 +240,14 @@ const StockPage = () => {
                         {loading ? (
                             <div className="col-span-full flex flex-col items-center justify-center gap-4 opacity-40 py-20">
                                 <RefreshCw className="animate-spin" size={48} />
-                                <span className="font-black uppercase tracking-widest text-sm">Scanning Matrix...</span>
+                                <span className="font-black uppercase tracking-widest text-sm">{t('stock.scanning')}</span>
                             </div>
                         ) : filteredProducts.length === 0 ? (
                             <div className="col-span-full flex flex-col items-center justify-center gap-6 opacity-30 py-32 border-2 border-dashed border-white/5 rounded-[40px]">
                                 <Package size={80} strokeWidth={1} />
                                 <div className="text-center">
-                                    <p className="text-2xl font-black">No Items Identified</p>
-                                    <p className="text-sm font-bold mt-2">Try adjusting your search filters</p>
+                                    <p className="text-2xl font-black">{t('stock.no_items')}</p>
+                                    <p className="text-sm font-bold mt-2">{t('stock.adjust_filters')}</p>
                                 </div>
                             </div>
                         ) : filteredProducts.map(p => {
@@ -318,23 +318,23 @@ const StockPage = () => {
 
                                         <div className="px-1 flex flex-col gap-1 mt-2">
                                             <div className="flex items-center justify-between">
-                                                <div className="flex items-center justify-between">
-                                                    <div className="text-sm font-black text-slate-400 uppercase tracking-widest opacity-60 truncate">{p.itemCode}</div>
+                                                <div className="flex items-center">
+                                                    <div className="text-xs font-black text-slate-500 uppercase tracking-widest truncate">{p.itemCode}</div>
                                                     {p.isBundle && (
-                                                        <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest ml-2">BUNDLE</span>
+                                                        <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ml-2">BUNDLE</span>
                                                     )}
                                                 </div>
-                                                <div className={`px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest ${p.remain > 0 ? 'bg-slate-50 text-slate-400' : 'bg-red-50 text-red-300'}`}>
+                                                <div className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${p.remain > 0 ? 'bg-slate-50 text-slate-500' : 'bg-red-50 text-red-400'}`}>
                                                     {p.remain} {t('unit', { defaultValue: 'UNIT' })}
                                                 </div>
                                             </div>
-                                            <div className="font-extrabold text-slate-800 text-sm line-clamp-2 min-h-[1.5rem] tracking-tight leading-tight">{p.nameTH}</div>
+                                            <div className="font-black text-slate-900 text-base line-clamp-2 min-h-[1.5rem] tracking-tight leading-tight">{p.nameTH}</div>
 
                                             <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-50">
-                                                <div className="text-sm font-black text-slate-900 tracking-tight">
+                                                <div className="text-base font-black text-slate-900 tracking-tight">
                                                     ฿{p.price ? p.price.toLocaleString() : '0'}
                                                 </div>
-                                                <span className="text-[7px] font-black text-slate-300 uppercase tracking-widest">
+                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                                     {categories.find(c => c.id === p.productTypeId)?.name || 'General'}
                                                 </span>
                                             </div>
@@ -381,14 +381,14 @@ const StockPage = () => {
                                             </td>
                                             <td className="p-5">
                                                 <div className="flex flex-col gap-1">
-                                                    <span className="text-xs font-black text-slate-400 uppercase tracking-widest">{p.itemCode}</span>
-                                                    {p.barcode && <span className="text-[10px] font-bold text-slate-500 font-mono">{p.barcode}</span>}
+                                                    <span className="text-sm font-black text-slate-500 uppercase tracking-widest">{p.itemCode}</span>
+                                                    {p.barcode && <span className="text-xs font-bold text-slate-500 font-mono">{p.barcode}</span>}
                                                 </div>
                                             </td>
                                             <td className="p-5">
                                                 <div className="flex flex-col gap-0.5">
-                                                    <span className="font-bold text-[var(--text-primary)] text-sm">{p.nameTH}</span>
-                                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">
+                                                    <span className="font-black text-[var(--text-primary)] text-base">{p.nameTH}</span>
+                                                    <span className="text-xs font-bold text-slate-500 uppercase tracking-tight">
                                                         {categories.find(c => c.id === p.productTypeId)?.name || 'General'}
                                                     </span>
                                                 </div>
@@ -399,7 +399,7 @@ const StockPage = () => {
                                                 </span>
                                             </td>
                                             <td className="p-5 text-right">
-                                                <span className="text-base font-black text-[var(--accent-primary)]">
+                                                <span className="text-lg font-black text-[var(--accent-primary)]">
                                                     ฿{p.price ? p.price.toLocaleString() : '0'}
                                                 </span>
                                             </td>

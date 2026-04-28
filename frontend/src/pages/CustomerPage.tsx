@@ -251,12 +251,12 @@ const CustomerPage = () => {
                                                 {customer.customer_name?.charAt(0).toUpperCase()}
                                             </div>
                                             <div>
-                                                <div style={{ fontWeight: 900, fontSize: '1.2rem', color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                                                <div style={{ fontWeight: 900, fontSize: '1.5rem', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
                                                     {customer.customer_name}
                                                 </div>
-                                                <div className="flex items-center gap-1.5 text-[var(--text-secondary)] text-sm mt-0.5">
-                                                    <Phone size={12} />
-                                                    <span className="font-medium">{customer.mobile_no}</span>
+                                                <div className="flex items-center gap-2 text-[var(--text-secondary)] text-base mt-1">
+                                                    <Phone size={16} />
+                                                    <span className="font-black">{customer.mobile_no}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -323,10 +323,10 @@ const CustomerPage = () => {
                                 <thead>
                                     <tr className="border-b border-white/5">
 
-                                        <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400">Identity</th>
-                                        <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400">Contact Info</th>
-                                        <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400 text-right">Loyalty Points</th>
-                                        <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400 text-center">Actions</th>
+                                        <th className="p-5 text-sm font-black uppercase tracking-[0.2em] text-slate-500">Identity</th>
+                                        <th className="p-5 text-sm font-black uppercase tracking-[0.2em] text-slate-500">Contact Info</th>
+                                        <th className="p-5 text-sm font-black uppercase tracking-[0.2em] text-slate-500 text-right">Loyalty Points</th>
+                                        <th className="p-5 text-sm font-black uppercase tracking-[0.2em] text-slate-500 text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
@@ -335,26 +335,26 @@ const CustomerPage = () => {
 
                                             <td className="p-5">
                                                 <div className="flex flex-col gap-0.5">
-                                                    <span className="font-bold text-[var(--text-primary)]">{customer.customer_name}</span>
-                                                    <span className="text-xs text-slate-500 font-medium">{customer.mobile_no}</span>
+                                                    <span className="font-black text-[var(--text-primary)] text-base">{customer.customer_name}</span>
+                                                    <span className="text-sm text-slate-500 font-black">{customer.mobile_no}</span>
                                                 </div>
                                             </td>
                                             <td className="p-5">
-                                                <div className="flex flex-col gap-1">
-                                                    <div className="flex items-center gap-2 text-xs text-slate-400">
-                                                        <Mail size={12} />
+                                                <div className="flex flex-col gap-1.5">
+                                                    <div className="flex items-center gap-2 text-sm text-slate-500 font-black">
+                                                        <Mail size={14} />
                                                         <span>{customer.email_id || 'No email'}</span>
                                                     </div>
-                                                    <div className="flex items-center gap-2 text-xs text-slate-400">
-                                                        <MapPin size={12} />
+                                                    <div className="flex items-center gap-2 text-sm text-slate-500 font-black">
+                                                        <MapPin size={14} />
                                                         <span className="truncate max-w-[200px]">{customer.primary_address || 'No address'}</span>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="p-5 text-right">
-                                                <div className="inline-flex items-center gap-2 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] px-3 py-1 rounded-full border border-[var(--accent-primary)]/20">
-                                                    <Award size={14} />
-                                                    <span className="font-black text-sm">{(customer.loyalty_points || 0).toLocaleString()}</span>
+                                                <div className="inline-flex items-center gap-2 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] px-4 py-1.5 rounded-full border border-[var(--accent-primary)]/20">
+                                                    <Award size={16} />
+                                                    <span className="font-black text-base">{(customer.loyalty_points || 0).toLocaleString()}</span>
                                                 </div>
                                             </td>
                                             <td className="p-5">

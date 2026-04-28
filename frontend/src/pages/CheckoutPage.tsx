@@ -733,28 +733,28 @@ const CheckoutPage = () => {
 
                                     <div className="px-1 flex flex-col gap-1 mt-2">
                                         <div className="flex items-center justify-between">
-                                            <div className="text-sm font-black text-slate-400 uppercase tracking-widest opacity-60 truncate">{product.itemCode}</div>
+                                            <div className="text-xs font-black text-slate-500 uppercase tracking-widest truncate">{product.itemCode}</div>
                                             {product.isBundle && (
-                                                <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest">BUNDLE</span>
+                                                <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-widest">BUNDLE</span>
                                             )}
                                         </div>
-                                        <div className="font-extrabold text-slate-800 text-sm line-clamp-2 min-h-[1.5rem] tracking-tight leading-tight">{product.nameTH}</div>
+                                        <div className="font-black text-slate-900 text-base line-clamp-2 min-h-[1.5rem] tracking-tight leading-tight">{product.nameTH}</div>
 
                                         {/* Stock badge */}
                                         {product.remain !== undefined && (
                                             <div className="flex items-center gap-2 mt-1">
-                                                <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest w-fit ${product.remain <= 0
+                                                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-widest w-fit ${product.remain <= 0
                                                     ? 'bg-red-100 text-red-500'
                                                     : product.remain <= 5
                                                         ? 'bg-amber-100 text-amber-600'
                                                         : 'bg-emerald-50 text-emerald-600'
                                                     }`}>
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${product.remain <= 0 ? 'bg-red-400' : product.remain <= 5 ? 'bg-amber-400' : 'bg-emerald-400'}`} />
-                                                    {product.remain <= 0 ? 'หมด' : `คงเหลือ ${product.remain}`}
+                                                    <span className={`w-2 h-2 rounded-full ${product.remain <= 0 ? 'bg-red-400' : product.remain <= 5 ? 'bg-amber-400' : 'bg-emerald-400'}`} />
+                                                    {product.remain <= 0 ? t('checkout.out_of_stock') : `${t('checkout.stock_remaining')} ${product.remain}`}
                                                 </div>
                                                 <button
                                                     onClick={(e) => checkLiveStock(product, e)}
-                                                    className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                                                    className="btn-stock-refresh"
                                                     title="Live Check"
                                                 >
                                                     <RotateCcw size={12} strokeWidth={3} />
@@ -763,7 +763,7 @@ const CheckoutPage = () => {
                                         )}
 
                                         <div className="flex justify-between items-center mt-2">
-                                            <div className="text-sm font-black text-slate-900 tracking-tight">
+                                            <div className="text-base font-black text-slate-900 tracking-tight">
                                                 ฿{product.price ? product.price.toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00'}
                                             </div>
                                             <button
@@ -787,16 +787,16 @@ const CheckoutPage = () => {
             {/* 3. Order Sidebar (Premium White Tray) */}
             <div className="order-tray-wrapper">
                 <div className="order-tray-card">
-                    <div className="px-5 py-4 flex items-center justify-between shrink-0 border-bottom border-slate-50">
+                    <div className="px-4 py-3 flex items-center justify-between shrink-0 border-b border-slate-100">
                         <div className="flex items-center gap-2">
                             <div className="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-white shadow-md">
                                 <ShoppingCart size={18} strokeWidth={2.5} />
                             </div>
                             <div>
-                                <h3 className="font-black text-lg text-slate-800 tracking-tight">
+                                <h3 className="font-black text-xl text-slate-900 tracking-tight">
                                     {t('checkout.order')} {activeSessionId}
                                 </h3>
-                                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mt-0.5">
                                     {cart.length} {t('checkout.items_selected')}
                                 </p>
                             </div>
@@ -812,19 +812,68 @@ const CheckoutPage = () => {
                         </div>
                     </div>
 
-                    {/* Customer Selection Row */}
-                    <div
-                        onClick={openCustomerModal}
-                        className="mx-5 mb-2 p-3.5 rounded-2xl border-2 border-dashed border-slate-100 hover:border-blue-500 hover:bg-blue-50/30 transition-all cursor-pointer group"
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${activeSession?.customerName ? 'bg-blue-600 text-white shadow-blue-premium' : 'bg-slate-50 text-slate-300 group-hover:bg-blue-100 group-hover:text-blue-600'}`}>
-                                <UserPlus size={18} strokeWidth={2.5} />
+                    {/* PRIORITY: Cart Items List moved UP */}
+                    <div className="order-item-list custom-scrollbar flex-1 py-1 bg-slate-50/50 border-b border-slate-100">
+                        {cart.length === 0 ? (
+                            <div className="h-full flex flex-col items-center justify-center text-slate-100 gap-6">
+                                <ShoppingCart size={80} strokeWidth={1} />
+                                <p className="font-black uppercase tracking-[0.3em] text-sm text-slate-300">{t('checkout.tray_empty')}</p>
+                            </div>
+                        ) : (
+                            cart.map((item) => (
+                                <div key={item.id} className="order-item-card !px-3 !py-2 !gap-3">
+                                    <div className="order-qty-control !p-1 !gap-1">
+                                        <button
+                                            onClick={() => updateQuantity(item.id, 1)}
+                                            className="order-qty-btn-s !w-7 !h-7"
+                                        >
+                                            <Plus size={10} strokeWidth={3} />
+                                        </button>
+                                        <span className="text-xs font-black text-slate-900 leading-none py-1 text-center w-6">{item.quantity}</span>
+                                        <button
+                                            onClick={() => updateQuantity(item.id, -1)}
+                                            className="order-qty-btn-s !w-7 !h-7"
+                                        >
+                                            <Minus size={10} strokeWidth={3} />
+                                        </button>
+                                    </div>
+
+                                    <div className="flex-1 min-w-0">
+                                        <span className="font-black text-slate-900 block text-sm tracking-tight line-clamp-1">{item.nameTH}</span>
+                                        <span className="text-[10px] font-black text-slate-400 block mt-0.5 uppercase tracking-widest">฿{item.price.toLocaleString()} EA</span>
+                                    </div>
+
+                                    <div className="text-right shrink-0">
+                                        <span className="font-black text-slate-900 text-base tracking-tighter block">
+                                            ฿{(item.price * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                        </span>
+                                        <button
+                                            onClick={() => updateCart(cart.filter(c => c.id !== item.id))}
+                                            className="text-slate-200 hover:text-[#ef4444] transition-all ml-auto mt-0.5"
+                                        >
+                                            <Trash2 size={12} strokeWidth={3} />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+
+                    {/* COMPACT: Controls moved DOWN */}
+                    <div className="pt-2 pb-1 border-b border-slate-100 bg-white">
+
+                        <div
+                            onClick={openCustomerModal}
+                            className="mx-4 mb-1 p-2 rounded-xl border border-slate-100 bg-white shadow-sm hover:border-blue-500 hover:bg-blue-50/30 transition-all cursor-pointer group"
+                        >
+                        <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${activeSession?.customerName ? 'bg-blue-600 text-white shadow-blue-premium' : 'bg-slate-50 text-slate-300 group-hover:bg-blue-100 group-hover:text-blue-600'}`}>
+                                <UserPlus size={16} strokeWidth={2.5} />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Customer / Member</p>
-                                <h4 className={`font-black tracking-tight truncate ${activeSession?.customerName ? 'text-slate-900 text-base' : 'text-slate-300 group-hover:text-blue-600 text-sm'}`}>
-                                    {activeSession?.customerName ? activeSession.customerName : 'Select or Create...'}
+                                <p className="pos-label mb-1">{t('checkout.customer_label')}</p>
+                                <h4 className={`font-black tracking-tight truncate ${activeSession?.customerName ? 'text-slate-900 text-lg' : 'text-slate-400 group-hover:text-blue-600 text-base'}`}>
+                                    {activeSession?.customerName ? activeSession.customerName : t('checkout.customer_placeholder')}
                                 </h4>
                                 {activeSession?.customerName && activeSession?.customerPoints !== undefined && (
                                     <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mt-0.5">
@@ -869,15 +918,15 @@ const CheckoutPage = () => {
 
                     {/* Loyalty Points Redemption Row */}
                     {activeSession?.customerName && activeSession?.customerPoints !== undefined && activeSession.customerPoints > 0 && (
-                        <div className="mx-5 mb-2 p-3.5 rounded-2xl bg-blue-50/50 border border-blue-100 flex items-center gap-3">
-                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${activeSession?.redeemedPoints ? 'bg-blue-600 text-white shadow-blue-premium' : 'bg-white text-blue-300'}`}>
-                                <Star size={16} strokeWidth={2.5} />
+                        <div className="mx-4 mb-1 p-2 rounded-xl bg-blue-50/50 border border-blue-100 flex items-center gap-2">
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${activeSession?.redeemedPoints ? 'bg-blue-600 text-white shadow-blue-premium' : 'bg-white text-blue-300'}`}>
+                                <Star size={14} strokeWidth={2.5} />
                             </div>
                             {activeSession?.redeemedPoints ? (
                                 <div className="flex-1 flex items-center justify-between">
                                     <div>
-                                        <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest leading-none mb-1">Points Redeemed</p>
-                                        <h4 className="font-black text-blue-900 tracking-tight text-sm uppercase">{activeSession.redeemedPoints} POINTS</h4>
+                                        <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest leading-none mb-0.5">Redeemed</p>
+                                        <h4 className="font-black text-blue-900 tracking-tight text-xs uppercase">{activeSession.redeemedPoints} Pts</h4>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <span className="text-sm font-black text-blue-600">-฿{activeSession.redeemedAmount?.toLocaleString()}</span>
@@ -895,7 +944,7 @@ const CheckoutPage = () => {
                             ) : (
                                 <div className="flex-1 flex gap-2">
                                     <input
-                                        className="flex-1 bg-transparent border-none outline-none text-xs font-bold text-blue-600 placeholder:text-blue-300"
+                                        className="flex-1 bg-transparent border-none outline-none text-sm font-black text-blue-600 placeholder:text-blue-300"
                                         placeholder={t('checkout.redeem_points')}
                                         type="number"
                                         value={redeemInput}
@@ -905,25 +954,25 @@ const CheckoutPage = () => {
                                     <button
                                         onClick={handleApplyRedemption}
                                         disabled={!redeemInput}
-                                        className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${!redeemInput ? 'text-blue-200' : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95'}`}
+                                        className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${!redeemInput ? 'text-blue-200' : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95'}`}
                                     >
-                                        Apply
+                                        {t('checkout.apply')}
                                     </button>
                                 </div>
                             )}
                         </div>
                     )}
 
-                    {/* Coupon / Discount Code Row */}
-                    <div className="mx-5 mb-2 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${activeSession?.couponCode ? 'bg-orange-500 text-white shadow-orange-premium' : 'bg-white text-slate-300'}`}>
-                            <Ticket size={16} strokeWidth={2.5} />
+                        {/* Coupon / Discount Code Row */}
+                        <div className="mx-4 mb-1 p-2 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center gap-2">
+                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${activeSession?.couponCode ? 'bg-orange-500 text-white shadow-orange-premium' : 'bg-white text-slate-300'}`}>
+                            <Ticket size={14} strokeWidth={2.5} />
                         </div>
                         {activeSession?.couponCode ? (
                             <div className="flex-1 flex items-center justify-between">
                                 <div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Promo Applied</p>
-                                    <h4 className="font-black text-slate-900 tracking-tight text-sm uppercase">{activeSession.couponCode}</h4>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-0.5">Promo Applied</p>
+                                    <h4 className="font-black text-slate-900 tracking-tight text-xs uppercase">{activeSession.couponCode}</h4>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <span className="text-sm font-black text-orange-500">-฿{activeSession.couponDiscount?.toLocaleString()}</span>
@@ -935,7 +984,7 @@ const CheckoutPage = () => {
                         ) : (
                             <div className="flex-1 flex gap-2">
                                 <input
-                                    className="flex-1 bg-transparent border-none outline-none text-xs font-bold text-slate-600 placeholder:text-slate-300"
+                                    className="flex-1 bg-transparent border-none outline-none text-sm font-black text-slate-700 placeholder:text-slate-400"
                                     placeholder="COUPON CODE"
                                     value={couponInput}
                                     onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
@@ -944,109 +993,54 @@ const CheckoutPage = () => {
                                 <button
                                     onClick={handleApplyCoupon}
                                     disabled={!couponInput || isApplyingCoupon}
-                                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${!couponInput || isApplyingCoupon ? 'text-slate-300' : 'bg-slate-900 text-white hover:bg-black active:scale-95'}`}
+                                    className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${!couponInput || isApplyingCoupon ? 'text-slate-300' : 'bg-slate-900 text-white hover:bg-black active:scale-95'}`}
                                 >
-                                    {isApplyingCoupon ? '...' : 'Apply'}
+                                    {isApplyingCoupon ? '...' : t('checkout.apply')}
                                 </button>
                             </div>
                         )}
                     </div>
 
-                    {/* Manual Discount Row */}
-                    <div className="mx-5 mb-2 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${activeSession?.manualDiscount ? 'bg-red-500 text-white shadow-red-premium' : 'bg-white text-slate-300'}`}>
-                            <Tag size={16} strokeWidth={2.5} />
-                        </div>
-                        {activeSession?.manualDiscount ? (
-                            <div className="flex-1 flex items-center justify-between">
-                                <div className="min-w-0">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Manual Discount</p>
-                                    <h4 className="font-black text-slate-900 tracking-tight text-sm uppercase truncate">{activeSession.discountReason || 'Discount'}</h4>
+                        {/* Manual Discount Row */}
+                        <div className="mx-4 mb-1 p-2 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center gap-2">
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${activeSession?.manualDiscount ? 'bg-red-500 text-white shadow-red-premium' : 'bg-white text-slate-300'}`}>
+                                <Tag size={14} strokeWidth={2.5} />
+                            </div>
+                            {activeSession?.manualDiscount ? (
+                                <div className="flex-1 flex items-center justify-between">
+                                    <div className="min-w-0">
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-0.5">Manual Discount</p>
+                                        <h4 className="font-black text-slate-900 tracking-tight text-xs uppercase truncate">{activeSession.discountReason || 'Discount'}</h4>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-sm font-black text-red-500">-฿{activeSession.manualDiscount?.toLocaleString()}</span>
+                                        <button onClick={removeManualDiscount} className="text-slate-300 hover:text-red-500 transition-colors">
+                                            <X size={14} strokeWidth={3} />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-sm font-black text-red-500">-฿{activeSession.manualDiscount?.toLocaleString()}</span>
-                                    <button onClick={removeManualDiscount} className="text-slate-300 hover:text-red-500 transition-colors">
-                                        <X size={14} strokeWidth={3} />
+                            ) : (
+                                <div className="flex-1 flex justify-between items-center">
+                                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">{t('checkout.manual_discount')}</span>
+                                    <button
+                                        onClick={openDiscountModal}
+                                        className="px-3 py-1.5 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-black active:scale-95 transition-all"
+                                    >
+                                        {t('checkout.modify')}
                                     </button>
                                 </div>
-                            </div>
-                        ) : (
-                            <div className="flex-1 flex justify-between items-center">
-                                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Add Manual Discount</span>
-                                <button
-                                    onClick={openDiscountModal}
-                                    className="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-black active:scale-95 transition-all"
-                                >
-                                    Modify
-                                </button>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
 
-                    <div className="order-item-list custom-scrollbar">
-                        {cart.length === 0 ? (
-                            <div className="h-full flex flex-col items-center justify-center text-slate-100 gap-6">
-                                <ShoppingCart size={80} strokeWidth={1} />
-                                <p className="font-black uppercase tracking-[0.3em] text-sm text-slate-300">{t('checkout.tray_empty')}</p>
-                            </div>
-                        ) : (
-                            cart.map((item) => (
-                                <div key={item.id} className="order-item-card">
-                                    <div className="order-qty-control px-1">
-                                        <button
-                                            onClick={() => updateQuantity(item.id, 1)}
-                                            className="order-qty-btn-s"
-                                        >
-                                            <Plus size={10} strokeWidth={3} />
-                                        </button>
-                                        <span className="text-sm font-black text-slate-900 leading-none">{item.quantity}</span>
-                                        <button
-                                            onClick={() => updateQuantity(item.id, -1)}
-                                            className="order-qty-btn-s"
-                                        >
-                                            <Minus size={10} strokeWidth={3} />
-                                        </button>
-                                    </div>
-
-                                    <div className="flex-1 min-w-0">
-                                        <span className="font-black text-slate-800 block text-sm tracking-tight leading-tight line-clamp-1">{item.nameTH}</span>
-                                        <span className="text-sm font-black text-slate-400 block mt-0.5">฿{item.price.toLocaleString()} EA</span>
-                                        {item.isBundle && item.bundleItems && item.bundleItems.length > 0 && (
-                                            <div className="mt-2 pl-3 border-l-2 border-blue-100 space-y-1">
-                                                {item.bundleItems.map((bi: any, idx: number) => (
-                                                    <div key={idx} className="flex justify-between items-center text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                                                        <span>{bi.qty}x {bi.item_name || bi.item_code}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="text-right shrink-0">
-                                        <span className="font-black text-slate-900 text-base tracking-tighter block">
-                                            ฿{(item.price * item.quantity).toFixed(2)}
-                                        </span>
-                                        <button
-                                            onClick={() => removeFromCart(item.id)}
-                                            className="px-4 py-2 bg-slate-50/50 text-slate-400 rounded-full text-sm font-black uppercase tracking-widest hover:bg-[#ef4444] hover:text-white transition-all flex items-center gap-2 border border-slate-50/50"
-                                        >
-                                            <Trash2 size={12} strokeWidth={3} />
-                                            {t('checkout.remove')}
-                                        </button>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-
-                    <div className="checkout-footer">
-                        <div className="space-y-3 mb-6">
+                    <div className="checkout-footer bg-white border-t border-slate-100">
+                        <div className="space-y-4 mb-8">
                             <div className="flex justify-between items-center px-1">
-                                <span className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('checkout.total_due')}</span>
+                                <span className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">{t('checkout.total_due')}</span>
                                 <div className="flex flex-col items-end">
                                     {discountAmount > 0 && (
-                                        <span className="text-xs font-black text-orange-500 uppercase tracking-widest mb-1">
-                                            Discount: -฿{discountAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                        <span className="text-sm font-black text-orange-500 uppercase tracking-widest mb-1">
+                                            {t('checkout.discount_applied')} {discountAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                         </span>
                                     )}
                                     <span className="text-4xl font-black text-slate-900 tracking-tighter">
@@ -1078,18 +1072,18 @@ const CheckoutPage = () => {
 
                         <div className="space-y-4">
                             <div
-                                className={`flex items-center gap-4 p-5 rounded-4xl border-2 border-dashed transition-all cursor-pointer ${remainingAmount > 0 ? 'bg-white border-slate-200 hover:border-[#ef4444]' : 'bg-green-500/5 border-green-500/20'}`}
+                                className={`flex items-center gap-4 p-4 rounded-2xl border transition-all cursor-pointer shadow-sm ${remainingAmount > 0 ? 'bg-white border-slate-100 hover:border-slate-300' : 'bg-emerald-50 border-emerald-100 shadow-none'}`}
                                 onClick={openNumpad}
                             >
-                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${remainingAmount > 0 ? 'bg-[#ef4444] text-white shadow-red-premium' : 'bg-green-500 text-white'}`}>
-                                    <PlusCircle size={24} />
+                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${remainingAmount > 0 ? 'bg-[#ef4444] text-white shadow-lg shadow-red-500/20' : 'bg-emerald-500 text-white'}`}>
+                                    <PlusCircle size={22} />
                                 </div>
                                 <div className="flex-1 flex items-center justify-between">
                                     <div>
-                                        <label className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 block mb-0.5">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 block leading-tight mb-1">
                                             {remainingAmount > 0 ? t('checkout.remaining') : t('checkout.settled')}
                                         </label>
-                                        <div className={`font-black text-2xl tracking-tighter ${remainingAmount > 0 ? 'text-slate-900' : 'text-green-500'}`}>
+                                        <div className={`font-black text-2xl tracking-tighter ${remainingAmount > 0 ? 'text-slate-900' : 'text-emerald-600'}`}>
                                             ฿{remainingAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                         </div>
                                     </div>
@@ -1101,15 +1095,15 @@ const CheckoutPage = () => {
                                 <button
                                     onClick={handleCheckout}
                                     disabled={total === 0 || processing || remainingAmount > 0}
-                                    className={`w-full py-6 rounded-4xl font-black text-lg flex items-center justify-center gap-3 transition-all duration-300 ${total === 0 || processing || remainingAmount > 0
-                                        ? 'bg-slate-100 text-slate-300'
-                                        : 'bg-slate-900 text-white hover:bg-[#ef4444] hover:shadow-red-premium hover:scale-[1.02]'
+                                    className={`w-full py-6 rounded-2xl font-black flex items-center justify-center gap-3 transition-all duration-300 shadow-xl ${total === 0 || processing || remainingAmount > 0
+                                        ? 'bg-slate-100 text-slate-300 shadow-none cursor-not-allowed'
+                                        : 'bg-slate-900 text-white hover:bg-[#ef4444] hover:shadow-red-premium active:scale-[0.98]'
                                         }`}
                                 >
-                                    <Check size={24} strokeWidth={3} />
-                                    <span className="uppercase tracking-[0.3em] text-[13px]">{t('checkout.submit_protocol')}</span>
+                                    <Check size={20} strokeWidth={4} />
+                                    <span className="uppercase tracking-[0.25em] text-xs font-black">{t('checkout.submit_protocol')}</span>
                                 </button>
-                                <div className="absolute right-5 top-1/2 -translate-y-1/2">
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2">
                                     <HelpTooltip titleKey="help.sessions.title" contentKey="help.sessions.content" size={16} />
                                 </div>
                             </div>
