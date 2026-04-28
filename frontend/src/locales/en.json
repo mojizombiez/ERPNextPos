@@ -17,6 +17,13 @@
             "devices": "Devices",
             "appearance": "Appearance & Display"
         },
+        "appearance": {
+            "title": "App Appearance",
+            "subtitle": "Personalize your POS with premium themes",
+            "typography": "Typography & Fonts",
+            "typography_desc": "Choose a Thai font that works best for your display",
+            "local_fonts": "All fonts are loaded as local offline resources."
+        },
         "display": {
             "title": "Customer Display",
             "subtitle": "Configure secondary monitor for customer information",

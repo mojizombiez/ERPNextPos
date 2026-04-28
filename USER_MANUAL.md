@@ -1,6 +1,6 @@
 # MWinPOS — User Manual
 
-**Version:** 1.0  
+**Version:** 1.2.1  
 **Platform:** Windows Desktop (Wails / ERPNext POS)  
 **Audience:** Cashiers, Managers, Store Administrators
 
@@ -245,9 +245,6 @@ Navigate to **Settings** from the sidebar. Requires a **Manager PIN**.
 Settings are organized into tabs:
 
 ### General
-| Setting | Description |
-|---|---|
-| **Language** | Switch between 🇺🇸 English and 🇹🇭 Thai |
 | **ERPNext Company** | The default company name for Sales Invoices |
 | **ERPNext Warehouse** | Stock location associated with this terminal |
 | **POS Profile** | Link to an ERPNext POS Profile (auto-fills warehouse & company) |
@@ -283,9 +280,10 @@ Settings are organized into tabs:
 | **Master PIN** | A universal override PIN (default: `123456`) — change this immediately |
 | **Auto-Lock Timeout** | Seconds of inactivity before the screen locks and requires a PIN |
 
-### Appearance
 - Choose from **21 themes** (10 dark, 11 light), including: Midnight, Amethyst, Emerald, Crimson, Makro, etc.
-- Theme changes preview live before saving.
+- **Language Selection**: Switch between 🇺🇸 English and 🇹🇭 Thai using premium selection cards.
+- **Typography (Thai Fonts)**: Choose from various Thai fonts (Kanit, Prompt, Sukhumvit Set, Noto Sans Thai, etc.) for optimal readability. All fonts are loaded locally for offline use.
+- Theme and font changes preview live before saving.
 
 ### Scanner
 - Test your barcode scanner by scanning into the test field.
@@ -362,6 +360,15 @@ MWinPOS supports **USB HID barcode scanners** (plug-and-play):
 | **Customer display not opening** | Settings → Display → Detect Screens, select a monitor, then click Launch. |
 | **Cannot enter app at all** | Perform a **Hard Reset** from Settings → Danger Zone. On next start, use PIN `123456`. |
 | **Order stuck as "unsynced"** | Go to Orders, open the order, and click **Manual Sync**. |
+
+---
+
+### 19. Responsive UI & Accessibility
+
+MWinPOS v1.2.1 features a fully **Responsive UI** architecture. All core components (Modals, PIN Keypads, Payment Numpads) use fluid units (`clamp`, `vw`, `vh`) to ensure:
+- **Tablet Optimization**: Perfectly usable on 10-inch POS tablets and touch monitors.
+- **Adaptive Modals**: Popup windows automatically resize and stack content to fit smaller screens.
+- **Fluid Inputs**: Numeric keypads and buttons scale dynamically, maintaining a premium touch-target feel on all devices.
 
 ---
 

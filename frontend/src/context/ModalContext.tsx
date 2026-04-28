@@ -101,23 +101,49 @@ const GlobalModalComponent: React.FC<{
                 style={{ backgroundColor: '#ffffff' }}
                 onClick={e => e.stopPropagation()}
             >
-                <div className={`modal-scrollable-content flex flex-col items-center justify-center text-center ${options.compactMode ? 'py-4 gap-2' : 'py-8 gap-6'}`}>
+                <div className={`modal-scrollable-content flex flex-col items-center justify-center text-center ${options.compactMode ? 'py-4 px-4 gap-2' : 'py-clamp px-clamp gap-clamp'}`}>
+                    <style dangerouslySetInnerHTML={{ __html: `
+                        :root {
+                            --py-modal: clamp(1.5rem, 6vh, 4rem);
+                            --px-modal: clamp(1rem, 5vw, 3rem);
+                            --gap-modal: clamp(1rem, 4vh, 2.5rem);
+                        }
+                        .py-clamp { padding-top: var(--py-modal); padding-bottom: var(--py-modal); }
+                        .px-clamp { padding-left: var(--px-modal); padding-right: var(--px-modal); }
+                        .gap-clamp { gap: var(--gap-modal); }
+                    `}} />
+                    
                     {/* Icon Header (PinCode Match) */}
                     {!options.compactMode && (
                         <div
-                            className="w-24 h-24 rounded-4xl flex items-center justify-center relative shadow-red-premium shrink-0"
+                            className="w-clamp-icon h-clamp-icon rounded-4xl flex items-center justify-center relative shadow-red-premium shrink-0"
                             style={{ backgroundColor: '#ef4444' }}
                         >
-                            <div className="relative z-10">
+                            <style dangerouslySetInnerHTML={{ __html: `
+                                .w-clamp-icon { width: clamp(60px, 15vh, 96px); }
+                                .h-clamp-icon { height: clamp(60px, 15vh, 96px); }
+                            `}} />
+                            <div className="relative z-10 scale-clamp-icon">
+                                <style dangerouslySetInnerHTML={{ __html: `
+                                    .scale-clamp-icon { transform: scale(clamp(0.7, 2vh, 1)); }
+                                `}} />
                                 {getIcon()}
                             </div>
                         </div>
                     )}
 
-                    <div className="flex flex-col gap-4">
-                        <h2 className="text-4xl font-black text-slate-800 tracking-[0.01em] leading-tight">{title}</h2>
+                    <div className="flex flex-col gap-3">
+                        <h2 className="text-clamp-title font-black text-slate-800 tracking-[0.01em] leading-tight">
+                            <style dangerouslySetInnerHTML={{ __html: `
+                                .text-clamp-title { font-size: clamp(1.5rem, 5vh, 2.25rem); }
+                            `}} />
+                            {title}
+                        </h2>
                         {typeof message === 'string' && (
-                            <div className="text-slate-400 text-sm tracking-[0.3em] font-black uppercase opacity-60">
+                            <div className="text-slate-400 text-clamp-msg tracking-[0.2em] font-black uppercase opacity-60">
+                                <style dangerouslySetInnerHTML={{ __html: `
+                                    .text-clamp-msg { font-size: clamp(0.7rem, 2vh, 0.875rem); }
+                                `}} />
                                 {message}
                             </div>
                         )}
@@ -128,18 +154,18 @@ const GlobalModalComponent: React.FC<{
                     </div>
 
                     {!options.hideFooter && (
-                        <div className="flex gap-4 w-full mt-4 shrink-0 px-2">
+                        <div className="flex gap-4 w-full mt-2 shrink-0 px-2">
                             {type === 'confirm' && (
                                 <button
                                     onClick={onCancel}
-                                    className="btn-cancel-modal flex-1"
+                                    className="btn-cancel-modal flex-1 py-4 text-sm font-black"
                                 >
                                     {cancelText}
                                 </button>
                             )}
                             <button
                                 onClick={onConfirm}
-                                className="btn-primary-modal flex-1"
+                                className="btn-primary-modal flex-1 py-4 text-sm font-black"
                             >
                                 {confirmText}
                             </button>

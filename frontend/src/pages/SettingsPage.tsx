@@ -64,6 +64,17 @@ const SettingsPage = () => {
     const [updateMessage, setUpdateMessage] = useState<{ text: string, type: 'success' | 'error' | 'info' | null }>({ text: '', type: null });
     const [showHistory, setShowHistory] = useState(false);
     const [debugMode, setDebugMode] = useState(false);
+    const [selectedFont, setSelectedFont] = useState('inter');
+
+    const thaiFonts = [
+        { id: 'inter', name: 'Default (Inter)', family: "'Inter', system-ui, -apple-system, sans-serif", source: 'local' },
+        { id: 'kanit', name: 'Kanit', family: "'Kanit', sans-serif", source: 'local' },
+        { id: 'prompt', name: 'Prompt', family: "'Prompt', sans-serif", source: 'local' },
+        { id: 'noto-sans-thai', name: 'Noto Sans Thai', family: "'Noto Sans Thai', sans-serif", source: 'local' },
+        { id: 'chakra-petch', name: 'Chakra Petch', family: "'Chakra Petch', sans-serif", source: 'local' },
+        { id: 'sarabun', name: 'TH Sarabun New', family: "'TH Sarabun New', sans-serif", source: 'local' },
+        { id: 'sukhumvit', name: 'Sukhumvit Set', family: "'Sukhumvit Set', 'Helvetica Neue', Helvetica, Arial, sans-serif", source: 'system' },
+    ];
 
     const themes = [
         // Dark Themes
@@ -110,6 +121,7 @@ const SettingsPage = () => {
             const lang = await window.go.main.App.GetSetting('SelectedLanguage');
             const upUrl = await window.go.main.App.GetSetting('UpdateUrl');
             const debug = await window.go.main.App.GetSetting('DebugMode');
+            const font = await window.go.main.App.GetSetting('SelectedFont');
 
             setWarehouse(wh || '');
             setApiUrl(url || '');
@@ -144,6 +156,7 @@ const SettingsPage = () => {
             const pList = await window.go.main.App.GetSetting('Cached_PriceList');
             setPriceList(pList || 'Standard Selling');
             setDebugMode(debug === 'true');
+            setSelectedFont(font || 'inter');
             const version = await (window.go.main.App as any).GetAppVersion();
             setCurrentAppVersion(version || 'Unknown');
         } catch (err) {
@@ -180,6 +193,7 @@ const SettingsPage = () => {
             await window.go.main.App.SaveSetting('SkipUpdateCheck', skipUpdateCheck ? 'true' : 'false', 6);
             await window.go.main.App.SaveSetting('Cached_PriceList', priceList, 3);
             await window.go.main.App.SaveSetting('DebugMode', debugMode.toString(), 6);
+            await window.go.main.App.SaveSetting('SelectedFont', selectedFont, 3);
 
             // Apply language immediately if it changed
             if (i18n.language !== selectedLanguage) {
@@ -519,6 +533,15 @@ const SettingsPage = () => {
     };
 
     useEffect(() => {
+        const applyFont = (fontId: string) => {
+            const font = thaiFonts.find(f => f.id === fontId);
+            if (!font) return;
+            document.documentElement.style.setProperty('--font-family', font.family);
+        };
+        applyFont(selectedFont);
+    }, [selectedFont]);
+
+    useEffect(() => {
         loadSettings();
         detectPrinters();
         detectScreens();
@@ -574,47 +597,6 @@ const SettingsPage = () => {
                 <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar animate-in slide-in-from-bottom-4">
                     {activeTab === 'general' && (
                         <div className="flex flex-col gap-6">
-                            {/* Language Selection Card */}
-                            <div className="card flex flex-col p-8 bg-[var(--glass-bg)] border-[var(--border-color)] shadow-xl rounded-[32px]">
-                                <div className="flex items-center gap-4 mb-6">
-                                    <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600">
-                                        <Languages size={24} />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-bold">{t('settings.language.title')}</h2>
-                                        <p className="text-sm text-gray-400">{t('settings.language.subtitle')}</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col">
-                                    <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', alignItems: 'center', gap: '2rem', padding: '1rem 0' }}>
-                                        <div className="flex flex-col">
-                                            <span style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.8 }}>{t('settings.language.label')}</span>
-                                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Region-based selection</span>
-                                        </div>
-                                        <div className="flex gap-4">
-                                            <div className="flex flex-col gap-2">
-                                                <span className="text-sm font-black text-slate-400 uppercase tracking-widest ml-1">{t('settings.language.regions.global')}</span>
-                                                <button
-                                                    onClick={() => setSelectedLanguage('en')}
-                                                    className={`px-6 py-3 rounded-full font-bold transition-all border-2 ${selectedLanguage === 'en' ? 'bg-blue-500 text-white border-blue-500 shadow-lg' : 'bg-white/50 text-gray-500 border-gray-200 hover:border-blue-300'}`}
-                                                >
-                                                    🇺🇸 {t('settings.language.languages.en')}
-                                                </button>
-                                            </div>
-                                            <div className="flex flex-col gap-2">
-                                                <span className="text-sm font-black text-slate-400 uppercase tracking-widest ml-1">{t('settings.language.regions.asia')}</span>
-                                                <button
-                                                    onClick={() => setSelectedLanguage('th')}
-                                                    className={`px-6 py-3 rounded-full font-bold transition-all border-2 ${selectedLanguage === 'th' ? 'bg-blue-500 text-white border-blue-500 shadow-lg' : 'bg-white/50 text-gray-500 border-gray-200 hover:border-blue-300'}`}
-                                                >
-                                                    🇹🇭 {t('settings.language.languages.th')}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                             <div className="card flex flex-col p-8 bg-[var(--glass-bg)] border-[var(--border-color)] shadow-xl rounded-[32px]">
                                 <div className="flex items-center gap-4 mb-6">
@@ -1477,8 +1459,8 @@ const SettingsPage = () => {
                                         <Palette size={24} />
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-bold flex items-center gap-2">App Appearance <HelpTooltip titleKey="help.settings_appearance.title" contentKey="help.settings_appearance.content" size={14} /></h2>
-                                        <p className="text-sm text-[var(--text-secondary)]">Personalize your POS with premium themes</p>
+                                        <h2 className="text-xl font-bold flex items-center gap-2">{t('settings.appearance.title')} <HelpTooltip titleKey="help.settings_appearance.title" contentKey="help.settings_appearance.content" size={14} /></h2>
+                                        <p className="text-sm text-[var(--text-secondary)]">{t('settings.appearance.subtitle')}</p>
                                     </div>
                                 </div>
 
@@ -1532,6 +1514,106 @@ const SettingsPage = () => {
                                         <div className="w-8 h-8 rounded-full shadow-md" style={{ background: themes.find(t => t.id === activeTheme)?.primary }}></div>
                                         <div className="w-8 h-8 rounded-full shadow-md" style={{ background: themes.find(t => t.id === activeTheme)?.bg }}></div>
                                     </div>
+                                </div>
+
+                                {/* Language Selection Section */}
+                                <div className="mt-12 pt-8 border-t border-[var(--border-color)]">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600">
+                                            <Languages size={24} />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-xl font-bold">{t('settings.language.title')}</h2>
+                                            <p className="text-sm text-gray-400">{t('settings.language.subtitle')}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col md:flex-row gap-4">
+                                        <div className="flex-1 flex flex-col gap-2">
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">{t('settings.language.regions.global')}</span>
+                                            <button
+                                                onClick={() => setSelectedLanguage('en')}
+                                                className={`group relative flex items-center gap-4 p-4 rounded-[20px] transition-all duration-300 border-2 text-left ${selectedLanguage === 'en' 
+                                                    ? 'bg-white border-blue-500/10 shadow-[0_10px_20px_-10px_rgba(59,130,246,0.15)]' 
+                                                    : 'bg-slate-50/50 border-slate-100 hover:border-blue-200'}`}
+                                            >
+                                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-sm transition-all duration-300 ${selectedLanguage === 'en' ? 'bg-blue-50' : 'bg-white'}`}>
+                                                    🇺🇸
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className={`text-base font-black tracking-tight transition-colors ${selectedLanguage === 'en' ? 'text-blue-600' : 'text-slate-700'}`}>
+                                                        {t('settings.language.languages.en')}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">English (US)</span>
+                                                </div>
+                                                {selectedLanguage === 'en' && (
+                                                    <div className="ml-auto w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 animate-in zoom-in duration-300">
+                                                        <CheckCircle size={14} strokeWidth={3} />
+                                                    </div>
+                                                )}
+                                            </button>
+                                        </div>
+
+                                        <div className="flex-1 flex flex-col gap-2">
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">{t('settings.language.regions.asia')}</span>
+                                            <button
+                                                onClick={() => setSelectedLanguage('th')}
+                                                className={`group relative flex items-center gap-4 p-4 rounded-[20px] transition-all duration-300 border-2 text-left ${selectedLanguage === 'th' 
+                                                    ? 'bg-white border-blue-500/10 shadow-[0_10px_20px_-10px_rgba(59,130,246,0.15)]' 
+                                                    : 'bg-slate-50/50 border-slate-100 hover:border-blue-200'}`}
+                                            >
+                                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-sm transition-all duration-300 ${selectedLanguage === 'th' ? 'bg-blue-50' : 'bg-white'}`}>
+                                                    🇹🇭
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className={`text-base font-black tracking-tight transition-colors ${selectedLanguage === 'th' ? 'text-blue-600' : 'text-slate-700'}`}>
+                                                        {t('settings.language.languages.th')}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ไทย (TH)</span>
+                                                </div>
+                                                {selectedLanguage === 'th' && (
+                                                    <div className="ml-auto w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 animate-in zoom-in duration-300">
+                                                        <CheckCircle size={14} strokeWidth={3} />
+                                                    </div>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Typography Section */}
+                                <div className="mt-12 pt-8 border-t border-[var(--border-color)]">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <div className="w-12 h-12 rounded-2xl bg-violet-500/10 flex items-center justify-center text-violet-600">
+                                            <Languages size={24} />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-xl font-bold">{t('settings.appearance.typography')}</h2>
+                                            <p className="text-sm text-gray-400">{t('settings.appearance.typography_desc')}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                        {thaiFonts.map(font => (
+                                            <button
+                                                key={font.id}
+                                                onClick={() => setSelectedFont(font.id)}
+                                                className={`p-6 rounded-3xl border-2 transition-all flex flex-col items-start gap-4 ${selectedFont === font.id ? 'border-violet-500 bg-violet-500/5 shadow-lg' : 'border-gray-100 bg-white hover:border-violet-200'}`}
+                                            >
+                                                <div className="flex justify-between items-center w-full">
+                                                    <span className="text-xs font-black uppercase tracking-widest text-gray-400">{font.source}</span>
+                                                    {selectedFont === font.id && <CheckCircle size={16} className="text-violet-500" />}
+                                                </div>
+                                                <div className="flex flex-col items-start">
+                                                    <span className="text-2xl font-black mb-1" style={{ fontFamily: font.family }}>สวัสดี</span>
+                                                    <span className="text-sm font-bold">{font.name}</span>
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <p className="mt-4 text-xs text-emerald-500 font-bold flex items-center gap-1">
+                                        <CheckCircle size={12} /> {t('settings.appearance.local_fonts')}
+                                    </p>
                                 </div>
                             </div>
 

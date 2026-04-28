@@ -26,11 +26,11 @@ const Keypad: React.FC<KeypadProps> = ({
     compact = false,
     hideDisplay = false
 }) => {
-    const btnSize = compact ? '56px' : '70px';
-    const gridGap = compact ? '0.5rem' : '1.5rem';
-    const containerGap = compact ? '1rem' : '2.5rem';
-    const displayHeight = compact ? '50px' : '80px';
-    const btnFontSize = compact ? '1.125rem' : '1.5rem';
+    const btnSize = compact ? 'clamp(48px, 12vh, 56px)' : 'clamp(56px, 15vh, 70px)';
+    const gridGap = compact ? 'clamp(0.25rem, 1vh, 0.5rem)' : 'clamp(0.5rem, 2vh, 1.5rem)';
+    const containerGap = compact ? 'clamp(0.5rem, 2vh, 1rem)' : 'clamp(1rem, 4vh, 2.5rem)';
+    const displayHeight = compact ? 'clamp(40px, 8vh, 50px)' : 'clamp(60px, 12vh, 80px)';
+    const btnFontSize = compact ? 'clamp(1rem, 2vh, 1.125rem)' : 'clamp(1.125rem, 3vh, 1.5rem)';
     const handleNumberClick = (num: number | string) => {
         if (value.length < maxLength) {
             onValueChange(value + num);

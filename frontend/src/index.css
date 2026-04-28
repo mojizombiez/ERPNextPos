@@ -2,6 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Local Thai Fonts */
+@font-face {
+  font-family: 'Kanit';
+  src: url('./assets/fonts/Kanit-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Kanit';
+  src: url('./assets/fonts/Kanit-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Prompt';
+  src: url('./assets/fonts/Prompt-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Prompt';
+  src: url('./assets/fonts/Prompt-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  src: url('./assets/fonts/NotoSansThai-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Noto Sans Thai';
+  src: url('./assets/fonts/NotoSansThai-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Chakra Petch';
+  src: url('./assets/fonts/ChakraPetch-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Chakra Petch';
+  src: url('./assets/fonts/ChakraPetch-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'TH Sarabun New';
+  src: url('./assets/fonts/THSarabunNew.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'TH Sarabun New';
+  src: url('./assets/fonts/THSarabunNew Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
 /* Global Reset for POS Hardware Consistency */
 button, input, optgroup, select, textarea {
   border: none;
@@ -23,7 +89,8 @@ button {
 }
 
 :root {
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-family: var(--font-sans);
 
   /* Z-Index Hierarchy */
   --z-header: 100;
@@ -248,6 +315,10 @@ button {
   --glass-bg: rgba(255, 255, 255, 0.8);
   --glass-border: rgba(16, 185, 129, 0.1);
   --border-color: rgba(16, 185, 129, 0.1);
+}
+
+body {
+  font-family: var(--font-family) !important;
 }
 
 .theme-rose {
@@ -2050,26 +2121,25 @@ input[type="time"] {
   position: fixed;
   inset: 0;
   background-color: rgba(15, 23, 42, 0.85);
-  /* Solid dark overlay */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: var(--z-modal-global);
-  padding: 1.5rem;
+  padding: clamp(0.5rem, 3vh, 1.5rem);
   overflow: hidden;
 }
 
 .modal-card-standard {
   position: relative;
   background-color: #ffffff !important;
-  /* Forces solid white */
   border: 1px solid #f1f5f9;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  border-radius: 48px;
+  overflow-y: auto;
+  max-height: 100%;
+  border-radius: clamp(24px, 5vw, 48px);
   box-shadow:
     0 40px 100px -20px rgba(0, 0, 0, 0.3),
     0 20px 40px -15px rgba(0, 0, 0, 0.2);

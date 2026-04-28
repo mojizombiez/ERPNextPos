@@ -65,22 +65,28 @@ const PinCodeModal: React.FC<PinCodeModalProps> = ({ title, onSuccess, onCancel,
     return (
         <div className="modal-overlay-standard" onClick={onCancel}>
             <div
-                className="modal-card-standard modal-viewport-constraint animate-in fade-in zoom-in duration-400 max-w-[440px]"
-                style={{ backgroundColor: '#ffffff', padding: '3rem 2rem' }}
+                className="modal-card-standard modal-viewport-constraint animate-in fade-in zoom-in duration-400"
+                style={{ 
+                    backgroundColor: '#ffffff', 
+                    padding: 'clamp(1.5rem, 5vh, 3rem) clamp(1rem, 5vw, 2rem)',
+                    width: 'min(90vw, 440px)',
+                    maxHeight: '90vh',
+                    overflowY: 'auto'
+                }}
                 onClick={e => e.stopPropagation()}
             >
                 <button
                     onClick={onCancel}
-                    className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 transition-all rounded-full hover:bg-slate-50"
+                    className="absolute top-4 right-4 md:top-6 md:right-6 p-2 text-slate-400 hover:text-slate-600 transition-all rounded-full hover:bg-slate-50"
                 >
-                    <X size={24} />
+                    <X size={20} className="md:w-6 md:h-6" />
                 </button>
 
-                <div className="flex flex-col items-center gap-6 mb-8 mt-4">
+                <div className="flex flex-col items-center gap-4 md:gap-6 mb-6 md:mb-8 mt-2 md:mt-4">
                     <div className={`transition-all duration-300 ${error ? 'shake' : ''}`} style={{
-                        width: '80px',
-                        height: '80px',
-                        borderRadius: '24px',
+                        width: 'clamp(60px, 12vh, 80px)',
+                        height: 'clamp(60px, 12vh, 80px)',
+                        borderRadius: 'clamp(16px, 3vh, 24px)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -88,18 +94,18 @@ const PinCodeModal: React.FC<PinCodeModalProps> = ({ title, onSuccess, onCancel,
                         boxShadow: error ? '0 0 30px rgba(239,68,68,0.4)' : '0 20px 40px -10px rgba(139,92,246,0.5)',
                     }}>
                         {loading ? (
-                            <div className="animate-spin" style={{ width: '32px', height: '32px', border: '4px solid white', borderTopColor: 'transparent', borderRadius: '50%' }} />
+                            <div className="animate-spin" style={{ width: '24px', height: '24px', border: '3px solid white', borderTopColor: 'transparent', borderRadius: '50%' }} />
                         ) : error ? (
-                            <X size={40} color="white" strokeWidth={3} />
+                            <X size={32} color="white" strokeWidth={3} className="md:w-10 md:h-10" />
                         ) : (
-                            <Lock size={40} color="white" strokeWidth={2.5} />
+                            <Lock size={32} color="white" strokeWidth={2.5} className="md:w-10 md:h-10" />
                         )}
                     </div>
                     <div className="text-center">
-                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+                        <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
                             {title || (requireManager ? 'Manager Only' : 'Enter PIN')}
                         </h2>
-                        <p className="text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest text-sm">
+                        <p className="text-[10px] md:text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest">
                             {error ? (requireManager ? 'Authorized Manager Required' : 'Invalid Passcode') : 'Authorized Access Only'}
                         </p>
                     </div>

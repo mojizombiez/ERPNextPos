@@ -24,9 +24,19 @@
                         "date":  "2026-04-27 13:56:50",
                         "description":  "UI refinement for user profile block in sidebar",
                         "version":  "1.1.4"
+                    },
+                    {
+                        "date":  "2026-04-28 12:22:54",
+                        "description":  "v1.2.0 - Implemented Manual Discount feature with manager authorization and premium UI",
+                        "version":  "1.2.0"
+                    },
+                    {
+                        "date":  "2026-04-28 13:55:00",
+                        "description":  "v1.2.1 - Responsive UI overhaul (modals/keypads), Offline Thai Fonts support, and Premium Appearance settings",
+                        "version":  "1.2.1"
                     }
                 ],
-    "url":  "https://nuget.moltothailand.com/erpnext/windows/MWinPOS-v1.2.0.exe",
-    "description":  "v1.2.0 - Implemented Manual Discount feature with manager authorization and premium UI",
-    "version":  "1.2.0"
+    "url":  "https://nuget.moltothailand.com/erpnext/windows/MWinPOS-v1.2.1.exe",
+    "description":  "v1.2.1: Full Responsive UI overhaul, Offline Thai Fonts, and Premium Appearance settings",
+    "version":  "1.2.1"
 }
