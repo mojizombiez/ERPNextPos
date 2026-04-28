@@ -63,6 +63,7 @@ const SettingsPage = () => {
     const [isUpdatingApp, setIsUpdatingApp] = useState(false);
     const [updateMessage, setUpdateMessage] = useState<{ text: string, type: 'success' | 'error' | 'info' | null }>({ text: '', type: null });
     const [showHistory, setShowHistory] = useState(false);
+    const [debugMode, setDebugMode] = useState(false);
 
     const themes = [
         // Dark Themes
@@ -108,6 +109,7 @@ const SettingsPage = () => {
             const theme = await window.go.main.App.GetSetting('ActiveTheme');
             const lang = await window.go.main.App.GetSetting('SelectedLanguage');
             const upUrl = await window.go.main.App.GetSetting('UpdateUrl');
+            const debug = await window.go.main.App.GetSetting('DebugMode');
 
             setWarehouse(wh || '');
             setApiUrl(url || '');
@@ -141,6 +143,7 @@ const SettingsPage = () => {
             setWriteOffAccount(woa || '');
             const pList = await window.go.main.App.GetSetting('Cached_PriceList');
             setPriceList(pList || 'Standard Selling');
+            setDebugMode(debug === 'true');
             const version = await (window.go.main.App as any).GetAppVersion();
             setCurrentAppVersion(version || 'Unknown');
         } catch (err) {
@@ -176,6 +179,7 @@ const SettingsPage = () => {
             await window.go.main.App.SaveSetting('WriteOffAccount', writeOffAccount, 3);
             await window.go.main.App.SaveSetting('SkipUpdateCheck', skipUpdateCheck ? 'true' : 'false', 6);
             await window.go.main.App.SaveSetting('Cached_PriceList', priceList, 3);
+            await window.go.main.App.SaveSetting('DebugMode', debugMode.toString(), 6);
 
             // Apply language immediately if it changed
             if (i18n.language !== selectedLanguage) {
@@ -795,7 +799,42 @@ const SettingsPage = () => {
                                 </div>
                             </div>
 
+
+                            {/* Advanced Settings Card */}
+                            <div className="card flex flex-col p-8 bg-[var(--glass-bg)] border-[var(--border-color)] shadow-xl rounded-[32px] mt-6">
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-600">
+                                        <Database size={24} />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-bold">Advanced Settings</h2>
+                                        <p className="text-sm text-gray-400">Developer tools and diagnostic options</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', alignItems: 'center', gap: '2rem', padding: '1rem 0' }}>
+                                        <div className="flex flex-col">
+                                            <span style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.8 }}>Debug Mode</span>
+                                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Show console logs for troubleshooting</span>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <button
+                                                onClick={() => setDebugMode(!debugMode)}
+                                                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors focus:outline-none ${debugMode ? 'bg-purple-500' : 'bg-slate-200'}`}
+                                            >
+                                                <span
+                                                    className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${debugMode ? 'translate-x-7' : 'translate-x-1'}`}
+                                                />
+                                            </button>
+                                            <span className="ml-3 font-bold text-sm text-slate-600">{debugMode ? 'Enabled' : 'Disabled'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Application Updates Card */}
+
                             <div className="card flex flex-col p-8 bg-[var(--glass-bg)] backdrop-blur-xl border-[var(--border-color)] shadow-xl rounded-[32px] mt-6">
                                 <div className="flex items-center gap-4 mb-6">
                                     <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-600">

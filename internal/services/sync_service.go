@@ -21,6 +21,16 @@ import (
 	"gorm.io/gorm"
 )
 
+func (s *SyncService) debugLog(format string, a ...interface{}) {
+	if s.setting.IsDebug() {
+		if len(a) > 0 {
+			s.debugLog(format, a...)
+		} else {
+			s.debugLog(format)
+		}
+	}
+}
+
 type SyncService struct {
 	db            *gorm.DB
 	api           *ApiService
@@ -58,6 +68,10 @@ func NewSyncService() *SyncService {
 
 	// Run data maintenance on start
 	go s.DataMaintenance()
+
+	// Update API debug state
+	s.api.debug = ss.IsDebug()
+
 	return s
 }
 
@@ -67,7 +81,7 @@ func (s *SyncService) DataMaintenance() {
 }
 
 func (s *SyncService) CleanupDuplicates() error {
-	fmt.Println("[MAINTENANCE] Cleaning up potential duplicates...")
+	s.debugLog("[MAINTENANCE] Cleaning up potential duplicates...")
 
 	// 1. Products by item_code
 	var productDuplicates []struct {
@@ -83,7 +97,7 @@ func (s *SyncService) CleanupDuplicates() error {
 		var first models.Product
 		if err := s.db.Where("ip_code = ?", d.IpCode).Order("id asc").First(&first).Error; err == nil {
 			s.db.Unscoped().Where("ip_code = ? AND id != ?", d.IpCode, first.Id).Delete(&models.Product{})
-			fmt.Printf("[MAINTENANCE] Cleaned duplicates for product: %s\n", d.IpCode)
+			s.debugLog("[MAINTENANCE] Cleaned duplicates for product: %s\n", d.IpCode)
 		}
 	}
 
@@ -101,7 +115,7 @@ func (s *SyncService) CleanupDuplicates() error {
 		var first models.Customer
 		if err := s.db.Where("customer_name = ?", d.CustomerName).Order("id asc").First(&first).Error; err == nil {
 			s.db.Unscoped().Where("customer_name = ? AND id != ?", d.CustomerName, first.Id).Delete(&models.Customer{})
-			fmt.Printf("[MAINTENANCE] Cleaned duplicates for customer: %s\n", d.CustomerName)
+			s.debugLog("[MAINTENANCE] Cleaned duplicates for customer: %s\n", d.CustomerName)
 		}
 	}
 	return nil
@@ -147,7 +161,7 @@ func (s *SyncService) GetModeOfPayments() ([]map[string]string, error) {
 		if cached != "" {
 			var modes []map[string]string
 			if err := json.Unmarshal([]byte(cached), &modes); err == nil {
-				fmt.Println("API failed, using cached Mode of Payments.")
+				s.debugLog("API failed, using cached Mode of Payments.")
 				return modes, nil
 			}
 		}
@@ -218,7 +232,7 @@ func (s *SyncService) GetPosProfileDetails(name string) (map[string]string, erro
 			cachedWh := s.setting.GetString("Cached_Warehouse")
 			cachedCo := s.setting.GetString("Cached_Company")
 			if cachedWh != "" && cachedCo != "" {
-				fmt.Println("API failed, using cached POS Profile details.")
+				s.debugLog("API failed, using cached POS Profile details.")
 				return map[string]string{
 					"warehouse": cachedWh,
 					"company":   cachedCo,
@@ -247,7 +261,7 @@ func (s *SyncService) SyncAllData() error {
 	}()
 
 	if s.setting.GetString(SettingAppMode) == "standalone" {
-		fmt.Println("Standalone mode: Skipping SyncAllData.")
+		s.debugLog("Standalone mode: Skipping SyncAllData.")
 		return nil
 	}
 
@@ -257,33 +271,34 @@ func (s *SyncService) SyncAllData() error {
 		config.GetEnvWithDefault(config.EnvErpApiKey, s.setting.GetString("UserName")),
 		config.GetEnvWithDefault(config.EnvErpApiSecret, s.setting.GetString("Password")),
 	)
+	s.api.debug = s.setting.IsDebug()
 
 	posProfile := s.setting.GetString(SettingPosProfile)
-	fmt.Printf("Starting SyncAllData for POS Profile: %s at %s\n", posProfile, time.Now().Format(time.RFC822))
+	s.debugLog("Starting SyncAllData for POS Profile: %s at %s\n", posProfile, time.Now().Format(time.RFC822))
 	s.syncStatus = "Initializing sync..."
 	s.lastSyncError = ""
 
 	// 1. Sync Products
 	err := s.SyncProductsOnly()
 	if err != nil {
-		fmt.Printf("SyncAllData: Product sync error: %v\n", err)
+		s.debugLog("SyncAllData: Product sync error: %v\n", err)
 	}
 
 	// 2. Sync Customers
 	err = s.SyncCustomersOnly()
 	if err != nil {
-		fmt.Printf("SyncAllData: Customer sync error: %v\n", err)
+		s.debugLog("SyncAllData: Customer sync error: %v\n", err)
 	}
 
 	// 3. Sync Offline Resources (Background)
 	go s.SyncOfflineResources()
 
-	fmt.Println("SyncAllData background tasks started.")
+	s.debugLog("SyncAllData background tasks started.")
 	return nil
 }
 
 func (s *SyncService) SyncProductsOnly() error {
-	fmt.Println("Syncing Products...")
+	s.debugLog("Syncing Products...")
 	s.mu.Lock()
 	s.syncStatus = "Syncing products..."
 	// Fetch products from ERPNext
@@ -295,7 +310,7 @@ func (s *SyncService) SyncProductsOnly() error {
 		return err
 	}
 
-	fmt.Printf("Received %d products from API. Saving to database...\n", len(products))
+	s.debugLog("Received %d products from API. Saving to database...\n", len(products))
 
 	err = s.db.Transaction(func(tx *gorm.DB) error {
 		// Identify item codes from API to remove local items no longer in ERPNext
@@ -333,15 +348,15 @@ func (s *SyncService) SyncProductsOnly() error {
 	})
 
 	if err != nil {
-		fmt.Printf("Failed to sync products: %v\n", err)
+		s.debugLog("Failed to sync products: %v\n", err)
 		return err
 	}
 
 	// 2. Sync Product Bundles
-	fmt.Println("Syncing Product Bundles...")
+	s.debugLog("Syncing Product Bundles...")
 	bundles, bErr := s.api.GetProductBundles()
 	if bErr != nil {
-		fmt.Printf("Product Bundle Sync Failed: %v\n", bErr)
+		s.debugLog("Product Bundle Sync Failed: %v\n", bErr)
 		s.LogSyncError("", "Bundle Sync Failed", bErr.Error())
 	} else {
 		err = s.db.Transaction(func(tx *gorm.DB) error {
@@ -370,19 +385,19 @@ func (s *SyncService) SyncProductsOnly() error {
 			return nil
 		})
 		if err != nil {
-			fmt.Printf("Failed to save product bundles to DB: %v\n", err)
+			s.debugLog("Failed to save product bundles to DB: %v\n", err)
 		} else {
-			fmt.Printf("Synced %d product bundles.\n", len(bundles))
+			s.debugLog("Synced %d product bundles.\n", len(bundles))
 		}
 	}
 
-	fmt.Println("Products synced successfully.")
+	s.debugLog("Products synced successfully.")
 	go s.downloadImages(products)
 	return nil
 }
 
 func (s *SyncService) SyncCustomersOnly() error {
-	fmt.Println("Syncing Customers...")
+	s.debugLog("Syncing Customers...")
 	s.mu.Lock()
 	s.syncStatus = "Syncing customers..."
 	s.mu.Unlock()
@@ -393,7 +408,7 @@ func (s *SyncService) SyncCustomersOnly() error {
 		return err
 	}
 
-	fmt.Printf("Received %d customers. Saving...\n", len(customers))
+	s.debugLog("Received %d customers. Saving...\n", len(customers))
 	return s.db.Transaction(func(tx *gorm.DB) error {
 		for _, c := range customers {
 			var existing models.Customer
@@ -472,7 +487,7 @@ func (s *SyncService) StartBackgroundSync() {
 			}
 
 			if s.setting.GetBool(SettingRequireSync) {
-				fmt.Println("Background Sync Triggered...")
+				s.debugLog("Background Sync Triggered...")
 				s.SyncOrders()
 			}
 		}
@@ -485,9 +500,10 @@ func (s *SyncService) SyncOrders() error {
 
 	// Check connectivity first
 	if !s.api.IsOnline() {
-		fmt.Println("Offline mode: Skipping order sync.")
+		s.debugLog("Offline mode: Skipping order sync.")
 		return nil
 	}
+	s.api.debug = s.setting.IsDebug()
 
 	batchSize := s.setting.GetInt(SettingSyncBatchSize)
 	if batchSize <= 0 {
@@ -500,7 +516,7 @@ func (s *SyncService) SyncOrders() error {
 	if len(orders) > 0 {
 		// Ensure Walkin Customer exists before syncing orders that might need it
 		if err := s.api.EnsureWalkinCustomerExists(); err != nil {
-			fmt.Printf("Warning: Could not ensure Walkin Customer exists: %v\n", err)
+			s.debugLog("Warning: Could not ensure Walkin Customer exists: %v\n", err)
 			s.LogSyncError("", "Walkin Customer Creation Failed", err.Error())
 			// Continue anyway, it might already exist but we failed to verify
 		}
@@ -568,7 +584,7 @@ func (s *SyncService) SyncOrders() error {
 			order.SyncError = ""
 			s.db.Save(&order)
 		} else {
-			fmt.Printf("Failed to sync order %s: %v\n", order.Uuid, err)
+			s.debugLog("Failed to sync order %s: %v\n", order.Uuid, err)
 			s.LogSyncError(order.Uuid, "Order Sync Failed", err.Error())
 			order.SyncError = err.Error()
 			s.db.Save(&order)
@@ -877,11 +893,11 @@ func (s *SyncService) GetDatabaseStats() (map[string]interface{}, error) {
 }
 
 func (s *SyncService) GetOrders(fromDate, toDate time.Time, filter models.OrderFilteringModel) (*models.OrderPosSearchResultModelOffline, error) {
-	fmt.Printf("DEBUG GetOrders: Range [%v] to [%v], Filter: '%s'\n", fromDate, toDate, filter.FilterText)
+	s.debugLog("DEBUG GetOrders: Range [%v] to [%v], Filter: '%s'\n", fromDate, toDate, filter.FilterText)
 	var orders []models.OfflineOrder
 	query := s.db.Where("create_date >= ? AND create_date < ?", fromDate, toDate)
 	query.Find(&orders)
-	fmt.Printf("DEBUG GetOrders: Found %d raw orders in DB\n", len(orders))
+	s.debugLog("DEBUG GetOrders: Found %d raw orders in DB\n", len(orders))
 
 	var results models.OrderPosSearchResultModelOffline
 	var filtered []models.CheckoutOrderModelOffline
@@ -1031,13 +1047,13 @@ func (s *SyncService) OpenDrawer(startBalance float64, staffId int, staffName st
 	openingEntry := ""
 	profile := s.setting.GetString(SettingPosProfile)
 	if profile != "" && s.api.IsOnline() {
-		fmt.Printf("POS Integration: Creating Opening Entry for Profile: %s\n", profile)
+		s.debugLog("POS Integration: Creating Opening Entry for Profile: %s\n", profile)
 		entry, err := s.api.CreatePosOpeningEntry(profile, startBalance)
 		if err == nil {
 			openingEntry = entry
-			fmt.Printf("POS Integration: Created Opening Entry: %s\n", openingEntry)
+			s.debugLog("POS Integration: Created Opening Entry: %s\n", openingEntry)
 		} else {
-			fmt.Printf("POS Integration: Warning: Failed to create opening entry: %v\n", err)
+			s.debugLog("POS Integration: Warning: Failed to create opening entry: %v\n", err)
 		}
 	}
 
@@ -1058,12 +1074,12 @@ func (s *SyncService) CloseDrawer(drawerId int, actualCash float64, endBalance f
 	var drawer models.CashDrawer
 	if err := s.db.First(&drawer, drawerId).Error; err == nil {
 		if drawer.PosOpeningEntry != "" && s.api.IsOnline() {
-			fmt.Printf("POS Integration: Creating Closing Entry for Opening Entry: %s\n", drawer.PosOpeningEntry)
+			s.debugLog("POS Integration: Creating Closing Entry for Opening Entry: %s\n", drawer.PosOpeningEntry)
 			err := s.api.CreatePosClosingEntry(drawer.PosOpeningEntry, actualCash)
 			if err != nil {
-				fmt.Printf("POS Integration: Warning: Failed to create closing entry: %v\n", err)
+				s.debugLog("POS Integration: Warning: Failed to create closing entry: %v\n", err)
 			} else {
-				fmt.Printf("POS Integration: Successfully created closing entry\n")
+				s.debugLog("POS Integration: Successfully created closing entry\n")
 			}
 		}
 	}
@@ -1132,7 +1148,7 @@ func (s *SyncService) downloadImages(products []models.Product) {
 
 	logFile, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
-		fmt.Printf("Failed to open sync log file: %v\n", err)
+		s.debugLog("Failed to open sync log file: %v\n", err)
 		return
 	}
 	defer logFile.Close()
@@ -1248,7 +1264,7 @@ func (s *SyncService) downloadImages(products []models.Product) {
 }
 
 func (s *SyncService) SyncOfflineResources() error {
-	fmt.Println("Syncing Offline Resources (POS Profile & Modes of Payment)...")
+	s.debugLog("Syncing Offline Resources (POS Profile & Modes of Payment)...")
 
 	// 1. POS Profile Settings
 	posProfile := s.setting.GetString(SettingPosProfile)
@@ -1258,9 +1274,9 @@ func (s *SyncService) SyncOfflineResources() error {
 			s.setting.SaveSetting("Cached_Warehouse", details["warehouse"], DataTypeSTRING)
 			s.setting.SaveSetting("Cached_Company", details["company"], DataTypeSTRING)
 			s.setting.SaveSetting("Cached_PosProfilePayments", details["payments"], DataTypeJSON)
-			fmt.Printf("Local cache updated for POS Profile '%s' settings.\n", posProfile)
+			s.debugLog("Local cache updated for POS Profile '%s' settings.\n", posProfile)
 		} else {
-			fmt.Printf("Failed to get POS Profile details: %v\n", err)
+			s.debugLog("Failed to get POS Profile details: %v\n", err)
 		}
 	}
 
@@ -1269,9 +1285,9 @@ func (s *SyncService) SyncOfflineResources() error {
 	if err == nil {
 		data, _ := json.Marshal(modes)
 		s.setting.SaveSetting("Cached_ModeOfPayments", string(data), DataTypeJSON)
-		fmt.Printf("Local cache updated for %d Global Modes of Payment.\n", len(modes))
+		s.debugLog("Local cache updated for %d Global Modes of Payment.\n", len(modes))
 	} else {
-		fmt.Printf("Failed to get Global Modes of Payment: %v\n", err)
+		s.debugLog("Failed to get Global Modes of Payment: %v\n", err)
 	}
 
 	return nil
@@ -1301,7 +1317,7 @@ func (s *SyncService) ClearAllData() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fmt.Println("[CLEAR] Initiating Clear All Data...")
+	s.debugLog("[CLEAR] Initiating Clear All Data...")
 
 	// 1. Delete transactional and master data from DB (excluding pos_settings)
 	err := s.db.Transaction(func(tx *gorm.DB) error {
@@ -1329,7 +1345,7 @@ func (s *SyncService) ClearAllData() error {
 	})
 
 	if err != nil {
-		fmt.Printf("[CLEAR] Error clearing database: %v\n", err)
+		s.debugLog("[CLEAR] Error clearing database: %v\n", err)
 		return err
 	}
 
@@ -1345,7 +1361,7 @@ func (s *SyncService) ClearAllData() error {
 		}
 	}
 
-	fmt.Println("[CLEAR] All data cleared successfully (settings preserved).")
+	s.debugLog("[CLEAR] All data cleared successfully (settings preserved).")
 	return nil
 }
 func (s *SyncService) GetSyncLogs() ([]models.SyncLog, error) {
@@ -1411,5 +1427,5 @@ func (s *SyncService) FixExistingDates() {
 			s.db.Model(&models.OfflineOrder{}).Where("id = ?", ro.Id).Update("create_date", t.UTC())
 		}
 	}
-	fmt.Println("Finished migrating existing order dates.")
+	s.debugLog("Finished migrating existing order dates.")
 }

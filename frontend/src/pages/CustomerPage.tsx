@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Plus, Edit2, Trash2, UserPlus, X, Save, Phone, Mail, MapPin, Users, Award } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, UserPlus, X, Save, Phone, Mail, MapPin, Users, Award, LayoutGrid, List } from 'lucide-react';
 import { useModal } from '../context/ModalContext';
 import HelpTooltip from '../components/HelpTooltip';
 
@@ -12,6 +12,9 @@ const CustomerPage = () => {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCustomer, setEditingCustomer] = useState<any>(null);
+    const [viewMode, setViewMode] = useState<'grid' | 'table'>(() => {
+        return (localStorage.getItem('customerViewMode') as 'grid' | 'table') || 'grid';
+    });
 
     const loadCustomers = async () => {
         setLoading(true);
@@ -110,10 +113,32 @@ const CustomerPage = () => {
                     </div>
                     <HelpTooltip titleKey="help.customers.title" contentKey="help.customers.content" size={16} />
                 </div>
-                <button className="btn flex items-center gap-2" onClick={openCreate} style={{ padding: '0.6rem 1.25rem', fontSize: '0.875rem' }}>
-                    <Plus size={18} />
-                    <span>{t('customers.add_new', { defaultValue: 'Add Customer' })}</span>
-                </button>
+                <div className="flex gap-4">
+                    <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 shrink-0">
+                        <button
+                            onClick={() => {
+                                setViewMode('grid');
+                                localStorage.setItem('customerViewMode', 'grid');
+                            }}
+                            className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white shadow-lg text-slate-800' : 'text-slate-400 hover:text-white'}`}
+                        >
+                            <LayoutGrid size={18} />
+                        </button>
+                        <button
+                            onClick={() => {
+                                setViewMode('table');
+                                localStorage.setItem('customerViewMode', 'table');
+                            }}
+                            className={`p-2 rounded-lg transition-all ${viewMode === 'table' ? 'bg-white shadow-lg text-slate-800' : 'text-slate-400 hover:text-white'}`}
+                        >
+                            <List size={18} />
+                        </button>
+                    </div>
+                    <button className="btn flex items-center gap-2" onClick={openCreate} style={{ padding: '0.6rem 1.25rem', fontSize: '0.875rem' }}>
+                        <Plus size={18} />
+                        <span>{t('customers.add_new', { defaultValue: 'Add Customer' })}</span>
+                    </button>
+                </div>
             </header>
 
             {/* Stats Summary */}
@@ -203,7 +228,7 @@ const CustomerPage = () => {
                                 </button>
                             )}
                         </div>
-                    ) : (
+                    ) : viewMode === 'grid' ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {filteredCustomers.map((customer) => (
                                 <div key={customer.id} className="p-6 glass border border-[var(--border-color)] rounded-3xl flex flex-col gap-4 relative group hover:border-[var(--accent-primary)]/50 transition-all hover:shadow-2xl hover:shadow-[var(--accent-primary)]/10">
@@ -291,6 +316,57 @@ const CustomerPage = () => {
                                     </div>
                                 </div>
                             ))}
+                        </div>
+                    ) : (
+                        <div className="bg-white/5 border border-white/10 rounded-[32px] overflow-hidden shadow-2xl">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="border-b border-white/5">
+
+                                        <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400">Identity</th>
+                                        <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400">Contact Info</th>
+                                        <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400 text-right">Loyalty Points</th>
+                                        <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {filteredCustomers.map((customer) => (
+                                        <tr key={customer.id} className="group hover:bg-white/[0.02] transition-colors">
+
+                                            <td className="p-5">
+                                                <div className="flex flex-col gap-0.5">
+                                                    <span className="font-bold text-[var(--text-primary)]">{customer.customer_name}</span>
+                                                    <span className="text-xs text-slate-500 font-medium">{customer.mobile_no}</span>
+                                                </div>
+                                            </td>
+                                            <td className="p-5">
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                                                        <Mail size={12} />
+                                                        <span>{customer.email_id || 'No email'}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                                                        <MapPin size={12} />
+                                                        <span className="truncate max-w-[200px]">{customer.primary_address || 'No address'}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="p-5 text-right">
+                                                <div className="inline-flex items-center gap-2 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] px-3 py-1 rounded-full border border-[var(--accent-primary)]/20">
+                                                    <Award size={14} />
+                                                    <span className="font-black text-sm">{(customer.loyalty_points || 0).toLocaleString()}</span>
+                                                </div>
+                                            </td>
+                                            <td className="p-5">
+                                                <div className="flex justify-center gap-2">
+                                                    <button onClick={() => openEdit(customer)} className="p-2.5 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl transition-all"><Edit2 size={16} /></button>
+                                                    <button onClick={() => handleDelete(customer.id)} className="p-2.5 hover:bg-red-500/10 text-red-500 rounded-xl transition-all"><Trash2 size={16} /></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     )}
                 </div>

@@ -18,6 +18,17 @@ type ApiService struct {
 	token    string
 	username string
 	password string
+	debug    bool
+}
+
+func (s *ApiService) debugLog(format string, a ...interface{}) {
+	if s.debug {
+		if len(a) > 0 {
+			s.debugLog(format, a...)
+		} else {
+			s.debugLog(format)
+		}
+	}
 }
 
 func NewApiService(baseUrl string) *ApiService {
@@ -167,7 +178,7 @@ func (s *ApiService) CreateNewOrderDetail(order models.CheckoutOrderModel, posPr
 		return nil, fmt.Errorf("Sales Invoice created but ERPNext returned no document name")
 	}
 
-	fmt.Printf("Sales Invoice created: %s — submitting...\n", docName)
+	s.debugLog("Sales Invoice created: %s — submitting...\n", docName)
 
 	// Submit the invoice (docstatus=1) to mark it as paid
 	submitPayload := map[string]interface{}{
@@ -184,7 +195,7 @@ func (s *ApiService) CreateNewOrderDetail(order models.CheckoutOrderModel, posPr
 		return nil, fmt.Errorf("Sales Invoice '%s' submit failed: %v", docName, s.parseERPNextError(submitResp))
 	}
 
-	fmt.Printf("Sales Invoice %s submitted successfully (Paid).\n", docName)
+	s.debugLog("Sales Invoice %s submitted successfully (Paid).\n", docName)
 
 	// Store the ERPNext document name back onto the order for reference
 	order.ERPNextName = docName
@@ -271,7 +282,7 @@ func (s *ApiService) GetProducts(priceList string) ([]models.Product, error) {
 	query.Set("fields", fields)
 	query.Set("limit_page_length", "500")
 
-	fmt.Println("Fetching Items from ERPNext")
+	s.debugLog("Fetching Items from ERPNext")
 	resp, err := s.doRequest(http.MethodGet, "/api/resource/Item", nil, query)
 	if err != nil {
 		return nil, err
@@ -370,7 +381,7 @@ func (s *ApiService) GetProducts(priceList string) ([]models.Product, error) {
 			}
 		}
 		binResp.Body.Close()
-		fmt.Println("Stock levels fetched from Bin.")
+		s.debugLog("Stock levels fetched from Bin.")
 	}
 
 	return products, nil
@@ -415,7 +426,7 @@ func (s *ApiService) GetStockLevel(itemCode, warehouse string) (float64, error) 
 }
 
 func (s *ApiService) GetProductBundles() (map[string][]models.BundleItem, error) {
-	fmt.Println("Fetching Product Bundles from ERPNext")
+	s.debugLog("Fetching Product Bundles from ERPNext")
 	// Use a join-like approach or fetch all bundle items if possible.
 	// For simplicity, we fetch all Product Bundle names first.
 	query := url.Values{}
@@ -441,7 +452,7 @@ func (s *ApiService) GetProductBundles() (map[string][]models.BundleItem, error)
 	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return nil, err
 	}
-	fmt.Printf("API: Found %d Product Bundles\n", len(res.Data))
+	s.debugLog("API: Found %d Product Bundles\n", len(res.Data))
 
 	bundles := make(map[string][]models.BundleItem)
 
@@ -464,7 +475,7 @@ func (s *ApiService) GetProductBundles() (map[string][]models.BundleItem, error)
 			} `json:"data"`
 		}
 		if err := json.NewDecoder(itemResp.Body).Decode(&itemRes); err == nil {
-			fmt.Printf("API: Found %d Product Bundle Items\n", len(itemRes.Data))
+			s.debugLog("API: Found %d Product Bundle Items\n", len(itemRes.Data))
 			// Map Parent (Bundle Name) to NewItemCode (Parent Item Code)
 			bundleMap := make(map[string]string)
 			for _, b := range res.Data {
@@ -487,9 +498,9 @@ func (s *ApiService) GetProductBundles() (map[string][]models.BundleItem, error)
 		itemResp.Body.Close()
 	} else {
 		if itemErr != nil {
-			fmt.Printf("API: Error fetching Product Bundle Items: %v\n", itemErr)
+			s.debugLog("API: Error fetching Product Bundle Items: %v\n", itemErr)
 		} else if itemResp != nil {
-			fmt.Printf("API: Product Bundle Item fetch returned status: %d\n", itemResp.StatusCode)
+			s.debugLog("API: Product Bundle Item fetch returned status: %d\n", itemResp.StatusCode)
 			itemResp.Body.Close()
 		}
 	}
@@ -498,7 +509,7 @@ func (s *ApiService) GetProductBundles() (map[string][]models.BundleItem, error)
 }
 
 func (s *ApiService) GetCustomers() ([]models.Customer, error) {
-	fmt.Println("Fetching Customers from ERPNext")
+	s.debugLog("Fetching Customers from ERPNext")
 
 	// Initial set of fields we want (trying 'credit_limits' as requested)
 	currentFields := []string{"name", "customer_name", "mobile_no", "email_id", "primary_address", "loyalty_points", "credit_limits", "outstanding_amount"}
@@ -537,7 +548,7 @@ func (s *ApiService) GetCustomers() ([]models.Customer, error) {
 			parts := strings.Split(errMsg, ":")
 			if len(parts) > 1 {
 				badField := strings.TrimSpace(parts[len(parts)-1])
-				fmt.Printf("API: Field '%s' not permitted, retrying without it...\n", badField)
+				s.debugLog("API: Field '%s' not permitted, retrying without it...\n", badField)
 
 				// Remove the bad field from the list
 				newFields := []string{}
@@ -589,7 +600,7 @@ func (s *ApiService) GetCustomerBalance(customerName string) (float64, float64, 
 }
 
 func (s *ApiService) EnsureWalkinCustomerExists() error {
-	fmt.Println("Checking if 'Walkin Customer' exists in ERPNext")
+	s.debugLog("Checking if 'Walkin Customer' exists in ERPNext")
 	// Search for customer named 'Walkin Customer'
 	query := url.Values{}
 	query.Set("filters", `[["customer_name", "=", "Walkin Customer"]]`)
@@ -606,12 +617,12 @@ func (s *ApiService) EnsureWalkinCustomerExists() error {
 			} `json:"data"`
 		}
 		if err := json.NewDecoder(resp.Body).Decode(&res); err == nil && len(res.Data) > 0 {
-			fmt.Println("'Walkin Customer' already exists")
+			s.debugLog("'Walkin Customer' already exists")
 			return nil
 		}
 	}
 
-	fmt.Println("'Walkin Customer' not found, creating...")
+	s.debugLog("'Walkin Customer' not found, creating...")
 
 	// Resilient defaults
 	customerGroup := "All Customer Groups"
@@ -654,7 +665,7 @@ func (s *ApiService) EnsureWalkinCustomerExists() error {
 	createResp, err := createCustomer(customerGroup, territory)
 	if err == nil {
 		if createResp.StatusCode == http.StatusOK || createResp.StatusCode == http.StatusCreated {
-			fmt.Println("Successfully created 'Walkin Customer'")
+			s.debugLog("Successfully created 'Walkin Customer'")
 			createResp.Body.Close()
 			return nil
 		}
@@ -662,9 +673,9 @@ func (s *ApiService) EnsureWalkinCustomerExists() error {
 	}
 
 	// Attempt 2: Fetch actual names and retry
-	fmt.Println("Standard defaults failed, fetching localized names...")
+	s.debugLog("Standard defaults failed, fetching localized names...")
 	fetchDefaults()
-	fmt.Printf("Retrying with: Group=%s, Territory=%s\n", customerGroup, territory)
+	s.debugLog("Retrying with: Group=%s, Territory=%s\n", customerGroup, territory)
 
 	createResp, err = createCustomer(customerGroup, territory)
 	if err != nil {
@@ -673,7 +684,7 @@ func (s *ApiService) EnsureWalkinCustomerExists() error {
 	defer createResp.Body.Close()
 
 	if createResp.StatusCode == http.StatusOK || createResp.StatusCode == http.StatusCreated {
-		fmt.Println("Successfully created 'Walkin Customer' with localized names")
+		s.debugLog("Successfully created 'Walkin Customer' with localized names")
 		return nil
 	}
 
@@ -681,7 +692,7 @@ func (s *ApiService) EnsureWalkinCustomerExists() error {
 }
 
 func (s *ApiService) CreateCustomerInERPNext(name, phone string) (string, error) {
-	fmt.Printf("Creating customer '%s' in ERPNext...\n", name)
+	s.debugLog("Creating customer '%s' in ERPNext...\n", name)
 
 	// Fetch defaults
 	customerGroup := "All Customer Groups"
@@ -737,7 +748,7 @@ func (s *ApiService) CreateCustomerInERPNext(name, phone string) (string, error)
 }
 
 func (s *ApiService) ValidateGiftCard(code string) (map[string]interface{}, error) {
-	fmt.Printf("Validating gift card: %s\n", code)
+	s.debugLog("Validating gift card: %s\n", code)
 
 	query := url.Values{}
 	// Common Gift Card fields in ERPNext
@@ -791,7 +802,7 @@ func (s *ApiService) ValidateGiftCard(code string) (map[string]interface{}, erro
 }
 
 func (s *ApiService) ValidateCouponCode(code string) (map[string]interface{}, error) {
-	fmt.Printf("Validating coupon code: %s\n", code)
+	s.debugLog("Validating coupon code: %s\n", code)
 
 	query := url.Values{}
 	// We need fields that determine discount type and value
@@ -1240,19 +1251,19 @@ func (s *ApiService) GetNetworkPing() (int64, error) {
 
 	// Handle 401 Unauthorized with one retry
 	if err == nil && resp.StatusCode == http.StatusUnauthorized && s.username != "" {
-		fmt.Println("Ping received 401. Attempting re-authentication...")
+		s.debugLog("Ping received 401. Attempting re-authentication...")
 		resp.Body.Close()
 		if loginErr := s.Login(); loginErr == nil {
-			fmt.Println("Re-authentication successful. Retrying ping...")
+			s.debugLog("Re-authentication successful. Retrying ping...")
 			resp, duration, err = makeRequest()
 		} else {
-			fmt.Printf("Re-authentication failed: %v\n", loginErr)
+			s.debugLog("Re-authentication failed: %v\n", loginErr)
 			return 0, fmt.Errorf("auth failed: %w", loginErr)
 		}
 	}
 
 	if err != nil {
-		fmt.Printf("Ping failed: %v\n", err)
+		s.debugLog("Ping failed: %v\n", err)
 		// Fallback: If specific ping fails, try base URL
 		resp, err = client.Get(s.baseUrl)
 		if err != nil {
@@ -1262,7 +1273,7 @@ func (s *ApiService) GetNetworkPing() (int64, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		fmt.Printf("Ping returned bad status: %s\n", resp.Status)
+		s.debugLog("Ping returned bad status: %s\n", resp.Status)
 		return 0, fmt.Errorf("bad status: %s", resp.Status)
 	}
 

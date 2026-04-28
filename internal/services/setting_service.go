@@ -57,6 +57,7 @@ const (
 	SettingSkipUpdateCheck       = "SkipUpdateCheck"
 	SettingPosProfile            = "PosProfile"
 	SettingWriteOffAccount       = "WriteOffAccount"
+	SettingDebugMode             = "DebugMode"
 )
 
 type SettingService struct {
@@ -103,16 +104,21 @@ func (s *SettingService) InitSettings() {
 	s.ensureSetting(SettingFullScreenMode, "false", DataTypeBOOLEAN)
 	s.ensureSetting(SettingPosProfile, "", DataTypeSTRING)
 	s.ensureSetting(SettingWriteOffAccount, "", DataTypeSTRING)
+	s.ensureSetting(SettingDebugMode, "false", DataTypeBOOLEAN)
 }
 
 func (s *SettingService) ensureSetting(name string, value string, dataType DataType) {
 	var setting models.PosSettings
 	result := s.db.Where("name = ?", name).First(&setting)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		fmt.Printf("SettingService: ensureSetting: %s not found, saving default: %s\n", name, value)
+		if s.IsDebug() {
+			fmt.Printf("SettingService: ensureSetting: %s not found, saving default: %s\n", name, value)
+		}
 		s.SaveSetting(name, value, dataType)
 	} else {
-		fmt.Printf("SettingService: ensureSetting: %s found: %s\n", name, setting.Value)
+		if s.IsDebug() {
+			fmt.Printf("SettingService: ensureSetting: %s found: %s\n", name, setting.Value)
+		}
 	}
 }
 
@@ -146,7 +152,9 @@ func (s *SettingService) SaveSetting(name string, value interface{}, dataType Da
 		Columns:   []clause.Column{{Name: "name"}},
 		DoUpdates: clause.AssignmentColumns([]string{"value", "json_value", "data_type"}),
 	}).Create(&setting)
-	fmt.Printf("SettingService: SaveSetting: %s = %s\n", name, valStr)
+	if s.IsDebug() {
+		fmt.Printf("SettingService: SaveSetting: %s = %s\n", name, valStr)
+	}
 }
 
 func (s *SettingService) GetString(name string) string {
@@ -155,7 +163,9 @@ func (s *SettingService) GetString(name string) string {
 	if setting.Name == "" {
 		return ""
 	}
-	fmt.Printf("SettingService: GetString: %s = %s\n", name, setting.Value)
+	if s.IsDebug() {
+		fmt.Printf("SettingService: GetString: %s = %s\n", name, setting.Value)
+	}
 	return setting.Value
 }
 
@@ -207,6 +217,13 @@ func (s *SettingService) GetRunningNumber() int {
 	newVal := val + 1
 	s.SaveSetting(SettingRunningNumber, strconv.Itoa(newVal), DataTypeINT)
 	return newVal
+}
+
+func (s *SettingService) IsDebug() bool {
+	var setting models.PosSettings
+	// Check DB directly to avoid recursion
+	s.db.Where("name = ?", SettingDebugMode).Limit(1).Find(&setting)
+	return setting.Value == "true"
 }
 func (s *SettingService) GetAllSettings() ([]models.PosSettings, error) {
 	var settings []models.PosSettings

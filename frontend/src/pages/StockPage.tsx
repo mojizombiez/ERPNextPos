@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Package, Search, Plus, Edit2, Trash2, X, Check, Printer, Info, Tag, Barcode, Eye, EyeOff, RefreshCw } from 'lucide-react';
+import { Package, Search, Plus, Edit2, Trash2, X, Check, Printer, Info, Tag, Barcode, Eye, EyeOff, RefreshCw, LayoutGrid, List } from 'lucide-react';
 import { useModal } from '../context/ModalContext';
 import HelpTooltip from '../components/HelpTooltip';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,9 @@ const StockPage = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [categories, setCategories] = useState<any[]>([]);
+    const [viewMode, setViewMode] = useState<'grid' | 'table'>(() => {
+        return (localStorage.getItem('stockViewMode') as 'grid' | 'table') || 'grid';
+    });
 
     // Detailed form state
     const [editingProduct, setEditingProduct] = useState<any>({
@@ -160,6 +163,26 @@ const StockPage = () => {
                 </div>
 
                 <div className="flex gap-4">
+                    <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 shrink-0">
+                        <button
+                            onClick={() => {
+                                setViewMode('grid');
+                                localStorage.setItem('stockViewMode', 'grid');
+                            }}
+                            className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white shadow-lg text-slate-800' : 'text-slate-400 hover:text-white'}`}
+                        >
+                            <LayoutGrid size={18} />
+                        </button>
+                        <button
+                            onClick={() => {
+                                setViewMode('table');
+                                localStorage.setItem('stockViewMode', 'table');
+                            }}
+                            className={`p-2 rounded-lg transition-all ${viewMode === 'table' ? 'bg-white shadow-lg text-slate-800' : 'text-slate-400 hover:text-white'}`}
+                        >
+                            <List size={18} />
+                        </button>
+                    </div>
                     <button
                         onClick={() => setIsCategoryModalOpen(true)}
                         className="glass-shine-wrap relative px-6 py-3 bg-white/5 hover:bg-white/10 rounded-[16px] border border-white/5 font-bold transition-all flex items-center gap-2 text-[var(--text-secondary)] text-sm"
@@ -212,114 +235,189 @@ const StockPage = () => {
             </div>
 
             <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                <div className="grid gap-4 pb-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))' }}>
-                    {loading ? (
-                        <div className="col-span-full flex flex-col items-center justify-center gap-4 opacity-40 py-20">
-                            <RefreshCw className="animate-spin" size={48} />
-                            <span className="font-black uppercase tracking-widest text-sm">Scanning Matrix...</span>
-                        </div>
-                    ) : filteredProducts.length === 0 ? (
-                        <div className="col-span-full flex flex-col items-center justify-center gap-6 opacity-30 py-32 border-2 border-dashed border-white/5 rounded-[40px]">
-                            <Package size={80} strokeWidth={1} />
-                            <div className="text-center">
-                                <p className="text-2xl font-black">No Items Identified</p>
-                                <p className="text-sm font-bold mt-2">Try adjusting your search filters</p>
+                {viewMode === 'grid' ? (
+                    <div className="grid gap-4 pb-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))' }}>
+                        {loading ? (
+                            <div className="col-span-full flex flex-col items-center justify-center gap-4 opacity-40 py-20">
+                                <RefreshCw className="animate-spin" size={48} />
+                                <span className="font-black uppercase tracking-widest text-sm">Scanning Matrix...</span>
                             </div>
-                        </div>
-                    ) : filteredProducts.map(p => {
-                        const available = p.isAvailable === undefined || p.isAvailable === true;
-                        return (
-                            <div
-                                key={p.id}
-                                className={`product-card group shadow-premium compact relative transition-all duration-300`}
-                            >
-                                {/* Management Actions - Top Center Absolute */}
-                                <div className="absolute -top-3 inset-x-0 flex justify-center w-full z-[999] pointer-events-none">
-                                    <div className={`flex flex-row gap-1 opacity-100 transition-all duration-300 pointer-events-auto bg-white p-1.5 rounded-full shadow-lg border border-slate-200 ${!available ? 'ring-2 ring-slate-100' : ''}`}>
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); handlePrintTag(p); }}
-                                            className="w-8 h-8 flex items-center justify-center bg-white hover:bg-slate-50 text-slate-700 shadow-sm rounded-full transition-all border border-slate-200"
-                                            title="Print Tag"
-                                        >
-                                            <Printer size={16} />
-                                        </button>
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); toggleAvailability(p); }}
-                                            className="w-8 h-8 flex items-center justify-center bg-white hover:bg-slate-50 text-slate-700 shadow-sm rounded-full transition-all border border-slate-200"
-                                            title={available ? "Mark Sold Out" : "Mark Available"}
-                                        >
-                                            {available ? <Eye size={16} /> : <EyeOff size={16} />}
-                                        </button>
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); setEditingProduct(p); setIsEditModalOpen(true); }}
-                                            className="w-8 h-8 flex items-center justify-center bg-white hover:bg-slate-50 text-slate-700 shadow-sm rounded-full transition-all border border-slate-200"
-                                        >
-                                            <Edit2 size={16} />
-                                        </button>
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); deleteProduct(p.id); }}
-                                            className="w-8 h-8 flex items-center justify-center bg-red-50 text-red-600 hover:bg-red-500 hover:text-white shadow-sm rounded-full transition-all border border-red-200"
-                                        >
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </div>
+                        ) : filteredProducts.length === 0 ? (
+                            <div className="col-span-full flex flex-col items-center justify-center gap-6 opacity-30 py-32 border-2 border-dashed border-white/5 rounded-[40px]">
+                                <Package size={80} strokeWidth={1} />
+                                <div className="text-center">
+                                    <p className="text-2xl font-black">No Items Identified</p>
+                                    <p className="text-sm font-bold mt-2">Try adjusting your search filters</p>
                                 </div>
-
-                                {/* Card Content Container (Grayscaled context if sold out) */}
-                                <div className={`flex-1 flex flex-col transition-all duration-300 ${!available ? 'opacity-40 grayscale' : ''}`}>
-                                    {/* Image */}
-                                    <div className="product-image-wrap relative bg-white transition-transform duration-300" style={{ overflow: 'visible' }}>
-                                        {p.localImagePath ? (
-                                            <img
-                                                src={`/images/${p.localImagePath.split(/[\\/]/).pop()}`}
-                                                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                                                alt={p.nameTH}
-                                                onError={(e) => {
-                                                    (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9InN0ZWVsdmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIyNCIgcng9IjIiIHJ5PSIyIi8+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiLz48cG9seWdvbiBwb2ludHM9IjIxIDE1IDE2IDEwIDUgMjEgMjEgMjEiLz48L3N2Zz4=';
-                                                }}
-                                            />
-                                        ) : (
-                                            <div className="flex flex-col items-center justify-center opacity-20">
-                                                <Package size={48} strokeWidth={1} />
-                                                <span className="text-sm font-black uppercase tracking-widest mt-2">{t('noImage', { defaultValue: 'No Image' })}</span>
-                                            </div>
-                                        )}
-
-                                        {!available && (
-                                            <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none text-center">
-                                                <span className="bg-slate-800 text-white px-5 py-2 rounded-full font-black text-sm uppercase tracking-[0.2em] shadow-2xl">SOLD OUT</span>
-                                            </div>
-                                        )}
+                            </div>
+                        ) : filteredProducts.map(p => {
+                            const available = p.isAvailable === undefined || p.isAvailable === true;
+                            return (
+                                <div
+                                    key={p.id}
+                                    className={`product-card group shadow-premium compact relative transition-all duration-300`}
+                                >
+                                    {/* Management Actions - Top Center Absolute */}
+                                    <div className="absolute -top-3 inset-x-0 flex justify-center w-full z-[999] pointer-events-none">
+                                        <div className={`flex flex-row gap-1 opacity-100 transition-all duration-300 pointer-events-auto bg-white p-1.5 rounded-full shadow-lg border border-slate-200 ${!available ? 'ring-2 ring-slate-100' : ''}`}>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); handlePrintTag(p); }}
+                                                className="w-8 h-8 flex items-center justify-center bg-white hover:bg-slate-50 text-slate-700 shadow-sm rounded-full transition-all border border-slate-200"
+                                                title="Print Tag"
+                                            >
+                                                <Printer size={16} />
+                                            </button>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); toggleAvailability(p); }}
+                                                className="w-8 h-8 flex items-center justify-center bg-white hover:bg-slate-50 text-slate-700 shadow-sm rounded-full transition-all border border-slate-200"
+                                                title={available ? "Mark Sold Out" : "Mark Available"}
+                                            >
+                                                {available ? <Eye size={16} /> : <EyeOff size={16} />}
+                                            </button>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setEditingProduct(p); setIsEditModalOpen(true); }}
+                                                className="w-8 h-8 flex items-center justify-center bg-white hover:bg-slate-50 text-slate-700 shadow-sm rounded-full transition-all border border-slate-200"
+                                            >
+                                                <Edit2 size={16} />
+                                            </button>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); deleteProduct(p.id); }}
+                                                className="w-8 h-8 flex items-center justify-center bg-red-50 text-red-600 hover:bg-red-500 hover:text-white shadow-sm rounded-full transition-all border border-red-200"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    <div className="px-1 flex flex-col gap-1 mt-2">
-                                        <div className="flex items-center justify-between">
+                                    {/* Card Content Container (Grayscaled context if sold out) */}
+                                    <div className={`flex-1 flex flex-col transition-all duration-300 ${!available ? 'opacity-40 grayscale' : ''}`}>
+                                        {/* Image */}
+                                        <div className="product-image-wrap relative bg-white transition-transform duration-300" style={{ height: '140px', overflow: 'hidden' }}>
+                                            {p.localImagePath ? (
+                                                <img
+                                                    src={`/images/${p.localImagePath.split(/[\\/]/).pop()}`}
+                                                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                                                    alt={p.nameTH}
+                                                    onError={(e) => {
+                                                        (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9InN0ZWVsdmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIyNCIgcng9IjIiIHJ5PSIyIi8+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiLz48cG9seWdvbiBwb2ludHM9IjIxIDE1IDE2IDEwIDUgMjEgMjEgMjEiLz48L3N2Zz4=';
+                                                    }}
+                                                />
+                                            ) : (
+                                                <div className="flex flex-col items-center justify-center opacity-20">
+                                                    <Package size={48} strokeWidth={1} />
+                                                    <span className="text-sm font-black uppercase tracking-widest mt-2">{t('noImage', { defaultValue: 'No Image' })}</span>
+                                                </div>
+                                            )}
+
+                                            {!available && (
+                                                <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none text-center">
+                                                    <span className="bg-slate-800 text-white px-5 py-2 rounded-full font-black text-sm uppercase tracking-[0.2em] shadow-2xl">SOLD OUT</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="px-1 flex flex-col gap-1 mt-2">
                                             <div className="flex items-center justify-between">
-                                                <div className="text-sm font-black text-slate-400 uppercase tracking-widest opacity-60 truncate">{p.itemCode}</div>
-                                                {p.isBundle && (
-                                                    <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest">BUNDLE</span>
-                                                )}
+                                                <div className="flex items-center justify-between">
+                                                    <div className="text-sm font-black text-slate-400 uppercase tracking-widest opacity-60 truncate">{p.itemCode}</div>
+                                                    {p.isBundle && (
+                                                        <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest ml-2">BUNDLE</span>
+                                                    )}
+                                                </div>
+                                                <div className={`px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest ${p.remain > 0 ? 'bg-slate-50 text-slate-400' : 'bg-red-50 text-red-300'}`}>
+                                                    {p.remain} {t('unit', { defaultValue: 'UNIT' })}
+                                                </div>
                                             </div>
-                                            <div className={`px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest ${p.remain > 0 ? 'bg-slate-50 text-slate-400' : 'bg-red-50 text-red-300'}`}>
-                                                {p.remain} {t('unit', { defaultValue: 'UNIT' })}
-                                            </div>
-                                        </div>
-                                        <div className="font-extrabold text-slate-800 text-sm line-clamp-2 min-h-[1.5rem] tracking-tight leading-tight">{p.nameTH}</div>
+                                            <div className="font-extrabold text-slate-800 text-sm line-clamp-2 min-h-[1.5rem] tracking-tight leading-tight">{p.nameTH}</div>
 
-                                        <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-50">
-                                            <div className="text-sm font-black text-slate-900 tracking-tight">
-                                                ฿{p.price ? p.price.toLocaleString() : '0'}
+                                            <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-50">
+                                                <div className="text-sm font-black text-slate-900 tracking-tight">
+                                                    ฿{p.price ? p.price.toLocaleString() : '0'}
+                                                </div>
+                                                <span className="text-[7px] font-black text-slate-300 uppercase tracking-widest">
+                                                    {categories.find(c => c.id === p.productTypeId)?.name || 'General'}
+                                                </span>
                                             </div>
-                                            <span className="text-[7px] font-black text-slate-300 uppercase tracking-widest">
-                                                {categories.find(c => c.id === p.productTypeId)?.name || 'General'}
-                                            </span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
-                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div className="bg-white/5 border border-white/10 rounded-[32px] overflow-hidden shadow-2xl">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="border-b border-white/5">
+                                    <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400">Status</th>
+                                    <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400">Identity</th>
+                                    <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400">Name</th>
+                                    <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400 text-right">Inventory</th>
+                                    <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400 text-right">Price</th>
+                                    <th className="p-5 text-xs font-black uppercase tracking-[0.2em] text-slate-400 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan={6} className="py-20 text-center">
+                                            <RefreshCw className="animate-spin mx-auto mb-4 opacity-40" size={32} />
+                                            <span className="text-xs font-black uppercase tracking-widest opacity-40">Syncing...</span>
+                                        </td>
+                                    </tr>
+                                ) : filteredProducts.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="py-20 text-center opacity-30">
+                                            <Package className="mx-auto mb-4" size={48} />
+                                            <p className="font-black uppercase tracking-widest">No Products Identified</p>
+                                        </td>
+                                    </tr>
+                                ) : filteredProducts.map(p => {
+                                    const available = p.isAvailable === undefined || p.isAvailable === true;
+                                    return (
+                                        <tr key={p.id} className={`group hover:bg-white/[0.02] transition-colors ${!available ? 'opacity-40 grayscale' : ''}`}>
+                                            <td className="p-5">
+                                                <div className={`w-2.5 h-2.5 rounded-full ${available ? 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]' : 'bg-slate-400'}`} />
+                                            </td>
+                                            <td className="p-5">
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="text-xs font-black text-slate-400 uppercase tracking-widest">{p.itemCode}</span>
+                                                    {p.barcode && <span className="text-[10px] font-bold text-slate-500 font-mono">{p.barcode}</span>}
+                                                </div>
+                                            </td>
+                                            <td className="p-5">
+                                                <div className="flex flex-col gap-0.5">
+                                                    <span className="font-bold text-[var(--text-primary)] text-sm">{p.nameTH}</span>
+                                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">
+                                                        {categories.find(c => c.id === p.productTypeId)?.name || 'General'}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="p-5 text-right">
+                                                <span className={`text-sm font-black ${p.remain <= 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                                                    {p.remain} <span className="text-[10px] ml-0.5 opacity-60">UNIT</span>
+                                                </span>
+                                            </td>
+                                            <td className="p-5 text-right">
+                                                <span className="text-base font-black text-[var(--accent-primary)]">
+                                                    ฿{p.price ? p.price.toLocaleString() : '0'}
+                                                </span>
+                                            </td>
+                                            <td className="p-5">
+                                                <div className="flex justify-center gap-2">
+                                                    <button onClick={() => handlePrintTag(p)} className="p-2.5 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl transition-all" title="Print Tag"><Printer size={16} /></button>
+                                                    <button onClick={() => toggleAvailability(p)} className="p-2.5 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl transition-all">{available ? <Eye size={16} /> : <EyeOff size={16} />}</button>
+                                                    <button onClick={() => { setEditingProduct(p); setIsEditModalOpen(true); }} className="p-2.5 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl transition-all"><Edit2 size={16} /></button>
+                                                    <button onClick={() => deleteProduct(p.id)} className="p-2.5 hover:bg-red-500/10 text-red-500 rounded-xl transition-all"><Trash2 size={16} /></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
 
             {/* Edit Modal - Standard Premium Aesthetic (Fixed Transparency) */}
