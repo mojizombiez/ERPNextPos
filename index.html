@@ -3,318 +3,456 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download MWinPOS Updater</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>MWinPOS - The Next-Gen Retail POS Solution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f1f5f9;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --card-bg: rgba(255, 255, 255, 0.85);
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --accent: #10b981;
-            --linux: #f59e0b;
-            --linux-hover: #d97706;
-            --disabled: #e2e8f0;
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            overflow: hidden;
-            position: relative;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        .bg-circle {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
+        /* Animated Background */
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             z-index: -1;
-            opacity: 0.3;
-            animation: float 20s infinite ease-in-out alternate;
-        }
-        .circle-1 {
-            width: 400px;
-            height: 400px;
-            background: linear-gradient(to right, #3b82f6, #8b5cf6);
-            top: -100px;
-            left: -100px;
-        }
-        .circle-2 {
-            width: 500px;
-            height: 500px;
-            background: linear-gradient(to right, #10b981, #059669);
-            bottom: -200px;
-            right: -150px;
-            animation-delay: -5s;
+            overflow: hidden;
         }
 
-        @keyframes float {
-            0% { transform: translateY(0) scale(1); }
-            100% { transform: translateY(30px) scale(1.1); }
+        .glow-1 {
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            animation: move 20s infinite alternate;
         }
 
-        .container {
-            position: relative;
-            z-index: 10;
-            max-width: 600px;
-            width: 90%;
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-radius: 24px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
-            transform: translateY(20px);
-            opacity: 0;
-            animation: slideUp 0.8s ease-out forwards;
+        .glow-2 {
+            position: absolute;
+            bottom: -10%;
+            right: -5%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+            animation: move 25s infinite alternate-reverse;
         }
 
-        @keyframes slideUp {
-            to { transform: translateY(0); opacity: 1; }
+        @keyframes move {
+            from { transform: translate(0, 0); }
+            to { transform: translate(10%, 10%); }
+        }
+
+        /* Navbar */
+        nav {
+            padding: 2rem 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            width: 100%;
+            z-index: 100;
         }
 
         .logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary), #60a5fa);
-            border-radius: 20px;
-            margin: 0 auto 24px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-box {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
-            font-weight: 800;
             color: white;
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.5);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 10rem 10% 5rem;
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            min-height: 100vh;
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 99px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         h1 {
-            font-size: 28px;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            line-height: 1.1;
             font-weight: 800;
-            margin-bottom: 8px;
-            background: linear-gradient(to right, #0f172a, #334155);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom right, #fff 30%, #94a3b8);
             -webkit-background-clip: text;
-            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        p {
+        .hero-desc {
+            font-size: 1.25rem;
             color: var(--text-muted);
-            font-size: 16px;
-            margin-bottom: 32px;
-            line-height: 1.5;
+            margin-bottom: 2.5rem;
+            max-width: 500px;
         }
 
-        .button-group {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 32px;
+        .hero-visual {
+            flex: 1.2;
+            position: relative;
         }
 
-        .download-btn {
+        .hero-img {
+            width: 100%;
+            border-radius: 32px;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Buttons */
+        .btn {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-            color: white;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            border-radius: 14px;
+            font-weight: 700;
             text-decoration: none;
-            padding: 16px 24px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s;
             cursor: pointer;
             border: none;
-            outline: none;
-            min-width: 200px;
         }
 
-        .download-btn.linux {
-            background: linear-gradient(135deg, var(--linux), var(--linux-hover));
-            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
         }
 
-        .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 25px rgba(37, 99, 235, 0.5);
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.6);
         }
 
-        .download-btn.linux:hover {
-            box-shadow: 0 15px 25px rgba(245, 158, 11, 0.5);
+        .btn-outline {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: white;
         }
 
-        .download-btn:active {
-            transform: translateY(1px);
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.1);
         }
 
-        .download-btn.disabled {
-            background: var(--disabled);
-            color: #64748b;
-            box-shadow: none;
-            cursor: not-allowed;
-            opacity: 0.9;
-            transform: none;
-        }
-        
-        .download-btn.disabled:hover {
-            transform: none;
-            box-shadow: none;
+        /* Features */
+        .features {
+            padding: 10rem 10%;
+            text-align: center;
         }
 
-        .version-info {
-            margin-top: 24px;
-            font-size: 14px;
-            color: var(--text-muted);
-            padding-top: 24px;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 4rem;
         }
 
-        .status {
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            text-align: left;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--accent);
-            animation: pulse 2s infinite;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
         }
-        
-        /* Icons */
-        .icon {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-        
-        .platforms-title {
-            font-size: 14px;
+
+        .feature-card p {
             color: var(--text-muted);
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
+        }
+
+        .feature-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover .feature-img {
+            opacity: 1;
+        }
+
+        /* Downloads */
+        .downloads {
+            padding: 10rem 10%;
+            background: radial-gradient(circle at center, rgba(139, 92, 246, 0.05), transparent);
+            text-align: center;
+        }
+
+        .download-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            padding: 4rem;
+            border-radius: 40px;
+            backdrop-filter: blur(20px);
+        }
+
+        .version-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .download-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        footer {
+            padding: 5rem 10%;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 8rem;
+            }
+            .hero-desc {
+                margin: 0 auto 2.5rem;
+            }
+            .nav-links {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="bg-circle circle-1"></div>
-    <div class="bg-circle circle-2"></div>
-
-    <div class="container">
-        <div class="logo">M</div>
-        <h1>MWinPOS</h1>
-        <p>Your complete POS solution. Download the latest version to get the newest features and improvements.</p>
-        
-        <div class="platforms-title">Available Platforms</div>
-        <div class="button-group">
-            <a id="downloadWindowsLink" href="#" class="download-btn">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
-                Download for Windows
-            </a>
-            
-            <a id="downloadLinuxLink" href="#" class="download-btn linux">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M11.1 0C8.1.1 5.4 1.8 3.5 4.1C1.6 6.5.6 9.6.6 12.6c0 1.9.4 3.7 1.1 5.3 1.1-.9 2.5-1.5 4-1.5-.1-.7-.1-1.3-.1-1.9 0-3.3 2-6.2 5.1-7.2.2-.1.5-.2.8-.2.2 0 .4 0 .7.1 2.2.6 3.9 2 4.8 4l2.1-.2c0-1.8-.4-3.6-1.1-5.3-1.6-4.1-5.4-6.8-9.8-6.9zM7.5 13.9c-2 0-3.6 1.6-3.6 3.5 0 1.9 1.6 3.5 3.6 3.5s3.6-1.6 3.6-3.5-1.6-3.5-3.6-3.5zm9 0c-2 0-3.6 1.6-3.6 3.5 0 1.9 1.6 3.5 3.6 3.5 2 0 3.6-1.6 3.6-3.5 0-1.9-1.6-3.5-3.6-3.5zM22.2 11c-.3-1.2-1-2.2-1.9-2.9-1.1-1-2.5-1.5-4-1.5-.6 0-1.3.1-1.9.3-2.6.9-4.5 3.3-4.5 6.2 0 .6.1 1.2.2 1.8-1.5.2-2.9.8-4 1.7C5.2 17.5 4 19.3 4 21.3c0 .1 0 .2.1.3h15.8c.1-.1.1-.2.1-.3 0-2-1.2-3.8-2.6-4.8 1.4-1.3 2.5-2.9 3-4.8.1-.2.2-.5.2-.8z"/></svg>
-                Download for Linux
-            </a>
-        </div>
-
-        <div class="platforms-title">Coming Soon</div>
-        <div class="button-group">
-            <div class="download-btn disabled">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M17.523 15.3414c-.011-3.5652 2.903-5.2673 3.0366-5.3465-1.6558-2.42-4.2234-2.7504-5.0864-2.788-2.1524-.2164-4.2045 1.2687-5.305 1.2687-1.1116 0-2.793-1.2384-4.567-1.203-2.3168.0326-4.4607 1.3444-5.6443 3.4-2.413 4.185-.6154 10.3708 1.724 13.7508 1.1518 1.666 2.5126 3.5134 4.3015 3.4475 1.737-.0666 2.404-1.1197 4.5028-1.1197 2.0864 0 2.7042 1.1197 4.5205 1.087 1.8653-.032 3.0315-1.6917 4.168-3.3516 1.3146-1.9184 1.8546-3.7784 1.88-3.873-.0415-.0152-3.6195-1.3912-3.6338-5.5714M11.99 7.0272c.9575-1.1587 1.604-2.7663 1.428-4.3737-1.3855.0564-3.0487.9226-4.0374 2.1154-.8812 1.059-1.6547 2.7018-1.4426 4.281 1.5435.1194 3.097-1.0425 4.051-2.023"/></svg>
-                iOS App
-            </div>
-            
-            <div class="download-btn disabled">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M17.525 9.74h-.002a3.868 3.868 0 00-3.136-2.583v-1.74a.8.8 0 00-1.6 0v1.651a3.812 3.812 0 00-1.575.45c-.234.123-.457.26-.667.41V2.8a.8.8 0 00-1.6 0v15.968a.8.8 0 00.8.8h.08a10.655 10.655 0 00-1.155 3.01.8.8 0 101.551.402A8.995 8.995 0 0113.882 18h6.594a1.864 1.864 0 001.865-1.865V11.6a1.864 1.864 0 00-1.864-1.86h-2.952zm-1.895 2.11a1.29 1.29 0 110 2.58 1.29 1.29 0 010-2.58zM12.788 8.78c.84 0 1.54.67 1.54 1.498H9.7c0-.828.7-1.498 1.54-1.498h1.548zM6.55 12.2a2.3 2.3 0 00-2.298-2.29h-.9c-.93 0-1.684.757-1.684 1.68v4.912c0 .927.754 1.684 1.685 1.684h.9A2.3 2.3 0 006.55 15.89V12.2zm-2.4 4.386H3.34V11.59h.81c.382 0 .698.312.698.692v3.61c0 .385-.316.7-.698.7z"/></svg>
-                Android App
-            </div>
-        </div>
-
-        <div class="platforms-title">Documentation</div>
-        <div class="button-group">
-            <a href="manual.html?lang=en" class="download-btn" style="background: transparent; color: var(--text-main); border: 2px solid #cbd5e1; box-shadow: none; min-width: 140px; padding: 12px 20px;">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                Manual (EN)
-            </a>
-            <a href="manual.html?lang=th" class="download-btn" style="background: transparent; color: var(--text-main); border: 2px solid #cbd5e1; box-shadow: none; min-width: 140px; padding: 12px 20px;">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                คู่มือใช้งาน (TH)
-            </a>
-        </div>
-        
-        <div class="version-info">
-            <span id="versionText">Loading latest version data...</span>
-            <div class="status">
-                <div class="status-dot"></div>
-                <span>Server Online</span>
-            </div>
-        </div>
+    <div class="bg-glow">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
     </div>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-box">M</div>
+            MWinPOS
+        </div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#download">Download</a>
+            <a href="manual.html?lang=en">Docs</a>
+        </div>
+        <a href="#download" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">Get Started</a>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <span class="badge">Version 1.2.1 Available</span>
+            <h1>Modern POS for Modern Business.</h1>
+            <p class="hero-desc">The complete point-of-sale solution designed for speed, beauty, and reliability. Powered by Go and React.</p>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <a href="#download" class="btn btn-primary">Download Now</a>
+                <a href="#features" class="btn btn-outline">Explore Features</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <img src="pos_hero_mockup_1777361068433.png" alt="MWinPOS Interface" class="hero-img">
+        </div>
+    </header>
+
+    <section class="features" id="features">
+        <h2 class="section-title">Why MWinPOS?</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9m3 3H5m16 6h-9m3 3H5"/></svg>
+                </div>
+                <h3>Smart Checkout</h3>
+                <p>Ultra-fast product lookup and transaction processing with a beautiful, responsive grid.</p>
+                <img src="inventory_feature_mockup_1777361088430.png" alt="Checkout" class="feature-img">
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                </div>
+                <h3>Advanced Inventory</h3>
+                <p>Keep track of your stock across multiple locations with real-time sync and smart alerts.</p>
+                <img src="inventory_feature_mockup_1777361088430.png" alt="Stock" class="feature-img">
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </div>
+                <h3>Fully Customizable</h3>
+                <p>Personalize your experience with custom themes, fonts (Kanit, Prompt), and multi-language support.</p>
+                <img src="customization_feature_mockup_1777361105901.png" alt="Appearance" class="feature-img">
+            </div>
+        </div>
+    </section>
+
+    <section class="downloads" id="download">
+        <div class="download-box">
+            <h2>Ready to transform your retail?</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Download MWinPOS for your preferred platform and get started in minutes.</p>
+            
+            <span class="version-badge" id="versionText">Checking Latest Version...</span>
+            
+            <div class="download-links">
+                <a id="downloadWinLink" href="#" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+                    Windows
+                </a>
+                <a id="downloadLinLink" href="#" class="btn btn-outline">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.137 20.164 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                    Linux
+                </a>
+            </div>
+
+            <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 2rem;">
+                <a href="manual.html?lang=en" style="color: var(--text-muted); text-decoration: none; font-size: 0.875rem;">English Manual</a>
+                <a href="manual.html?lang=th" style="color: var(--text-muted); text-decoration: none; font-size: 0.875rem;">คู่มือภาษาไทย</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 MWinPOS Solution. All rights reserved.</p>
+        <p style="margin-top: 0.5rem; opacity: 0.5;">Modernized with Antigravity AI</p>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const downloadWinLink = document.getElementById('downloadWindowsLink');
-            const downloadLinLink = document.getElementById('downloadLinuxLink');
+            const downloadWinLink = document.getElementById('downloadWinLink');
+            const downloadLinLink = document.getElementById('downloadLinLink');
             const versionText = document.getElementById('versionText');
             
             try {
-                // Fetch Windows update data
                 const winResponse = await fetch('/erpnext/windows/update.json?t=' + new Date().getTime());
                 if (winResponse.ok) {
                     const winData = await winResponse.json();
                     downloadWinLink.href = winData.url;
-                    versionText.textContent = `Latest Windows Release: v${winData.version}`;
-                } else {
-                    downloadWinLink.href = 'MWinPOS-v1.0.0.exe'; 
+                    versionText.textContent = `Latest Release: v${winData.version}`;
                 }
 
-                // Fetch Linux update data
                 const linResponse = await fetch('/erpnext/linux/update.json?t=' + new Date().getTime());
                 if (linResponse.ok) {
                     const linData = await linResponse.json();
                     downloadLinLink.href = linData.url;
-                } else {
-                     downloadLinLink.href = 'MWinPOS-v1.0.0-linux'; 
                 }
-
             } catch (error) {
-                console.error(error);
-                downloadWinLink.href = 'MWinPOS-v1.0.0.exe'; 
-                downloadLinLink.href = 'MWinPOS-v1.0.0-linux'; 
-                versionText.textContent = 'Unable to securely verify latest version.';
+                console.error("Update check failed:", error);
+                versionText.textContent = 'Version check unavailable';
             }
         });
     </script>

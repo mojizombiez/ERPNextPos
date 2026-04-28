@@ -280,6 +280,7 @@ Settings are organized into tabs:
 | **Master PIN** | A universal override PIN (default: `123456`) — change this immediately |
 | **Auto-Lock Timeout** | Seconds of inactivity before the screen locks and requires a PIN |
 
+### Appearance
 - Choose from **21 themes** (10 dark, 11 light), including: Midnight, Amethyst, Emerald, Crimson, Makro, etc.
 - **Language Selection**: Switch between 🇺🇸 English and 🇹🇭 Thai using premium selection cards.
 - **Typography (Thai Fonts)**: Choose from various Thai fonts (Kanit, Prompt, Sukhumvit Set, Noto Sans Thai, etc.) for optimal readability. All fonts are loaded locally for offline use.

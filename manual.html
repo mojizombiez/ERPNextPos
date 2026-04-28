@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MWinPOS User Manual</title>
     <!-- External Fonts and Styles -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- Highlight.js for code block styling -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
     
     <style>
         :root {
-            --bg-color: #f8fafc;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --card-bg: #ffffff;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --border-color: #e2e8f0;
-            --code-bg: #f1f5f9;
+            --bg-color: #0f172a;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --card-bg: #1e293b;
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --code-bg: rgba(0, 0, 0, 0.3);
         }
 
         * {
@@ -31,11 +31,12 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            line-height: 1.6;
+            line-height: 1.7;
             font-size: 16px;
             display: flex;
             justify-content: center;
         }
+
 
         /* Nav Header */
         .header {
@@ -50,7 +51,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
         }
 
         .header .logo-area {
@@ -64,7 +65,7 @@
         .logo {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, var(--primary), #60a5fa);
+            background: linear-gradient(135deg, var(--primary), #a78bfa);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -76,36 +77,9 @@
 
         .header h1 {
             font-size: 20px;
-            font-weight: 600;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
             margin: 0;
-        }
-
-        .header .controls {
-            display: flex;
-            gap: 12px;
-        }
-
-        .lang-btn {
-            padding: 8px 16px;
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-main);
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .lang-btn:hover {
-            background: var(--border-color);
-        }
-
-        .lang-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
         }
 
         /* Container */
@@ -116,50 +90,56 @@
             margin-bottom: 60px;
             padding: 40px;
             background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            border-radius: 24px;
             border: 1px solid var(--border-color);
         }
 
         /* Markdown Styles */
         .markdown-body {
-            font-family: inherit;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
         }
 
         .markdown-body h1 {
-            font-size: 32px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 36px;
             font-weight: 800;
             margin-bottom: 24px;
             padding-bottom: 12px;
             border-bottom: 1px solid var(--border-color);
-            color: #0f172a;
+            color: white;
         }
 
         .markdown-body h2 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            color: #1e293b;
+            font-family: 'Outfit', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 48px;
+            margin-bottom: 20px;
+            color: white;
         }
 
         .markdown-body h3 {
-            font-size: 20px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
             font-weight: 600;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: #334155;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            color: var(--primary);
         }
 
         .markdown-body p {
-            margin-bottom: 16px;
-            color: #475569;
+            margin-bottom: 20px;
+            color: var(--text-muted);
+            font-size: 17px;
         }
 
         .markdown-body a {
             color: var(--primary);
             text-decoration: none;
+            font-weight: 600;
         }
+
 
         .markdown-body a:hover {
             text-decoration: underline;

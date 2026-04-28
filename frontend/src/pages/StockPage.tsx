@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Package, Search, Plus, Edit2, Trash2, X, Check, Printer, Info, Tag, Barcode, Eye, EyeOff, RefreshCw, LayoutGrid, List } from 'lucide-react';
+import { Package, Search, Plus, Edit2, Trash2, X, Check, Printer, Info, Tag, Barcode, Eye, EyeOff, RefreshCw, LayoutGrid, List, AlignJustify } from 'lucide-react';
 import { useModal } from '../context/ModalContext';
 import HelpTooltip from '../components/HelpTooltip';
 import { useTranslation } from 'react-i18next';
@@ -13,8 +13,8 @@ const StockPage = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [categories, setCategories] = useState<any[]>([]);
-    const [viewMode, setViewMode] = useState<'grid' | 'table'>(() => {
-        return (localStorage.getItem('stockViewMode') as 'grid' | 'table') || 'grid';
+    const [viewMode, setViewMode] = useState<'grid' | 'table' | 'list'>(() => {
+        return (localStorage.getItem('stockViewMode') as 'grid' | 'table' | 'list') || 'grid';
     });
 
     // Detailed form state
@@ -170,8 +170,19 @@ const StockPage = () => {
                                 localStorage.setItem('stockViewMode', 'grid');
                             }}
                             className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white shadow-lg text-slate-800' : 'text-slate-400 hover:text-white'}`}
+                            title="Grid View"
                         >
                             <LayoutGrid size={18} />
+                        </button>
+                        <button
+                            onClick={() => {
+                                setViewMode('list');
+                                localStorage.setItem('stockViewMode', 'list');
+                            }}
+                            className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-white shadow-lg text-slate-800' : 'text-slate-400 hover:text-white'}`}
+                            title="List View"
+                        >
+                            <AlignJustify size={18} />
                         </button>
                         <button
                             onClick={() => {
@@ -179,6 +190,7 @@ const StockPage = () => {
                                 localStorage.setItem('stockViewMode', 'table');
                             }}
                             className={`p-2 rounded-lg transition-all ${viewMode === 'table' ? 'bg-white shadow-lg text-slate-800' : 'text-slate-400 hover:text-white'}`}
+                            title="Table View"
                         >
                             <List size={18} />
                         </button>
@@ -339,6 +351,113 @@ const StockPage = () => {
                                                 </span>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : viewMode === 'list' ? (
+                    <div className="flex flex-col gap-3 pb-4">
+                        {loading ? (
+                            <div className="flex flex-col items-center justify-center gap-4 opacity-40 py-20">
+                                <RefreshCw className="animate-spin" size={48} />
+                                <span className="font-black uppercase tracking-widest text-sm">{t('stock.scanning')}</span>
+                            </div>
+                        ) : filteredProducts.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center gap-6 opacity-30 py-32 border-2 border-dashed border-white/5 rounded-[40px]">
+                                <Package size={80} strokeWidth={1} />
+                                <div className="text-center">
+                                    <p className="text-2xl font-black">{t('stock.no_items')}</p>
+                                    <p className="text-sm font-bold mt-2">{t('stock.adjust_filters')}</p>
+                                </div>
+                            </div>
+                        ) : filteredProducts.map(p => {
+                            const available = p.isAvailable === undefined || p.isAvailable === true;
+                            return (
+                                <div
+                                    key={p.id}
+                                    className={`glass-card group overflow-hidden border border-white/5 hover:border-white/10 transition-all duration-300 flex items-center p-3 gap-4 rounded-3xl ${!available ? 'opacity-50 grayscale' : ''}`}
+                                >
+                                    {/* Image Section */}
+                                    <div className="w-20 h-20 bg-white rounded-2xl overflow-hidden flex-shrink-0 border border-slate-100 flex items-center justify-center relative">
+                                        {p.localImagePath ? (
+                                            <img
+                                                src={`/images/${p.localImagePath.split(/[\\/]/).pop()}`}
+                                                className="w-full h-full object-contain"
+                                                alt={p.nameTH}
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9InN0ZWVsdmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIyNCIgcng9IjIiIHJ5PSIyIi8+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiLz48cG9seWdvbiBwb2ludHM9IjIxIDE1IDE2IDEwIDUgMjEgMjEgMjEiLz48L3N2Zz4=';
+                                                }}
+                                            />
+                                        ) : (
+                                            <Package size={32} className="text-slate-200" />
+                                        )}
+                                        {!available && (
+                                            <div className="absolute inset-0 bg-slate-900/60 flex items-center justify-center">
+                                                <span className="text-[8px] font-black text-white uppercase tracking-tighter">SOLD OUT</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Details Section */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest truncate">{p.itemCode}</span>
+                                            {p.isBundle && (
+                                                <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest">BUNDLE</span>
+                                            )}
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                {categories.find(c => c.id === p.productTypeId)?.name || 'General'}
+                                            </span>
+                                        </div>
+                                        <h3 className="font-black text-white text-lg leading-tight truncate">{p.nameTH}</h3>
+                                        <div className="text-xs text-slate-400 mt-1 line-clamp-1 opacity-60">{p.nameEN || 'No English identifier'}</div>
+                                    </div>
+
+                                    {/* Inventory & Pricing */}
+                                    <div className="flex items-center gap-8 px-4 border-l border-white/5">
+                                        <div className="text-center">
+                                            <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Stock</div>
+                                            <div className={`text-lg font-black ${p.remain <= 0 ? 'text-red-400' : 'text-white'}`}>
+                                                {p.remain} <span className="text-[10px] opacity-40 font-bold">UNIT</span>
+                                            </div>
+                                        </div>
+                                        <div className="text-right min-w-[100px]">
+                                            <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Unit Price</div>
+                                            <div className="text-xl font-black text-[var(--accent-primary)]">
+                                                ฿{p.price ? p.price.toLocaleString() : '0'}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex items-center gap-1.5 pl-4 border-l border-white/5">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handlePrintTag(p); }}
+                                            className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all border border-white/5"
+                                            title="Print Tag"
+                                        >
+                                            <Printer size={16} />
+                                        </button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); toggleAvailability(p); }}
+                                            className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all border border-white/5"
+                                            title={available ? "Mark Sold Out" : "Mark Available"}
+                                        >
+                                            {available ? <Eye size={16} /> : <EyeOff size={16} />}
+                                        </button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); setEditingProduct(p); setIsEditModalOpen(true); }}
+                                            className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all border border-white/5"
+                                        >
+                                            <Edit2 size={16} />
+                                        </button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); deleteProduct(p.id); }}
+                                            className="w-10 h-10 flex items-center justify-center bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all border border-red-500/20"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
                                     </div>
                                 </div>
                             );

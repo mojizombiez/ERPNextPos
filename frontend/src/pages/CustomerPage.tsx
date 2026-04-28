@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Plus, Edit2, Trash2, UserPlus, X, Save, Phone, Mail, MapPin, Users, Award, LayoutGrid, List } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, UserPlus, X, Save, Phone, Mail, MapPin, Users, Award, LayoutGrid, List, AlignJustify } from 'lucide-react';
 import { useModal } from '../context/ModalContext';
 import HelpTooltip from '../components/HelpTooltip';
 
@@ -12,8 +12,8 @@ const CustomerPage = () => {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCustomer, setEditingCustomer] = useState<any>(null);
-    const [viewMode, setViewMode] = useState<'grid' | 'table'>(() => {
-        return (localStorage.getItem('customerViewMode') as 'grid' | 'table') || 'grid';
+    const [viewMode, setViewMode] = useState<'grid' | 'table' | 'list'>(() => {
+        return (localStorage.getItem('customerViewMode') as 'grid' | 'table' | 'list') || 'grid';
     });
 
     const loadCustomers = async () => {
@@ -121,8 +121,19 @@ const CustomerPage = () => {
                                 localStorage.setItem('customerViewMode', 'grid');
                             }}
                             className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white shadow-lg text-slate-800' : 'text-slate-400 hover:text-white'}`}
+                            title="Grid View"
                         >
                             <LayoutGrid size={18} />
+                        </button>
+                        <button
+                            onClick={() => {
+                                setViewMode('list');
+                                localStorage.setItem('customerViewMode', 'list');
+                            }}
+                            className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-white shadow-lg text-slate-800' : 'text-slate-400 hover:text-white'}`}
+                            title="List View"
+                        >
+                            <AlignJustify size={18} />
                         </button>
                         <button
                             onClick={() => {
@@ -130,6 +141,7 @@ const CustomerPage = () => {
                                 localStorage.setItem('customerViewMode', 'table');
                             }}
                             className={`p-2 rounded-lg transition-all ${viewMode === 'table' ? 'bg-white shadow-lg text-slate-800' : 'text-slate-400 hover:text-white'}`}
+                            title="Table View"
                         >
                             <List size={18} />
                         </button>
@@ -313,6 +325,74 @@ const CustomerPage = () => {
                                         <span className="text-2xl font-black text-white">
                                             {(customer.loyalty_points || 0).toLocaleString()}
                                         </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : viewMode === 'list' ? (
+                        <div className="flex flex-col gap-3">
+                            {filteredCustomers.map((customer) => (
+                                <div key={customer.id} className="p-4 glass border border-[var(--border-color)] rounded-3xl flex items-center gap-4 group hover:border-[var(--accent-primary)]/50 transition-all hover:shadow-lg">
+                                    {/* Avatar */}
+                                    <div style={{
+                                        width: '48px',
+                                        height: '48px',
+                                        borderRadius: '14px',
+                                        background: 'var(--accent-gradient)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '1.25rem',
+                                        fontWeight: 'bold',
+                                        color: 'white',
+                                        flexShrink: 0
+                                    }}>
+                                        {customer.customer_name?.charAt(0).toUpperCase()}
+                                    </div>
+
+                                    {/* Identity */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-black text-lg text-[var(--text-primary)] truncate">{customer.customer_name}</h3>
+                                            <span className="text-xs text-[var(--text-secondary)] opacity-40 font-mono">ID: {customer.id}</span>
+                                        </div>
+                                        <div className="flex items-center gap-4 mt-0.5">
+                                            <div className="flex items-center gap-1.5 text-sm text-[var(--text-secondary)]">
+                                                <Phone size={14} className="opacity-60" />
+                                                <span className="font-bold">{customer.mobile_no}</span>
+                                            </div>
+                                            {customer.email_id && (
+                                                <div className="flex items-center gap-1.5 text-sm text-[var(--text-secondary)]">
+                                                    <Mail size={14} className="opacity-60" />
+                                                    <span className="truncate max-w-[150px]">{customer.email_id}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Address (Hidden on very small list) */}
+                                    <div className="hidden lg:flex flex-1 items-center gap-2 text-sm text-[var(--text-secondary)] opacity-60 max-w-[300px]">
+                                        <MapPin size={14} className="flex-shrink-0" />
+                                        <span className="truncate">{customer.primary_address || 'No address registered'}</span>
+                                    </div>
+
+                                    {/* Loyalty Badge */}
+                                    <div className="px-4 py-2 bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 rounded-2xl flex items-center gap-2">
+                                        <Award size={16} className="text-[var(--accent-primary)]" />
+                                        <div className="text-right">
+                                            <div className="text-[10px] font-black uppercase tracking-widest text-[var(--accent-primary)] opacity-60 leading-none">Points</div>
+                                            <div className="text-sm font-black text-[var(--accent-primary)]">{(customer.loyalty_points || 0).toLocaleString()}</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-all ml-2">
+                                        <button className="p-2.5 hover:bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] rounded-xl transition-colors" onClick={() => openEdit(customer)}>
+                                            <Edit2 size={16} />
+                                        </button>
+                                        <button className="p-2.5 hover:bg-red-500/10 text-red-500 rounded-xl transition-colors" onClick={() => handleDelete(customer.id)}>
+                                            <Trash2 size={16} />
+                                        </button>
                                     </div>
                                 </div>
                             ))}
