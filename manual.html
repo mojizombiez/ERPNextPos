@@ -211,6 +211,56 @@
             font-weight: 700;
         }
 
+        /* Mobile TOC Toggle */
+        .toc-toggle {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5);
+            z-index: 1001;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+        }
+
+        .toc-toggle:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.6);
+        }
+
+        .toc-toggle.active {
+            transform: rotate(90deg);
+            background: #1f2937;
+        }
+
+        /* Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
         /* Content Area */
         .content-container {
             flex-grow: 1;
@@ -403,23 +453,66 @@
         /* Responsive */
         @media (max-width: 1024px) {
             .sidebar {
-                display: none;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 280px;
+                height: 100vh;
+                background: var(--bg);
+                z-index: 1000;
+                padding: 40px 20px;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                border-right: 1px solid var(--glass-border);
+                box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+            }
+            .sidebar.active {
+                left: 0;
+            }
+            .toc-toggle {
+                display: flex;
             }
             .main-layout {
                 justify-content: center;
+                padding: 0 3%;
             }
         }
 
         @media (max-width: 768px) {
+            .main-layout {
+                margin-top: 70px;
+            }
             .content-container {
-                padding: 30px;
-                border-radius: 20px;
+                padding: 30px 20px;
+                border-radius: 24px;
+                border-left: none;
+                border-right: none;
+                width: 100%;
             }
             .header {
-                padding: 12px 5%;
+                padding: 10px 5%;
+            }
+            .header h1 {
+                font-size: 1.125rem;
+            }
+            .logo-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+            .lang-btn {
+                padding: 5px 10px;
+                font-size: 0.75rem;
             }
             .markdown-body h1 {
-                font-size: 2rem;
+                font-size: 1.85rem;
+                margin-bottom: 24px;
+            }
+            .markdown-body h2 {
+                font-size: 1.5rem;
+                margin-top: 40px;
+            }
+            .markdown-body p {
+                font-size: 1rem;
             }
         }
     </style>
@@ -430,6 +523,11 @@
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
     </div>
+
+    <button class="toc-toggle" id="tocToggle" onclick="toggleSidebar()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
     <header class="header">
         <a href="index.html" class="logo-area">
@@ -443,7 +541,7 @@
     </header>
 
     <div class="main-layout">
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="toc-title">On this page</div>
             <nav id="toc">
                 <ul class="toc-list" id="toc-list">
@@ -573,8 +671,35 @@
                         }
                     });
                 });
+
+                // Add click handler for TOC links on mobile to close sidebar
+                links.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (window.innerWidth <= 1024) {
+                            toggleSidebar();
+                        }
+                    });
+                });
             }
         });
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const toggle = document.getElementById('tocToggle');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            toggle.classList.toggle('active');
+            
+            if (sidebar.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+                toggle.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+            } else {
+                document.body.style.overflow = 'auto';
+                toggle.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+            }
+        }
     </script>
 </body>
 </html>
