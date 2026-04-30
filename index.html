@@ -143,6 +143,33 @@
             text-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
+        .lang-switch {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: 1.5rem;
+            padding-left: 1.5rem;
+            border-left: 1px solid var(--glass-border);
+        }
+
+        .lang-btn {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
         /* Hero Section */
         .hero {
             padding: 12rem 10% 8rem;
@@ -552,12 +579,16 @@
             MWinPOS
         </a>
         <div class="nav-links">
-            <a href="#features">Features</a>
-            <a href="#experience">Experience</a>
-            <a href="#download">Download</a>
-            <a href="manual.html?lang=en">Documentation</a>
+            <a href="#features" data-i18n="nav_features">Features</a>
+            <a href="#experience" data-i18n="nav_experience">Experience</a>
+            <a href="#download" data-i18n="nav_download">Download</a>
+            <a href="manual.html" id="doc-link" data-i18n="nav_docs">Documentation</a>
+            <div class="lang-switch">
+                <a href="?lang=en" id="lang-en" class="lang-btn">EN</a>
+                <a href="?lang=th" id="lang-th" class="lang-btn">TH</a>
+            </div>
         </div>
-        <a href="#download" class="btn btn-primary" style="padding: 0.75rem 1.5rem; border-radius: 12px; font-size: 0.875rem;">Get Started</a>
+        <a href="#download" class="btn btn-primary" style="padding: 0.75rem 1.5rem; border-radius: 12px; font-size: 0.875rem;" data-i18n="nav_get_started">Get Started</a>
     </nav>
 
     <header class="hero">
@@ -566,14 +597,14 @@
                 <div class="dot"></div>
                 v1.2.2 • Enhanced Discount & Large UI
             </div>
-            <h1>Smart POS for Modern Retail.</h1>
-            <p class="hero-desc">Experience the ultimate point-of-sale system built for speed, beauty, and offline-first reliability. Powered by Go & React.</p>
+            <h1><span data-i18n="hero_title">Smart POS for Modern Retail.</span></h1>
+            <p class="hero-desc" data-i18n="hero_desc">Experience the ultimate point-of-sale system built for speed, beauty, and offline-first reliability. Powered by Go & React.</p>
             <div style="display: flex; gap: 1.25rem; flex-wrap: wrap;">
                 <a href="#download" class="btn btn-primary">
-                    Download Free
+                    <span data-i18n="btn_download">Download Free</span>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 </a>
-                <a href="#features" class="btn btn-outline">Explore Features</a>
+                <a href="#features" class="btn btn-outline" data-i18n="btn_explore">Explore Features</a>
             </div>
         </div>
         <div class="hero-visual">
@@ -589,19 +620,19 @@
         <div class="stats-bar">
             <div class="stat-item">
                 <span class="stat-value">50ms</span>
-                <span class="stat-label">Response Time</span>
+                <span class="stat-label" data-i18n="stat_response">Response Time</span>
             </div>
             <div class="stat-item">
                 <span class="stat-value">100%</span>
-                <span class="stat-label">Offline Ready</span>
+                <span class="stat-label" data-i18n="stat_offline">Offline Ready</span>
             </div>
             <div class="stat-item">
                 <span class="stat-value">ERPNext</span>
-                <span class="stat-label">Native Sync</span>
+                <span class="stat-label" data-i18n="stat_sync">Native Sync</span>
             </div>
             <div class="stat-item">
-                <span class="stat-value">Multi</span>
-                <span class="stat-label">Language UI</span>
+                <span class="stat-value" data-i18n="stat_multi_val">Multi</span>
+                <span class="stat-label" data-i18n="stat_multi_label">Language UI</span>
             </div>
         </div>
     </section>
@@ -684,8 +715,8 @@
 
     <section id="download" class="cta-section">
         <div class="download-card">
-            <h2 style="font-size: 3rem; margin-bottom: 1rem;">Step into the future.</h2>
-            <p style="color: var(--text-muted); font-size: 1.25rem; margin-bottom: 3rem;">Download MWinPOS today and elevate your business experience.</p>
+            <h2 style="font-size: 3rem; margin-bottom: 1rem;" data-i18n="cta_title">Step into the future.</h2>
+            <p style="color: var(--text-muted); font-size: 1.25rem; margin-bottom: 3rem;" data-i18n="cta_desc">Download MWinPOS today and elevate your business experience.</p>
             
             <div style="display: inline-block; padding: 0.5rem 1.25rem; background: var(--primary); border-radius: 8px; font-weight: 800; font-size: 0.75rem; margin-bottom: 2rem; box-shadow: var(--neon-glow);" id="versionText">
                 Fetching Latest Release...
@@ -738,7 +769,74 @@
             }
         }
 
+        // Language System
+        const translations = {
+            en: {
+                nav_features: "Features",
+                nav_experience: "Experience",
+                nav_download: "Download",
+                nav_docs: "Documentation",
+                nav_get_started: "Get Started",
+                hero_title: "Smart POS for Modern Retail.",
+                hero_desc: "Experience the ultimate point-of-sale system built for speed, beauty, and offline-first reliability. Powered by Go & React.",
+                btn_download: "Download Free",
+                btn_explore: "Explore Features",
+                stat_response: "Response Time",
+                stat_offline: "Offline Ready",
+                stat_sync: "Native Sync",
+                stat_multi_val: "Multi",
+                stat_multi_label: "Language UI",
+                cta_title: "Step into the future.",
+                cta_desc: "Download MWinPOS today and elevate your business experience.",
+                version_fetching: "Fetching Latest Release..."
+            },
+            th: {
+                nav_features: "ฟีเจอร์",
+                nav_experience: "ประสบการณ์",
+                nav_download: "ดาวน์โหลด",
+                nav_docs: "คู่มือการใช้งาน",
+                nav_get_started: "เริ่มใช้งานเลย",
+                hero_title: "สมาร์ท POS สำหรับร้านค้ายุคใหม่",
+                hero_desc: "สัมผัสประสบการณ์ระบบขายหน้าร้านที่ดีที่สุด สร้างขึ้นเพื่อความรวดเร็ว ความสวยงาม และการทำงานแบบออฟไลน์ที่เชื่อถือได้ ขับเคลื่อนด้วย Go และ React",
+                btn_download: "ดาวน์โหลดฟรี",
+                btn_explore: "สำรวจฟีเจอร์",
+                stat_response: "เวลาตอบสนอง",
+                stat_offline: "พร้อมใช้งานออฟไลน์",
+                stat_sync: "ซิงค์ข้อมูลอัตโนมัติ",
+                stat_multi_val: "หลายภาษา",
+                stat_multi_label: "UI รองรับภาษาไทย",
+                cta_title: "ก้าวสู่อนาคต",
+                cta_desc: "ดาวน์โหลด MWinPOS วันนี้ เพื่อยกระดับประสบการณ์ธุรกิจของคุณ",
+                version_fetching: "กำลังดึงข้อมูลเวอร์ชันล่าสุด..."
+            }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const lang = urlParams.get('lang') || 'en';
+
+        function applyTranslations() {
+            const t = translations[lang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.textContent = t[key];
+            });
+
+            // Update manual link
+            const docLink = document.getElementById('doc-link');
+            if (docLink) docLink.href = `manual.html?lang=${lang}`;
+
+            // Update active state
+            document.getElementById(`lang-${lang}`).classList.add('active');
+            
+            // Apply font family for Thai
+            if (lang === 'th') {
+                document.body.style.fontFamily = "'Kanit', 'Inter', sans-serif";
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
+            applyTranslations();
+
             const downloadWinLink = document.getElementById('downloadWinLink');
             const downloadLinLink = document.getElementById('downloadLinLink');
             const versionText = document.getElementById('versionText');
