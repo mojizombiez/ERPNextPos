@@ -8,6 +8,8 @@ export function AddCategory(arg1:string):Promise<void>;
 
 export function AddOrder(arg1:models.CheckoutOrderModel):Promise<string>;
 
+export function AddPaymentMethod(arg1:models.PaymentMethod):Promise<void>;
+
 export function AddRefundOrder(arg1:models.CheckoutOrderModel,arg2:number):Promise<string>;
 
 export function CheckApiUrl(arg1:string):Promise<string>;
@@ -34,6 +36,8 @@ export function DeleteCategory(arg1:number):Promise<void>;
 
 export function DeleteCustomer(arg1:number):Promise<void>;
 
+export function DeletePaymentMethod(arg1:number):Promise<void>;
+
 export function DeleteProduct(arg1:number):Promise<void>;
 
 export function DeleteStaff(arg1:number):Promise<void>;
@@ -41,6 +45,10 @@ export function DeleteStaff(arg1:number):Promise<void>;
 export function DownloadAndInstallUpdate(arg1:string):Promise<void>;
 
 export function ExportSettings():Promise<void>;
+
+export function GeneratePromptPayQR(arg1:string,arg2:number):Promise<string>;
+
+export function GeneratePromptPayTemplate(arg1:string):Promise<string>;
 
 export function GetAccounts():Promise<Array<Record<string, string>>>;
 
@@ -76,6 +84,8 @@ export function GetNetworkPing():Promise<number>;
 
 export function GetOrders(arg1:string,arg2:string,arg3:models.OrderFilteringModel):Promise<models.OrderPosSearchResultModelOffline>;
 
+export function GetPaymentMethods():Promise<Array<models.PaymentMethod>>;
+
 export function GetPosProfileDetails(arg1:string):Promise<Record<string, string>>;
 
 export function GetPosProfiles():Promise<Array<string>>;
@@ -87,6 +97,8 @@ export function GetPrinters():Promise<Array<string>>;
 export function GetProducts(arg1:string):Promise<Array<models.Product>>;
 
 export function GetPromotions():Promise<Array<models.Promotion>>;
+
+export function GetReportStats(arg1:string,arg2:string,arg3:boolean):Promise<models.ReportStats>;
 
 export function GetScreens():Promise<Array<frontend.Screen>>;
 
@@ -101,6 +113,8 @@ export function GetSyncLogs():Promise<Array<models.SyncLog>>;
 export function GetSyncStatus():Promise<Record<string, any>>;
 
 export function GetUnsyncedOrderCount():Promise<number>;
+
+export function GetVideoFiles(arg1:string):Promise<Array<string>>;
 
 export function GetWarehouses():Promise<Array<Record<string, string>>>;
 
@@ -130,6 +144,8 @@ export function PrintPriceTag(arg1:models.Product):Promise<void>;
 
 export function PrintSlip(arg1:models.CheckoutOrderModel):Promise<void>;
 
+export function Quit():Promise<void>;
+
 export function SaveCustomer(arg1:models.Customer):Promise<void>;
 
 export function SaveProduct(arg1:models.Product):Promise<void>;
@@ -142,6 +158,8 @@ export function SaveStaff(arg1:models.Staff):Promise<void>;
 
 export function SelectAndSaveImage():Promise<string>;
 
+export function SelectFolder():Promise<string>;
+
 export function SendReceipt(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function SyncAllData():Promise<void>;
@@ -151,6 +169,8 @@ export function SyncCustomersOnly():Promise<void>;
 export function SyncProductsOnly():Promise<void>;
 
 export function UpdateOrderMetadata(arg1:string,arg2:string,arg3:string,arg4:string,arg5:string):Promise<void>;
+
+export function UpdatePaymentMethod(arg1:models.PaymentMethod):Promise<void>;
 
 export function UpdateProductAvailability(arg1:string,arg2:boolean):Promise<void>;
 

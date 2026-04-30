@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Globe, RefreshCw, CheckCircle, AlertCircle, Lock, Palette, Printer, Barcode, Languages, Monitor, Trash2, Database, Download, Upload } from 'lucide-react';
+import { Globe, RefreshCw, CheckCircle, AlertCircle, Lock, Palette, Printer, Barcode, Languages, Monitor, Trash2, Database, Download, Upload, PlaySquare, Plus, X, FolderOpen } from 'lucide-react';
 import AdminAuthWrapper from '../components/AdminAuthWrapper';
 import { useModal } from '../context/ModalContext';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,7 @@ const SettingsPage = () => {
     const [autoLockTimeout, setAutoLockTimeout] = useState('300');
     const [masterPin, setMasterPin] = useState('');
     const [updateUrl, setUpdateUrl] = useState('');
-    const [activeTab, setActiveTab] = useState<'general' | 'connection' | 'security' | 'devices' | 'appearance'>('general');
+    const [activeTab, setActiveTab] = useState<'general' | 'connection' | 'security' | 'devices' | 'appearance' | 'payments' | 'advertising'>('general');
     const [loading, setLoading] = useState(true);
     const [isTesting, setIsTesting] = useState(false);
     const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -65,6 +65,14 @@ const SettingsPage = () => {
     const [showHistory, setShowHistory] = useState(false);
     const [debugMode, setDebugMode] = useState(false);
     const [selectedFont, setSelectedFont] = useState('inter');
+    const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [editingPayment, setEditingPayment] = useState<any>(null);
+    const [promptPayIdInput, setPromptPayIdInput] = useState('');
+    const [adVideoFolder, setAdVideoFolder] = useState('');
+    const [adVideoLinks, setAdVideoLinks] = useState<string[]>([]);
+    const [adLinkInput, setAdLinkInput] = useState('');
+    const [adPlaybackMode, setAdPlaybackMode] = useState<'sequence' | 'random'>('sequence');
 
     const thaiFonts = [
         { id: 'inter', name: 'Default (Inter)', family: "'Inter', system-ui, -apple-system, sans-serif", source: 'local' },
@@ -159,6 +167,18 @@ const SettingsPage = () => {
             setSelectedFont(font || 'inter');
             const version = await (window.go.main.App as any).GetAppVersion();
             setCurrentAppVersion(version || 'Unknown');
+
+            const videoFolder = await window.go.main.App.GetSetting('AdVideoFolder');
+            const videoLinks = await window.go.main.App.GetSetting('AdVideoLinks');
+            const playbackMode = await window.go.main.App.GetSetting('AdPlaybackMode');
+
+            setAdVideoFolder(videoFolder || '');
+            if (videoLinks) {
+                try {
+                    setAdVideoLinks(JSON.parse(videoLinks));
+                } catch (e) { setAdVideoLinks([]); }
+            }
+            setAdPlaybackMode((playbackMode as any) || 'sequence');
         } catch (err) {
             console.error("Failed to load settings", err);
         } finally {
@@ -194,6 +214,9 @@ const SettingsPage = () => {
             await window.go.main.App.SaveSetting('Cached_PriceList', priceList, 3);
             await window.go.main.App.SaveSetting('DebugMode', debugMode.toString(), 6);
             await window.go.main.App.SaveSetting('SelectedFont', selectedFont, 3);
+            await window.go.main.App.SaveSetting('AdVideoFolder', adVideoFolder, 3);
+            await window.go.main.App.SaveSetting('AdVideoLinks', JSON.stringify(adVideoLinks), 5); // DataTypeJSON
+            await window.go.main.App.SaveSetting('AdPlaybackMode', adPlaybackMode, 3);
 
             // Apply language immediately if it changed
             if (i18n.language !== selectedLanguage) {
@@ -216,7 +239,10 @@ const SettingsPage = () => {
                 title: t('common.success'),
                 message: t('settings.save_success_msg', { defaultValue: 'Your settings have been saved successfully!' }),
                 type: 'success',
-                onConfirm: () => window.location.reload()
+                onConfirm: () => {
+                    // No reload needed, as most settings are applied dynamically.
+                    // If a reload is ever needed, it should be handled specifically.
+                }
             });
         } catch (err) {
             showModal({
@@ -433,6 +459,57 @@ const SettingsPage = () => {
         } catch (err) { console.error(err); }
     };
 
+    const fetchPaymentMethods = async () => {
+        try {
+            const list = await window.go.main.App.GetPaymentMethods();
+            setPaymentMethods(list || []);
+        } catch (err) { console.error("Failed to fetch payment methods", err); }
+    };
+
+    const savePaymentMethod = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            if (editingPayment.id) {
+                await window.go.main.App.UpdatePaymentMethod(editingPayment);
+            } else {
+                await window.go.main.App.AddPaymentMethod(editingPayment);
+            }
+            setShowPaymentModal(false);
+            setEditingPayment(null);
+            fetchPaymentMethods();
+            showModal({ title: t('common.success'), message: 'Payment method saved successfully.', type: 'success' });
+        } catch (err) {
+            showModal({ title: t('common.error'), message: 'Failed to save payment method: ' + err, type: 'error' });
+        }
+    };
+
+    const deletePaymentMethod = async (id: number) => {
+        showModal({
+            title: t('common.confirm'),
+            message: t('settings.payments.delete_confirm'),
+            type: 'error',
+            onConfirm: async () => {
+                try {
+                    await window.go.main.App.DeletePaymentMethod(id);
+                    fetchPaymentMethods();
+                } catch (err) {
+                    console.error("Failed to delete payment method", err);
+                }
+            }
+        });
+    };
+
+    const handleGenerateTemplate = async () => {
+        if (!promptPayIdInput) return;
+        try {
+            const template = await window.go.main.App.GeneratePromptPayTemplate(promptPayIdInput);
+            setEditingPayment({ ...editingPayment, qrTemplate: template });
+            setPromptPayIdInput('');
+        } catch (err) {
+            console.error("Failed to generate template", err);
+        }
+    };
+
     const fetchPriceLists = async () => {
         setIsFetchingPriceLists(true);
         try {
@@ -547,6 +624,7 @@ const SettingsPage = () => {
         detectScreens();
         fetchWarehouses();
         fetchModes();
+        fetchPaymentMethods();
         fetchPosProfiles();
         fetchPriceLists();
     }, []);
@@ -575,6 +653,12 @@ const SettingsPage = () => {
                         {t('settings.tabs.general')}
                     </button>
                     <button
+                        onClick={() => setActiveTab('connection')}
+                        className={`px-10 py-5 rounded-full font-black text-lg transition-all duration-300 ${activeTab === 'connection' ? 'bg-[var(--accent-gradient)] text-white shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)] scale-105' : 'text-gray-500 hover:bg-white/50 hover:text-[var(--text-primary)]'}`}
+                    >
+                        {t('settings.tabs.connection', 'Connection')}
+                    </button>
+                    <button
                         onClick={() => setActiveTab('devices')}
                         className={`px-10 py-5 rounded-full font-black text-lg transition-all duration-300 ${activeTab === 'devices' ? 'bg-[var(--accent-gradient)] text-white shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)] scale-105' : 'text-gray-500 hover:bg-white/50 hover:text-[var(--text-primary)]'}`}
                     >
@@ -591,6 +675,18 @@ const SettingsPage = () => {
                         className={`px-10 py-5 rounded-full font-black text-lg transition-all duration-300 ${activeTab === 'appearance' ? 'bg-[var(--accent-gradient)] text-white shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)] scale-105' : 'text-gray-500 hover:bg-white/50 hover:text-[var(--text-primary)]'}`}
                     >
                         {t('settings.tabs.appearance')}
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('payments')}
+                        className={`px-10 py-5 rounded-full font-black text-lg transition-all duration-300 ${activeTab === 'payments' ? 'bg-[var(--accent-gradient)] text-white shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)] scale-105' : 'text-gray-500 hover:bg-white/50 hover:text-[var(--text-primary)]'}`}
+                    >
+                        {t('settings.tabs.payments')}
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('advertising')}
+                        className={`px-10 py-5 rounded-full font-black text-lg transition-all duration-300 ${activeTab === 'advertising' ? 'bg-[var(--accent-gradient)] text-white shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)] scale-105' : 'text-gray-500 hover:bg-white/50 hover:text-[var(--text-primary)]'}`}
+                    >
+                        {t('settings.tabs.advertising', 'Advertising')}
                     </button>
                 </div>
 
@@ -953,7 +1049,7 @@ const SettingsPage = () => {
                                         <Lock size={24} />
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-bold flex items-center gap-2">Maintenance &amp; Security <HelpTooltip titleKey="help.settings_security.title" contentKey="help.settings_security.content" size={14} /></h2>
+                                        <h2 className="text-xl font-bold flex items-center gap-2">Maintenance & Security <HelpTooltip titleKey="help.settings_security.title" contentKey="help.settings_security.content" size={14} /></h2>
                                         <p className="text-sm text-gray-400">Sync behavior and access control</p>
                                     </div>
                                 </div>
@@ -1044,7 +1140,54 @@ const SettingsPage = () => {
                                 </div>
                             </div>
 
-                            {appMode === 'online' && (
+                            {/* Danger Zone Card */}
+                            <div className="card flex flex-col p-8 bg-red-500/5 backdrop-blur-xl border-red-500/20 shadow-xl rounded-[32px]">
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-600">
+                                        <AlertCircle size={24} />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-bold text-red-600">{t('settings.danger_zone.title')}</h2>
+                                        <p className="text-sm text-red-400/60">{t('settings.danger_zone.reset_desc')}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex items-center justify-between p-6 bg-red-500/5 rounded-2xl border border-red-500/10">
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-red-700/80">Clear Transactions & Master Data</span>
+                                            <span className="text-sm text-red-600/50">Wipe products, orders, and customers but keep settings.</span>
+                                        </div>
+                                        <button
+                                            onClick={handleClearData}
+                                            className="px-6 py-3 bg-red-600/20 hover:bg-red-600/30 text-red-600 rounded-xl font-bold transition-all border border-red-500/20 flex items-center gap-2"
+                                        >
+                                            <Trash2 size={18} />
+                                            Clear Data
+                                        </button>
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-6 bg-red-500/5 rounded-2xl border border-red-500/10">
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-red-700/80">{t('settings.danger_zone.reset_button')}</span>
+                                            <span className="text-sm text-red-600/50">{t('settings.danger_zone.reset_desc')}</span>
+                                        </div>
+                                        <button
+                                            onClick={handleHardReset}
+                                            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-red-500/30 flex items-center gap-2"
+                                        >
+                                            <RefreshCw size={18} />
+                                            {t('settings.danger_zone.reset_button')}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'connection' && (
+                        <div className="flex flex-col gap-6">
+                            {appMode === 'online' ? (
                                 <div className="card flex flex-col p-8 bg-[var(--glass-bg)] backdrop-blur-xl border-[var(--border-color)] shadow-xl rounded-[32px]">
                                     <div className="flex items-center gap-4 mb-6">
                                         <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-600">
@@ -1171,50 +1314,13 @@ const SettingsPage = () => {
                                         </div>
                                     </div>
                                 </div>
+                            ) : (
+                                <div className="p-12 text-center card bg-amber-50/20 border-amber-200">
+                                    <Globe size={48} className="mx-auto mb-4 text-amber-500 opacity-50" />
+                                    <h3 className="text-xl font-bold text-amber-900">Online Features Disabled</h3>
+                                    <p className="text-gray-500 max-w-md mx-auto">Switch to 'Online Mode' in General settings to configure ERPNext connection.</p>
+                                </div>
                             )}
-
-                            {/* Danger Zone Card */}
-                            <div className="card flex flex-col p-8 bg-red-500/5 backdrop-blur-xl border-red-500/20 shadow-xl rounded-[32px]">
-                                <div className="flex items-center gap-4 mb-6">
-                                    <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-600">
-                                        <AlertCircle size={24} />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-bold text-red-600">{t('settings.danger_zone.title')}</h2>
-                                        <p className="text-sm text-red-400/60">{t('settings.danger_zone.reset_desc')}</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col gap-4">
-                                    <div className="flex items-center justify-between p-6 bg-red-500/5 rounded-2xl border border-red-500/10">
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-red-700/80">Clear Transactions & Master Data</span>
-                                            <span className="text-sm text-red-600/50">Wipe products, orders, and customers but keep settings.</span>
-                                        </div>
-                                        <button
-                                            onClick={handleClearData}
-                                            className="px-6 py-3 bg-red-600/20 hover:bg-red-600/30 text-red-600 rounded-xl font-bold transition-all border border-red-500/20 flex items-center gap-2"
-                                        >
-                                            <Trash2 size={18} />
-                                            Clear Data
-                                        </button>
-                                    </div>
-
-                                    <div className="flex items-center justify-between p-6 bg-red-500/5 rounded-2xl border border-red-500/10">
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-red-700/80">{t('settings.danger_zone.reset_button')}</span>
-                                            <span className="text-sm text-red-600/50">{t('settings.danger_zone.reset_desc')}</span>
-                                        </div>
-                                        <button
-                                            onClick={handleHardReset}
-                                            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-red-500/30 flex items-center gap-2"
-                                        >
-                                            <RefreshCw size={18} />
-                                            {t('settings.danger_zone.reset_button')}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     )}
 
@@ -1805,6 +1911,199 @@ const SettingsPage = () => {
                         </div>
                     )}
 
+                    {activeTab === 'payments' && (
+                        <div className="flex flex-col gap-6">
+                            <div className="card flex flex-col p-8 bg-[var(--glass-bg)] border-[var(--border-color)] shadow-xl rounded-[32px]">
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-600">
+                                        <Database size={24} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h2 className="text-xl font-bold">{t('settings.payments.title', 'Payment Methods')}</h2>
+                                        <p className="text-sm text-gray-400">{t('settings.payments.subtitle', 'Manage acceptable payment types and dynamic QR generation')}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => { setEditingPayment({ name: '', type: 'cash', isActive: true, qrTemplate: '' }); setShowPaymentModal(true); }}
+                                        className="btn bg-indigo-500 hover:bg-indigo-600 text-white rounded-full px-6 py-2 flex items-center gap-2 font-bold shadow-lg shadow-indigo-500/30"
+                                    >
+                                        + {t('settings.payments.add', 'Add Payment Method')}
+                                    </button>
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr className="border-b border-[var(--border-color)] text-sm uppercase tracking-wider text-[var(--text-secondary)]">
+                                                <th className="pb-4 font-black">{t('settings.payments.name', 'Name')}</th>
+                                                <th className="pb-4 font-black">{t('settings.payments.type', 'Type')}</th>
+                                                <th className="pb-4 font-black text-center">{t('settings.payments.active', 'Active')}</th>
+                                                <th className="pb-4 font-black text-right">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {paymentMethods.map(method => (
+                                                <tr key={method.id} className="border-b border-[var(--border-color)] hover:bg-[var(--glass-bg-hover)] transition-colors">
+                                                    <td className="py-4 font-bold">{method.name}</td>
+                                                    <td className="py-4">
+                                                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-500/10 text-gray-500 uppercase tracking-widest">{method.type}</span>
+                                                    </td>
+                                                    <td className="py-4 text-center">
+                                                        <span className={`w-3 h-3 rounded-full inline-block ${method.isActive ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                                                    </td>
+                                                    <td className="py-4 text-right flex items-center justify-end gap-2">
+                                                        <button
+                                                            onClick={() => { setEditingPayment(method); setShowPaymentModal(true); }}
+                                                            className="px-4 py-2 rounded-xl font-bold bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-all text-sm"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button
+                                                            onClick={() => deletePaymentMethod(method.id)}
+                                                            className="px-4 py-2 rounded-xl font-bold bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all text-sm"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            {paymentMethods.length === 0 && (
+                                                <tr>
+                                                    <td colSpan={4} className="py-8 text-center text-gray-400 font-bold">No payment methods configured.</td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'advertising' && (
+                        <div className="flex flex-col gap-6 animate-in slide-in-from-bottom-4">
+                            <div className="card flex flex-col p-8 bg-[var(--glass-bg)] border-[var(--border-color)] shadow-xl rounded-[32px]">
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-600">
+                                        <PlaySquare size={24} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h2 className="text-xl font-bold">Advertising & Media</h2>
+                                        <p className="text-sm text-gray-400">Manage videos and promotions for the customer display</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col gap-8">
+                                    {/* Local Folder Section */}
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-black uppercase tracking-wider text-[var(--text-primary)] opacity-80">Local Video Folder</span>
+                                            <span className="text-xs text-[var(--text-secondary)]">Play all videos found in a local directory</span>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <div className="flex-1 glass p-3 rounded-xl border border-[var(--border-color)] flex items-center gap-2 overflow-hidden" style={{ minWidth: 0 }}>
+                                                <FolderOpen size={18} className="text-[var(--text-secondary)] flex-shrink-0" />
+                                                <span className="text-sm truncate text-[var(--text-primary)]">{adVideoFolder || 'No folder selected'}</span>
+                                            </div>
+                                            <button 
+                                                onClick={async () => {
+                                                    const folder = await (window as any).go.main.App.SelectFolder();
+                                                    if (folder) setAdVideoFolder(folder);
+                                                }}
+                                                className="btn-secondary px-6 rounded-xl flex items-center gap-2 flex-shrink-0"
+                                            >
+                                                Browse
+                                            </button>
+                                            {adVideoFolder && (
+                                                <button 
+                                                    onClick={() => setAdVideoFolder('')}
+                                                    className="p-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all flex-shrink-0"
+                                                >
+                                                    <X size={18} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Video Links Section */}
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-black uppercase tracking-wider text-[var(--text-primary)] opacity-80">Online Video Links</span>
+                                            <span className="text-xs text-[var(--text-secondary)]">Direct links to mp4/webm videos or streaming URLs</span>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <input 
+                                                className="glass flex-1 p-3 rounded-xl border border-[var(--border-color)] text-[var(--text-primary)]"
+                                                placeholder="https://example.com/video.mp4"
+                                                value={adLinkInput}
+                                                onChange={(e) => setAdLinkInput(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' && adLinkInput) {
+                                                        setAdVideoLinks([...adVideoLinks, adLinkInput]);
+                                                        setAdLinkInput('');
+                                                    }
+                                                }}
+                                            />
+                                            <button 
+                                                onClick={() => {
+                                                    if (adLinkInput) {
+                                                        setAdVideoLinks([...adVideoLinks, adLinkInput]);
+                                                        setAdLinkInput('');
+                                                    }
+                                                }}
+                                                className="btn rounded-xl flex items-center justify-center p-3"
+                                                disabled={!adLinkInput}
+                                            >
+                                                <Plus size={20} />
+                                            </button>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2 mt-2">
+                                            {adVideoLinks.map((link, idx) => (
+                                                <div key={idx} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                                                    <span className="text-sm truncate max-w-[400px] text-[var(--text-secondary)]">{link}</span>
+                                                    <button 
+                                                        onClick={() => setAdVideoLinks(adVideoLinks.filter((_, i) => i !== idx))}
+                                                        className="text-red-500 hover:text-red-600 p-1"
+                                                    >
+                                                        <X size={16} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                            {adVideoLinks.length === 0 && (
+                                                <div className="text-center py-4 text-xs text-gray-500 border border-dashed border-[var(--border-color)] rounded-xl">
+                                                    No links added
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Playback Mode */}
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-black uppercase tracking-wider text-[var(--text-primary)] opacity-80">Playback Mode</span>
+                                            <span className="text-xs text-[var(--text-secondary)]">How videos are selected from the pool</span>
+                                        </div>
+                                        <div className="flex gap-4">
+                                            <button 
+                                                onClick={() => setAdPlaybackMode('sequence')}
+                                                className={`flex-1 p-4 rounded-2xl border transition-all flex flex-col items-center gap-2 ${adPlaybackMode === 'sequence' ? 'border-purple-500 bg-purple-500/10 text-purple-600' : 'border-[var(--border-color)] text-[var(--text-secondary)]'}`}
+                                            >
+                                                <span className="font-bold">Sequential</span>
+                                                <span className="text-[10px] opacity-60">Play in order</span>
+                                            </button>
+                                            <button 
+                                                onClick={() => setAdPlaybackMode('random')}
+                                                className={`flex-1 p-4 rounded-2xl border transition-all flex flex-col items-center gap-2 ${adPlaybackMode === 'random' ? 'border-purple-500 bg-purple-500/10 text-purple-600' : 'border-[var(--border-color)] text-[var(--text-secondary)]'}`}
+                                            >
+                                                <span className="font-bold">Random</span>
+                                                <span className="text-[10px] opacity-60">Shuffle playlist</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Backup & Restore Section */}
                     <div className="card mt-8" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '1.5rem', padding: '2rem', marginBottom: '4rem' }}>
                         <div className="flex items-center gap-4 mb-8">
@@ -1938,6 +2237,96 @@ const SettingsPage = () => {
                         </div>
                     )}
 
+                    {/* Payment Method Modal */}
+                    {showPaymentModal && editingPayment && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                            <div className="bg-[var(--bg-primary)] w-full max-w-xl rounded-[32px] shadow-2xl overflow-hidden border border-[var(--border-color)] flex flex-col">
+                                <div className="p-6 border-b border-[var(--border-color)] flex items-center justify-between">
+                                    <h3 className="text-xl font-bold text-[var(--text-primary)]">{editingPayment.id ? 'Edit Payment Method' : 'Add Payment Method'}</h3>
+                                    <button onClick={() => setShowPaymentModal(false)} className="w-8 h-8 rounded-full bg-gray-500/10 flex items-center justify-center text-gray-500 hover:bg-red-500 hover:text-white transition-colors">✕</button>
+                                </div>
+                                <form onSubmit={savePaymentMethod} className="p-6 flex flex-col gap-4 overflow-y-auto max-h-[60vh]">
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-sm font-bold opacity-70 uppercase tracking-wider text-[var(--text-primary)]">{t('settings.payments.name', 'Name')}</label>
+                                        <input
+                                            required
+                                            className="glass p-3 rounded-xl border border-[var(--border-color)] text-[var(--text-primary)]"
+                                            value={editingPayment.name}
+                                            onChange={(e) => setEditingPayment({ ...editingPayment, name: e.target.value })}
+                                            placeholder="e.g. PromptPay KBank"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-sm font-bold opacity-70 uppercase tracking-wider text-[var(--text-primary)]">{t('settings.payments.type', 'Type')}</label>
+                                        <select
+                                            className="glass p-3 rounded-xl border border-[var(--border-color)] text-[var(--text-primary)]"
+                                            value={editingPayment.type}
+                                            onChange={(e) => setEditingPayment({ ...editingPayment, type: e.target.value })}
+                                        >
+                                            <option value="cash">{t('settings.payments.cash', 'Cash')}</option>
+                                            <option value="card">{t('settings.payments.card', 'Card')}</option>
+                                            <option value="promptpay">{t('settings.payments.promptpay', 'PromptPay (Dynamic QR)')}</option>
+                                            <option value="other">{t('settings.payments.other', 'Other')}</option>
+                                        </select>
+                                    </div>
+                                    <div className="flex items-center gap-3 py-2">
+                                        <input
+                                            type="checkbox"
+                                            id="paymentActive"
+                                            className="w-5 h-5 rounded"
+                                            checked={editingPayment.isActive}
+                                            onChange={(e) => setEditingPayment({ ...editingPayment, isActive: e.target.checked })}
+                                        />
+                                        <label htmlFor="paymentActive" className="font-bold text-[var(--text-primary)]">{t('settings.payments.active', 'Active')}</label>
+                                    </div>
+
+                                    {editingPayment.type === 'promptpay' && (
+                                        <div className="flex flex-col gap-4 p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/20 mt-2">
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-sm font-bold opacity-70 uppercase tracking-wider text-indigo-500">{t('settings.payments.generate_template', 'Auto-Generate Template')}</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        className="glass p-3 rounded-xl border border-indigo-500/30 flex-1 text-[var(--text-primary)]"
+                                                        value={promptPayIdInput}
+                                                        onChange={(e) => setPromptPayIdInput(e.target.value)}
+                                                        placeholder={t('settings.payments.promptpay_id', 'PromptPay ID (Phone/TaxID)')}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleGenerateTemplate}
+                                                        className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl px-4 transition-colors"
+                                                    >
+                                                        {t('settings.payments.generate', 'Generate')}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-sm font-bold opacity-70 uppercase tracking-wider text-[var(--text-primary)]">{t('settings.payments.template', 'EMVCo Template String')}</label>
+                                                <p className="text-xs text-[var(--text-secondary)] mb-1">{t('settings.payments.template_desc', 'Used for PromptPay. Contains {54} or {x54} for dynamic amount injection.')}</p>
+                                                <textarea
+                                                    required
+                                                    rows={4}
+                                                    className="glass p-3 rounded-xl border border-[var(--border-color)] font-mono text-xs text-[var(--text-primary)]"
+                                                    value={editingPayment.qrTemplate || ''}
+                                                    onChange={(e) => setEditingPayment({ ...editingPayment, qrTemplate: e.target.value })}
+                                                    placeholder="000201010212..."
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="flex justify-end gap-3 mt-4">
+                                        <button type="button" onClick={() => setShowPaymentModal(false)} className="px-6 py-3 rounded-xl font-bold bg-gray-500/10 text-gray-500 hover:bg-gray-500 hover:text-white transition-colors">
+                                            {t('common.cancel', 'Cancel')}
+                                        </button>
+                                        <button type="submit" className="px-6 py-3 rounded-xl font-bold bg-blue-500 text-white hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/30">
+                                            {t('common.save', 'Save')}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </AdminAuthWrapper >

@@ -15,7 +15,8 @@
             "general": "General",
             "security": "Security",
             "devices": "Devices",
-            "appearance": "Appearance & Display"
+            "appearance": "Appearance & Display",
+            "payments": "Payment Methods"
         },
         "appearance": {
             "title": "App Appearance",
@@ -75,6 +76,24 @@
             "endpoint": "Update Endpoint",
             "endpoint_desc": "Remote URL for application updates"
         },
+        "payments": {
+            "title": "Payment Methods",
+            "subtitle": "Manage acceptable payment types and dynamic QR generation",
+            "add": "Add Payment Method",
+            "name": "Method Name",
+            "type": "Method Type",
+            "active": "Active",
+            "template": "EMVCo Template String",
+            "template_desc": "Used for PromptPay. Contains {54} or {x54} for dynamic amount injection.",
+            "generate_template": "Auto-Generate Template",
+            "promptpay_id": "PromptPay ID (Phone/TaxID)",
+            "generate": "Generate",
+            "cash": "Cash",
+            "card": "Credit/Debit Card",
+            "promptpay": "PromptPay (Dynamic QR)",
+            "other": "Other",
+            "delete_confirm": "Are you sure you want to delete this payment method?"
+        },
         "danger_zone": {
             "title": "Danger Zone",
             "reset_button": "Hard Reset System",
@@ -93,9 +112,23 @@
         "campaigns": "Campaigns",
         "admin": "Admin",
         "staff": "Staff Management",
+        "reports": "Reports",
         "settings": "Settings",
         "logout": "Logout",
         "pos_system": "POS System"
+    },
+    "reports": {
+        "title": "Advanced Reporting",
+        "local": "Local Terminal Analytics",
+        "cloud": "ERPNext Cloud Analytics",
+        "total_revenue": "Total Revenue",
+        "profit": "Est. Profit",
+        "transactions": "Transactions",
+        "avg_ticket": "Average Ticket",
+        "performance": "Sales Performance",
+        "best_sellers": "Best Sellers",
+        "payment_methods": "Payment Methods",
+        "category_revenue": "Category Revenue"
     },
     "header": {
         "auto_lock": "Auto Lock",

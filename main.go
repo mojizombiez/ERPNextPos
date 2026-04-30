@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/wailsapp/wails/v2"
@@ -25,17 +26,39 @@ func main() {
 
 	database.InitDB()
 
-	// Parse flags for customer display mode
-	isCustomer := false
+	// Use environment variables for customer display mode (safer than flags in wails dev)
+	isCustomer := os.Getenv("MOLTOPOS_CUSTOMER") == "true"
 	monitorIndex := -1
-	for i, arg := range os.Args {
-		if arg == "--customer" {
-			isCustomer = true
-		}
-		if arg == "--monitor" && i+1 < len(os.Args) {
-			fmt.Sscanf(os.Args[i+1], "%d", &monitorIndex)
-		}
+	monitorStr := os.Getenv("MOLTOPOS_MONITOR")
+	if monitorStr != "" {
+		fmt.Sscanf(monitorStr, "%d", &monitorIndex)
 	}
+
+	// Start a dedicated video server on port 34999 to bypass all Wails/Vite proxy issues
+	go func() {
+		mux := http.NewServeMux()
+		mux.HandleFunc("/stream-video", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Range")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+			filePath := r.URL.Query().Get("path")
+			if filePath != "" {
+				cleanPath := filepath.Clean(filePath)
+				if info, err := os.Stat(cleanPath); err == nil && !info.IsDir() {
+					w.Header().Set("Content-Type", "video/mp4")
+					http.ServeFile(w, r, cleanPath)
+					return
+				}
+			}
+			http.NotFound(w, r)
+		})
+		fmt.Println("Dedicated Video Server starting on :34999")
+		http.ListenAndServe(":34999", mux)
+	}()
 
 	// Create an instance of the app structure
 	app := NewApp()
@@ -52,6 +75,7 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				fmt.Printf("AssetServer: Received request for: %s\n", r.URL.Path)
 				// Handle /images/ requests by serving from APPDATA
 				if len(r.URL.Path) > 8 && r.URL.Path[:8] == "/images/" {
 					appDataDir := os.Getenv("APPDATA")
@@ -61,7 +85,36 @@ func main() {
 						return
 					}
 				}
-				http.NotFound(w, r)
+				// Handle /stream-video requests
+				if strings.HasPrefix(r.URL.Path, "/stream-video") {
+					// Add CORS headers for direct access
+					w.Header().Set("Access-Control-Allow-Origin", "*")
+					w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+					w.Header().Set("Access-Control-Allow-Headers", "Range")
+					
+					if r.Method == "OPTIONS" {
+						w.WriteHeader(http.StatusOK)
+						return
+					}
+
+					fmt.Printf("AssetServer: Video request! Path=%s\n", r.URL.Path)
+					filePath := r.URL.Query().Get("path")
+					if filePath != "" {
+						cleanPath := filepath.Clean(filePath)
+						if info, err := os.Stat(cleanPath); err == nil && !info.IsDir() {
+							fmt.Printf("AssetServer: Serving local file: %s (%d bytes)\n", cleanPath, info.Size())
+							w.Header().Set("Content-Type", "video/mp4")
+							http.ServeFile(w, r, cleanPath)
+							return
+						} else if err != nil {
+							fmt.Printf("AssetServer: File access error: %v (path: %s)\n", err, cleanPath)
+						} else {
+							fmt.Printf("AssetServer: Path is a directory: %s\n", cleanPath)
+						}
+					}
+				}
+				// Pass through to default asset server for embedded files
+				// By NOT calling http.NotFound here, Wails AssetServer will continue to search Assets FS
 			}),
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},

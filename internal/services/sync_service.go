@@ -1429,3 +1429,150 @@ func (s *SyncService) FixExistingDates() {
 	}
 	s.debugLog("Finished migrating existing order dates.")
 }
+
+func (s *SyncService) GetReportStats(fromDateStr, toDateStr string, isCloud bool) (*models.ReportStats, error) {
+	fromDate, _ := time.Parse(time.RFC3339, fromDateStr)
+	toDate, _ := time.Parse(time.RFC3339, toDateStr)
+
+	if isCloud && s.setting.GetString(SettingAppMode) != "standalone" {
+		return s.GetCloudReportStats(fromDate, toDate)
+	}
+	return s.GetLocalReportStats(fromDate, toDate)
+}
+
+func (s *SyncService) GetLocalReportStats(fromDate, toDate time.Time) (*models.ReportStats, error) {
+	// 1. Fetch orders from local DB
+	var orders []models.OfflineOrder
+	s.db.Where("create_date >= ? AND create_date <= ?", fromDate, toDate).Find(&orders)
+
+	// 2. Aggregate
+	stats := &models.ReportStats{
+		HourlySales:   make([]float64, 24),
+		CategorySales: []models.CategoryEntry{},
+		PaymentSales:  []models.PaymentEntry{},
+		TopProducts:   []models.ProductEntry{},
+		DailySales:    []models.DailyEntry{},
+	}
+
+	catMap := make(map[string]float64)
+	payMap := make(map[string]float64)
+	prodMap := make(map[string]int)
+	dailyMap := make(map[string]float64)
+
+	// Pre-load products for cost calculation if needed
+	var products []models.Product
+	s.db.Find(&products)
+	costs := make(map[int]float64)
+	for _, p := range products {
+		if p.Cost != nil {
+			costs[p.Id] = *p.Cost
+		}
+	}
+
+	for _, o := range orders {
+		var od models.CheckoutOrderModel
+		if err := json.Unmarshal([]byte(o.JsonData), &od); err != nil {
+			continue
+		}
+
+		stats.TotalSales += od.TotalPrice
+		stats.OrderCount++
+
+		// Daily aggregation
+		dayStr := o.CreateDate.Format("2006-01-02")
+		dailyMap[dayStr] += od.TotalPrice
+
+		// Hourly (if it's a single day or small range)
+		stats.HourlySales[o.CreateDate.Hour()] += od.TotalPrice
+
+		// Categories & Products
+		for _, sub := range od.SubOrder {
+			catName := sub.CategoryName
+			if catName == "" {
+				catName = "Other"
+			}
+			for _, det := range sub.Detail {
+				catMap[catName] += det.Price * float64(det.Quantity)
+				prodMap[det.ProductName] += det.Quantity
+				stats.TotalProfit += (det.Price - costs[det.ProductId]) * float64(det.Quantity)
+			}
+		}
+
+		// Payments
+		if len(od.Payments) > 0 {
+			for _, p := range od.Payments {
+				payMap[p.Method] += p.Amount
+			}
+		} else {
+			method := od.PaymentGateway
+			if method == "" {
+				method = "Cash"
+			}
+			payMap[method] += od.TotalPrice
+		}
+	}
+
+	// 3. Format results
+	for k, v := range catMap {
+		stats.CategorySales = append(stats.CategorySales, models.CategoryEntry{Name: k, Value: v})
+	}
+	for k, v := range payMap {
+		stats.PaymentSales = append(stats.PaymentSales, models.PaymentEntry{Name: k, Value: v})
+	}
+	for k, v := range prodMap {
+		stats.TopProducts = append(stats.TopProducts, models.ProductEntry{Name: k, Qty: v})
+	}
+	
+	// Sort top products
+	sort.Slice(stats.TopProducts, func(i, j int) bool {
+		return stats.TopProducts[i].Qty > stats.TopProducts[j].Qty
+	})
+	if len(stats.TopProducts) > 10 {
+		stats.TopProducts = stats.TopProducts[:10]
+	}
+
+	// Daily entries sorted by date
+	var dates []string
+	for k := range dailyMap {
+		dates = append(dates, k)
+	}
+	sort.Strings(dates)
+	for _, d := range dates {
+		stats.DailySales = append(stats.DailySales, models.DailyEntry{Date: d, Value: dailyMap[d]})
+	}
+
+	return stats, nil
+}
+
+func (s *SyncService) GetCloudReportStats(fromDate, toDate time.Time) (*models.ReportStats, error) {
+	posProfile := s.setting.GetString(SettingPosProfile)
+	orders, err := s.api.GetCloudSalesInvoices(fromDate, toDate, posProfile)
+	if err != nil {
+		return nil, err
+	}
+
+	stats := &models.ReportStats{
+		OrderCount:    len(orders),
+		DailySales:    []models.DailyEntry{},
+		CategorySales: []models.CategoryEntry{}, // Cloud API might not return categories easily in one call
+		PaymentSales:  []models.PaymentEntry{},
+		TopProducts:   []models.ProductEntry{},
+	}
+
+	dailyMap := make(map[string]float64)
+	for _, o := range orders {
+		stats.TotalSales += o.TotalPrice
+		dailyMap[o.OrderDate] += o.TotalPrice
+	}
+
+	var dates []string
+	for k := range dailyMap {
+		dates = append(dates, k)
+	}
+	sort.Strings(dates)
+	for _, d := range dates {
+		stats.DailySales = append(stats.DailySales, models.DailyEntry{Date: d, Value: dailyMap[d]})
+	}
+
+	return stats, nil
+}

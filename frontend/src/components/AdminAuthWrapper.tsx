@@ -58,10 +58,10 @@ const AdminAuthWrapper = ({ children }: AdminAuthWrapperProps) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                zIndex: 'var(--z-auth)',
+                zIndex: 999999,
                 padding: 'min(5vh, 2rem)'
             }}>
-                <div className="animate-in fade-in zoom-in duration-300 scrollbar-hide" style={{
+                <div className="scrollbar-hide" style={{
                     width: 'min(90vw, 440px)',
                     maxHeight: '90vh',
                     overflowY: 'auto',

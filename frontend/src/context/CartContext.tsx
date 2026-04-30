@@ -37,6 +37,8 @@ export interface OrderSession {
     couponDiscount?: number;
     manualDiscount?: number;
     discountReason?: string;
+    currentQrString?: string;
+    currentQrAmount?: number;
 }
 
 interface CartContextType {
@@ -55,6 +57,7 @@ interface CartContextType {
     removeCoupon: () => void;
     applyManualDiscount: (amount: number, reason: string) => void;
     removeManualDiscount: () => void;
+    updateQrCode: (qrString: string, amount: number) => void;
     clearActiveCart: () => void;
 }
 
@@ -70,7 +73,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 console.error("Failed to parse order sessions", e);
             }
         }
-        return [{ id: '1', name: 'Order 1', cart: [], cashReceived: '', payments: [], customerName: '', customerPhone: '', customerPoints: 0, redeemedPoints: 0, redeemedAmount: 0, couponCode: '', couponDiscount: 0, manualDiscount: 0, discountReason: '' }];
+        return [{ id: '1', name: 'Order 1', cart: [], cashReceived: '', payments: [], customerName: '', customerPhone: '', customerPoints: 0, redeemedPoints: 0, redeemedAmount: 0, couponCode: '', couponDiscount: 0, manualDiscount: 0, discountReason: '', currentQrString: '', currentQrAmount: 0 }];
     });
 
     const [activeSessionId, setActiveSessionId] = useState<string>(() => {
@@ -115,14 +118,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if ((window as any).runtime?.EventsOn) {
             (window as any).runtime.EventsOn('sync-sessions', (data: string) => {
                 try {
-                    const newSessions = JSON.parse(data);
-                    setSessions(newSessions);
+                    setSessions(prev => {
+                        if (JSON.stringify(prev) === data) return prev;
+                        return JSON.parse(data);
+                    });
                 } catch (err) {
                     console.error("Failed to parse sync-sessions", err);
                 }
             });
             (window as any).runtime.EventsOn('sync-active-session', (id: string) => {
-                setActiveSessionId(id);
+                setActiveSessionId(prev => prev === id ? prev : id);
             });
         }
 
@@ -153,7 +158,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             couponCode: '',
             couponDiscount: 0,
             manualDiscount: 0,
-            discountReason: ''
+            discountReason: '',
+            currentQrString: '',
+            currentQrAmount: 0
         };
         setSessions([...sessions, newSession]);
         setActiveSessionId(newId);
@@ -222,9 +229,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ));
     };
 
+    const updateQrCode = (qrString: string, amount: number) => {
+        setSessions(prev => prev.map(s =>
+            s.id === activeSessionId ? { ...s, currentQrString: qrString, currentQrAmount: amount } : s
+        ));
+    };
+
     const clearActiveCart = () => {
         setSessions(prev => prev.map(s =>
-            s.id === activeSessionId ? { ...s, cart: [], cashReceived: '', payments: [], customerName: '', customerPhone: '', customerPoints: 0, redeemedPoints: 0, redeemedAmount: 0, couponCode: '', couponDiscount: 0, manualDiscount: 0, discountReason: '' } : s
+            s.id === activeSessionId ? { ...s, cart: [], cashReceived: '', payments: [], customerName: '', customerPhone: '', customerPoints: 0, redeemedPoints: 0, redeemedAmount: 0, couponCode: '', couponDiscount: 0, manualDiscount: 0, discountReason: '', currentQrString: '', currentQrAmount: 0 } : s
         ));
     };
 
@@ -245,6 +258,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             removeCoupon,
             applyManualDiscount,
             removeManualDiscount,
+            updateQrCode,
             clearActiveCart
         }}>
             {children}

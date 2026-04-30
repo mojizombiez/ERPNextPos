@@ -29,6 +29,7 @@ const CheckoutPage = () => {
         removeCoupon,
         applyManualDiscount,
         removeManualDiscount,
+        updateQrCode,
         clearActiveCart
     } = useCart();
     const { checkManager, ManagerAuthModal } = useManagerAuth();
@@ -63,35 +64,43 @@ const CheckoutPage = () => {
             const customersResult = await window.go.main.App.GetCustomers();
             setAllCustomers(customersResult || []);
 
-            // Load allowed payment methods from cache
-            const cachedPayments = await window.go.main.App.GetSetting('Cached_PosProfilePayments');
-            let parsedPayments = [];
-            if (cachedPayments) {
-                try {
-                    parsedPayments = JSON.parse(cachedPayments);
-                } catch (e) {
-                    console.error("Failed to parse cached POS Profile payments", e);
-                }
-            }
-
-            // Fallback to global modes if profile-specific ones are empty
+            // Load allowed payment methods from new model
+            let parsedPayments = await window.go.main.App.GetPaymentMethods();
+            
+            // Fallback to old cache logic if no new payment methods are defined
             if (!parsedPayments || parsedPayments.length === 0) {
-                const globalModes = await window.go.main.App.GetSetting('Cached_ModeOfPayments');
-                if (globalModes) {
+                const cachedPayments = await window.go.main.App.GetSetting('Cached_PosProfilePayments');
+                if (cachedPayments) {
                     try {
-                        const parsedGlobal = JSON.parse(globalModes);
-                        // Map global modes to the structure NumericKeypad expects
-                        parsedPayments = parsedGlobal.map((m: any) => ({
-                            mode_of_payment: m.name,
-                            default_account: ""
-                        }));
+                        const temp = JSON.parse(cachedPayments);
+                        parsedPayments = temp.map((m: any) => ({ name: m.mode_of_payment, type: 'other', isActive: true, qrTemplate: '' }));
                     } catch (e) {
-                        console.error("Failed to parse global modes", e);
+                        console.error("Failed to parse cached POS Profile payments", e);
+                    }
+                }
+
+                if (!parsedPayments || parsedPayments.length === 0) {
+                    const globalModes = await window.go.main.App.GetSetting('Cached_ModeOfPayments');
+                    if (globalModes) {
+                        try {
+                            const parsedGlobal = JSON.parse(globalModes);
+                            parsedPayments = parsedGlobal.map((m: any) => ({
+                                name: m.name,
+                                type: 'other',
+                                isActive: true,
+                                qrTemplate: ''
+                            }));
+                        } catch (e) {
+                            console.error("Failed to parse global modes", e);
+                        }
                     }
                 }
             }
 
-            setAllowedPaymentMethods(parsedPayments || []);
+            // Filter only active methods
+            const activeMethods = (parsedPayments || []).filter((m: any) => m.isActive !== false);
+            setAllowedPaymentMethods(activeMethods);
+
         } catch (err) {
             console.error("Failed to load checkout data", err);
         } finally {
@@ -285,6 +294,7 @@ const CheckoutPage = () => {
                     totalAmount={total}
                     remainingAmount={remainingAmount}
                     allowedMethods={allowedPaymentMethods}
+                    onQrUpdate={(qr, amount) => updateQrCode(qr, amount)}
                     onApply={(method, amount, reference) => {
                         updatePayments([...payments, { method, amount, reference }]);
                         hideModal();

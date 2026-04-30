@@ -10,6 +10,10 @@ export function AddOrder(arg1) {
   return window['go']['main']['App']['AddOrder'](arg1);
 }
 
+export function AddPaymentMethod(arg1) {
+  return window['go']['main']['App']['AddPaymentMethod'](arg1);
+}
+
 export function AddRefundOrder(arg1, arg2) {
   return window['go']['main']['App']['AddRefundOrder'](arg1, arg2);
 }
@@ -62,6 +66,10 @@ export function DeleteCustomer(arg1) {
   return window['go']['main']['App']['DeleteCustomer'](arg1);
 }
 
+export function DeletePaymentMethod(arg1) {
+  return window['go']['main']['App']['DeletePaymentMethod'](arg1);
+}
+
 export function DeleteProduct(arg1) {
   return window['go']['main']['App']['DeleteProduct'](arg1);
 }
@@ -76,6 +84,14 @@ export function DownloadAndInstallUpdate(arg1) {
 
 export function ExportSettings() {
   return window['go']['main']['App']['ExportSettings']();
+}
+
+export function GeneratePromptPayQR(arg1, arg2) {
+  return window['go']['main']['App']['GeneratePromptPayQR'](arg1, arg2);
+}
+
+export function GeneratePromptPayTemplate(arg1) {
+  return window['go']['main']['App']['GeneratePromptPayTemplate'](arg1);
 }
 
 export function GetAccounts() {
@@ -146,6 +162,10 @@ export function GetOrders(arg1, arg2, arg3) {
   return window['go']['main']['App']['GetOrders'](arg1, arg2, arg3);
 }
 
+export function GetPaymentMethods() {
+  return window['go']['main']['App']['GetPaymentMethods']();
+}
+
 export function GetPosProfileDetails(arg1) {
   return window['go']['main']['App']['GetPosProfileDetails'](arg1);
 }
@@ -168,6 +188,10 @@ export function GetProducts(arg1) {
 
 export function GetPromotions() {
   return window['go']['main']['App']['GetPromotions']();
+}
+
+export function GetReportStats(arg1, arg2, arg3) {
+  return window['go']['main']['App']['GetReportStats'](arg1, arg2, arg3);
 }
 
 export function GetScreens() {
@@ -196,6 +220,10 @@ export function GetSyncStatus() {
 
 export function GetUnsyncedOrderCount() {
   return window['go']['main']['App']['GetUnsyncedOrderCount']();
+}
+
+export function GetVideoFiles(arg1) {
+  return window['go']['main']['App']['GetVideoFiles'](arg1);
 }
 
 export function GetWarehouses() {
@@ -254,6 +282,10 @@ export function PrintSlip(arg1) {
   return window['go']['main']['App']['PrintSlip'](arg1);
 }
 
+export function Quit() {
+  return window['go']['main']['App']['Quit']();
+}
+
 export function SaveCustomer(arg1) {
   return window['go']['main']['App']['SaveCustomer'](arg1);
 }
@@ -278,6 +310,10 @@ export function SelectAndSaveImage() {
   return window['go']['main']['App']['SelectAndSaveImage']();
 }
 
+export function SelectFolder() {
+  return window['go']['main']['App']['SelectFolder']();
+}
+
 export function SendReceipt(arg1, arg2, arg3) {
   return window['go']['main']['App']['SendReceipt'](arg1, arg2, arg3);
 }
@@ -296,6 +332,10 @@ export function SyncProductsOnly() {
 
 export function UpdateOrderMetadata(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['main']['App']['UpdateOrderMetadata'](arg1, arg2, arg3, arg4, arg5);
+}
+
+export function UpdatePaymentMethod(arg1) {
+  return window['go']['main']['App']['UpdatePaymentMethod'](arg1);
 }
 
 export function UpdateProductAvailability(arg1, arg2) {

@@ -1319,3 +1319,55 @@ func (s *ApiService) parseERPNextError(resp *http.Response) error {
 	// Default fallback to raw body if JSON doesn't match
 	return fmt.Errorf("%s - %s", resp.Status, string(body))
 }
+
+func (s *ApiService) GetCloudSalesInvoices(fromDate, toDate time.Time, posProfile string) ([]models.CheckoutOrderModel, error) {
+	query := url.Values{}
+	// Fetch necessary fields for report
+	fields := `["name", "customer", "posting_date", "total", "base_total", "grand_total", "docstatus"]`
+	query.Set("fields", fields)
+	query.Set("limit_page_length", "1000")
+
+	filters := fmt.Sprintf(`[["posting_date", ">=", "%s"], ["posting_date", "<=", "%s"], ["docstatus", "=", 1]]`,
+		fromDate.Format("2006-01-02"), toDate.Format("2006-01-02"))
+	
+	if posProfile != "" {
+		filters = fmt.Sprintf(`[["posting_date", ">=", "%s"], ["posting_date", "<=", "%s"], ["docstatus", "=", 1], ["pos_profile", "=", "%s"]]`,
+			fromDate.Format("2006-01-02"), toDate.Format("2006-01-02"), posProfile)
+	}
+	
+	query.Set("filters", filters)
+
+	resp, err := s.doRequest(http.MethodGet, "/api/resource/Sales Invoice", nil, query)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("API error fetching sales invoices: %v", s.parseERPNextError(resp))
+	}
+
+	var res struct {
+		Data []struct {
+			Name        string  `json:"name"`
+			Customer    string  `json:"customer"`
+			PostingDate string  `json:"posting_date"`
+			GrandTotal  float64 `json:"grand_total"`
+		} `json:"data"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+		return nil, err
+	}
+
+	var orders []models.CheckoutOrderModel
+	for _, inv := range res.Data {
+		orders = append(orders, models.CheckoutOrderModel{
+			ERPNextName: inv.Name,
+			ReferenceNo: inv.Customer,
+			OrderDate:   inv.PostingDate,
+			TotalPrice:  inv.GrandTotal,
+		})
+	}
+
+	return orders, nil
+}

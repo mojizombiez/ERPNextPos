@@ -54,6 +54,7 @@ func InitDB() {
 		&models.Promotion{},
 		&models.SyncLog{},
 		&models.BundleItem{},
+		&models.PaymentMethod{},
 	)
 	if err != nil {
 		log.Fatal("[102] Failed to migrate database schema:", err)

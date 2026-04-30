@@ -10,6 +10,7 @@ import {
     Gift,
     Truck,
     Unlock,
+    BarChart3,
     Settings,
     Database,
     ShieldCheck,
@@ -42,6 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSwitchUser, onLock, isCollapsed, on
         { icon: <Gift size={24} />, label: t('sidebar.campaigns'), path: '/campaigns' },
         { icon: <Truck size={24} />, label: t('sidebar.delivery', { defaultValue: 'Delivery' }), path: '/delivery' },
         { icon: <Unlock size={24} />, label: t('sidebar.drawer', { defaultValue: 'Drawer' }), path: '/drawer' },
+        { icon: <BarChart3 size={24} />, label: t('sidebar.reports', { defaultValue: 'Reports' }), path: '/reports' },
         { icon: <Settings size={24} />, label: t('sidebar.settings'), path: '/settings' },
         { icon: <ShieldCheck size={24} />, label: t('sidebar.staff'), path: '/admin', state: { tab: 'staff' } },
         { icon: <Database size={24} />, label: t('sidebar.admin'), path: '/admin', state: { tab: 'products' } },
@@ -76,8 +78,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onSwitchUser, onLock, isCollapsed, on
             padding: isCollapsed ? '1.5rem 0.75rem' : '1.5rem 1rem',
             border: '1px solid var(--border-color)',
             position: 'relative',
+            zIndex: 500,
             transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            overflow: 'visible'
+            overflow: 'visible',
+            pointerEvents: 'auto'
         }}>
             {/* Toggle Button */}
             <button

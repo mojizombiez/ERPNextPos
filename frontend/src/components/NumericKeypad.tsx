@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Delete, Check, Banknote, CreditCard, Smartphone, Ticket, Search, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Delete, Check, Banknote, CreditCard, Smartphone, Ticket, Search, X, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { QRCodeCanvas } from 'qrcode.react';
 import Keypad from './Keypad';
 
 interface NumericKeypadProps {
@@ -8,45 +9,100 @@ interface NumericKeypadProps {
     remainingAmount: number;
     onApply: (method: string, amount: number, reference?: string) => void;
     onClose: () => void;
-    allowedMethods?: { mode_of_payment: string; default_account: string }[];
+    allowedMethods?: any[];
+    onQrUpdate?: (qrString: string, amount: number) => void;
 }
 
-const NumericKeypad: React.FC<NumericKeypadProps> = ({ totalAmount, remainingAmount, onApply, onClose, allowedMethods }) => {
+const NumericKeypad: React.FC<NumericKeypadProps> = ({ totalAmount, remainingAmount, onApply, onClose, allowedMethods, onQrUpdate }) => {
     const { t } = useTranslation();
     const [value, setValue] = useState(remainingAmount > 0 ? remainingAmount.toFixed(2) : '');
     const [selectedMethod, setSelectedMethod] = useState<string>(
         allowedMethods && allowedMethods.length > 0
-            ? allowedMethods[0].mode_of_payment
+            ? allowedMethods[0].name
             : 'Cash'
     );
     const [giftCardCode, setGiftCardCode] = useState('');
     const [isValidating, setIsValidating] = useState(false);
     const [gcBalance, setGcBalance] = useState<number | null>(null);
+    const [qrCodeString, setQrCodeString] = useState<string>('');
+    const [isGeneratingQr, setIsGeneratingQr] = useState(false);
 
     const paymentMethods = allowedMethods && allowedMethods.length > 0
         ? allowedMethods.map(m => {
-            const mode = m.mode_of_payment;
+            const mode = m.name;
+            const type = m.type || 'other';
             let icon = <Banknote size={20} />;
-            if (mode.toLowerCase().includes('card') || mode.toLowerCase().includes('credit')) icon = <CreditCard size={20} />;
-            if (mode.toLowerCase().includes('qr') || mode.toLowerCase().includes('bank') || mode.toLowerCase().includes('promptpay')) icon = <Smartphone size={20} />;
-            if (mode.toLowerCase().includes('gift')) icon = <Ticket size={20} />;
+            if (type === 'card' || mode.toLowerCase().includes('card') || mode.toLowerCase().includes('credit')) icon = <CreditCard size={20} />;
+            if (type === 'promptpay' || mode.toLowerCase().includes('qr') || mode.toLowerCase().includes('bank') || mode.toLowerCase().includes('promptpay')) icon = <Smartphone size={20} />;
+            if (type === 'other' && mode.toLowerCase().includes('gift')) icon = <Ticket size={20} />;
 
-            return { id: mode, icon, label: mode };
+            return { id: mode, icon, label: mode, rawMethod: m };
         })
         : [
-            { id: 'Cash', icon: <Banknote size={20} />, label: t('checkout.cash') },
-            { id: 'Card', icon: <CreditCard size={20} />, label: t('checkout.card') },
-            { id: 'QR', icon: <Smartphone size={20} />, label: t('checkout.qr') }
+            { id: 'Cash', icon: <Banknote size={20} />, label: t('checkout.cash'), rawMethod: { type: 'cash' } },
+            { id: 'Card', icon: <CreditCard size={20} />, label: t('checkout.card'), rawMethod: { type: 'card' } },
+            { id: 'QR', icon: <Smartphone size={20} />, label: t('checkout.qr'), rawMethod: { type: 'promptpay' } }
         ];
 
-
     const numericValue = parseFloat(value) || 0;
+    
+    const activeMethod = paymentMethods.find(m => m.id === selectedMethod);
+    const qrTemplate = activeMethod?.rawMethod?.qrTemplate;
+    const isPromptPay = activeMethod?.rawMethod?.type === 'promptpay';
+
+    // Generate QR code automatically when PromptPay is selected
+    useEffect(() => {
+        if (isPromptPay && qrTemplate) {
+            const generateQR = async () => {
+                if (isGeneratingQr) return;
+                setIsGeneratingQr(true);
+                try {
+                    const qr = await window.go.main.App.GeneratePromptPayQR(qrTemplate, numericValue);
+                    if (qr !== qrCodeString) {
+                        setQrCodeString(qr);
+                        if (onQrUpdate) onQrUpdate(qr, numericValue);
+                    }
+                } catch (err) {
+                    console.error("QR Generation failed", err);
+                    setQrCodeString('');
+                } finally {
+                    setIsGeneratingQr(false);
+                }
+            };
+
+            const timer = setTimeout(generateQR, 500);
+            return () => clearTimeout(timer);
+        } else if (qrCodeString !== '') {
+            setQrCodeString('');
+            if (onQrUpdate) onQrUpdate('', 0);
+        }
+    }, [isPromptPay, qrTemplate, numericValue, qrCodeString]);
+
+    // Cleanup QR state on unmount
+    useEffect(() => {
+        return () => {
+            if (onQrUpdate) onQrUpdate('', 0);
+        };
+    }, []);
+
     const change = Math.max(0, numericValue - remainingAmount);
 
     return (
-        <div className="flex flex-col md:flex-row w-full text-slate-800 bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm min-h-0 md:min-h-[380px]">
+        <div className="flex flex-col md:flex-row w-full text-slate-800 bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm min-h-0 md:min-h-[380px] relative">
+            
+            {/* Mobile Close Button (Absolute) */}
+            <button
+                onClick={() => {
+                    if (onQrUpdate) onQrUpdate('', 0);
+                    onClose();
+                }}
+                className="md:hidden absolute top-3 right-3 z-[100] p-2 bg-white/80 backdrop-blur-sm rounded-full text-slate-500 hover:text-red-500 shadow-sm border border-slate-100 transition-colors"
+            >
+                <X size={20} />
+            </button>
+
             {/* Left Panel: Summary & Input */}
-            <div className="flex-1 px-4 md:pl-8 md:pr-6 py-6 bg-slate-50/50 flex flex-col justify-between relative">
+            <div className="flex-1 px-4 md:pl-8 md:pr-6 py-6 bg-slate-50/50 flex flex-col justify-between relative overflow-y-auto max-h-[50vh] md:max-h-none">
 
                 {/* 1. Payment Method Pills */}
                 <div className="w-full flex flex-col gap-2 mb-6">
@@ -133,6 +189,29 @@ const NumericKeypad: React.FC<NumericKeypadProps> = ({ totalAmount, remainingAmo
                         </div>
                     )}
 
+                    {/* PromptPay QR Code Display */}
+                    {qrCodeString && (
+                        <div className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-indigo-100 shadow-sm mt-2 mb-4">
+                            <span className="text-xs font-black uppercase text-indigo-600 mb-3 tracking-widest">{t('checkout.scan_to_pay', 'Scan to Pay')}</span>
+                            <div className="p-2 bg-white rounded-xl shadow-sm border border-slate-100 relative">
+                                {isGeneratingQr ? (
+                                    <div className="w-[180px] h-[180px] flex items-center justify-center">
+                                        <Loader2 className="animate-spin text-indigo-300" size={40} />
+                                    </div>
+                                ) : (
+                                    <QRCodeCanvas
+                                        value={qrCodeString}
+                                        size={140}
+                                        level="H"
+                                        includeMargin={true}
+                                        className="rounded-lg"
+                                    />
+                                )}
+                            </div>
+                            <span className="text-xl font-black text-slate-800 mt-3 tracking-tighter">฿{numericValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                        </div>
+                    )}
+
                     {/* Amount Input */}
                     <div className="flex flex-col bg-white rounded-3xl p-4 md:p-5 shadow-sm border border-slate-100 my-2">
                         <span className="text-sm text-slate-400 font-bold uppercase tracking-[0.3em] mb-1 pl-1">{t('checkout.amount_paid', 'Amount Paid')}</span>
@@ -171,12 +250,14 @@ const NumericKeypad: React.FC<NumericKeypadProps> = ({ totalAmount, remainingAmo
                 <div className="w-full grid grid-cols-2 gap-2 mt-4 shrink-0">
                     <button
                         onClick={onClose}
-                        className="py-4 md:py-6 rounded-2xl bg-slate-100 text-slate-600 font-black uppercase tracking-widest text-sm md:text-base hover:bg-slate-200 transition-colors border border-transparent hover:border-slate-300 w-full"
+                        className="flex-1 py-4 md:py-5 bg-slate-100 text-slate-600 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95"
                     >
                         {t('common.cancel')}
                     </button>
                     <button
-                        onClick={() => onApply(selectedMethod, numericValue, selectedMethod.toLowerCase().includes('gift') ? giftCardCode : undefined)}
+                        onClick={() => {
+                            onApply(selectedMethod, numericValue, selectedMethod.toLowerCase().includes('gift') ? giftCardCode : undefined);
+                        }}
                         className="py-4 md:py-6 rounded-2xl bg-slate-900 text-white font-black uppercase tracking-widest text-sm md:text-base hover:bg-slate-800 transition-all shadow-md shadow-slate-900/20 active:scale-95 w-full"
                     >
                         {t('checkout.apply_payment')}

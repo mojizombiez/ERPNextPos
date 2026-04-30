@@ -37,6 +37,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     const hideModal = () => {
         setIsOpen(false);
+        setOptions(null);
     };
 
     const handleConfirm = () => {
@@ -98,9 +99,18 @@ const GlobalModalComponent: React.FC<{
         <div className={`${theme} modal-overlay-standard`} onClick={onCancel}>
             <div
                 className={`modal-card-standard modal-viewport-constraint animate-in fade-in zoom-in duration-400 ${options.maxWidthClass || 'max-w-2xl'}`}
-                style={{ backgroundColor: '#ffffff' }}
+                style={{ backgroundColor: '#ffffff', position: 'relative' }}
                 onClick={e => e.stopPropagation()}
             >
+                {/* Emergency Close Button */}
+                <button
+                    onClick={onCancel}
+                    className="absolute top-4 right-4 z-[1000] p-2 text-slate-400 hover:text-red-500 bg-white/80 backdrop-blur-sm rounded-full shadow-sm border border-slate-100 transition-all hover:scale-110 active:scale-95"
+                    title="Close Modal"
+                >
+                    <X size={24} />
+                </button>
+
                 <div className={`modal-scrollable-content flex flex-col items-center justify-center text-center ${options.compactMode ? 'py-4 px-4 gap-2' : 'py-clamp px-clamp gap-clamp'}`}>
                     <style dangerouslySetInnerHTML={{ __html: `
                         :root {

@@ -43,7 +43,14 @@ declare global {
                     OpenCustomerDisplay: (monitorIndex: number) => Promise<void>;
                     CloseCustomerDisplay: () => Promise<void>;
                     GetIsCustomerDisplay: () => Promise<boolean>;
+                    GetReportStats: (fromDate: string, toDate: string, isCloud: boolean) => Promise<any>;
                     LogFrontend: (msg: string) => Promise<void>;
+                    GetPaymentMethods: () => Promise<any[]>;
+                    AddPaymentMethod: (method: any) => Promise<void>;
+                    UpdatePaymentMethod: (method: any) => Promise<void>;
+                    DeletePaymentMethod: (id: number) => Promise<void>;
+                    GeneratePromptPayQR: (template: string, amount: number) => Promise<string>;
+                    GeneratePromptPayTemplate: (promptPayId: string) => Promise<string>;
                 }
             }
         }

@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -73,12 +74,28 @@ func (a *App) ClearAllData() error {
 	return a.syncService.ClearAllData()
 }
 
+func (a *App) shutdown(ctx context.Context) {
+	fmt.Println("Shutdown: Closing customer display...")
+	_ = a.CloseCustomerDisplay()
+}
+
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 	a.settingService.InitSettings()
 	a.syncService.StartBackgroundSync()
+
+	// Start heartbeat for customer display
+	go func() {
+		for {
+			if a.ctx == nil {
+				return
+			}
+			runtime.EventsEmit(a.ctx, "main-app-heartbeat", time.Now().Unix())
+			time.Sleep(5 * time.Second)
+		}
+	}()
 
 	// Check if this is the MAIN app (not the customer display child process)
 	if !a.GetIsCustomerDisplay() {
@@ -193,6 +210,10 @@ func (a *App) GetOrders(fromDateStr, toDateStr string, filter models.OrderFilter
 	fromDate, _ := time.Parse(time.RFC3339, fromDateStr)
 	toDate, _ := time.Parse(time.RFC3339, toDateStr)
 	return a.syncService.GetOrders(fromDate, toDate, filter)
+}
+
+func (a *App) GetReportStats(fromDateStr, toDateStr string, isCloud bool) (*models.ReportStats, error) {
+	return a.syncService.GetReportStats(fromDateStr, toDateStr, isCloud)
 }
 
 func (a *App) SyncAllData() error {
@@ -362,8 +383,19 @@ func (a *App) OpenCustomerDisplay(monitorIndex int) error {
 		return err
 	}
 
-	fmt.Printf("OpenCustomerDisplay: Launching %s --customer --monitor %d\n", exe, monitorIndex)
-	a.customerDisplayCmd = exec.Command(exe, "--customer", "--monitor", fmt.Sprintf("%d", monitorIndex))
+	fmt.Printf("OpenCustomerDisplay: Launching %s with monitor %d\n", exe, monitorIndex)
+	a.customerDisplayCmd = exec.Command(exe)
+	
+	// Use environment variables instead of flags to avoid Wails dev flag errors
+	a.customerDisplayCmd.Env = append(os.Environ(), 
+		"MOLTOPOS_CUSTOMER=true",
+		fmt.Sprintf("MOLTOPOS_MONITOR=%d", monitorIndex),
+	)
+	
+	// Redirect stdout/stderr so we can see child process logs in the main terminal
+	a.customerDisplayCmd.Stdout = os.Stdout
+	a.customerDisplayCmd.Stderr = os.Stderr
+	
 	err = a.customerDisplayCmd.Start()
 	if err != nil {
 		fmt.Printf("OpenCustomerDisplay: Failed to start process: %v\n", err)
@@ -380,13 +412,24 @@ func (a *App) CloseCustomerDisplay() error {
 	return nil
 }
 
+func (a *App) Quit() {
+	runtime.Quit(a.ctx)
+}
+
 func (a *App) GetIsCustomerDisplay() bool {
-	for _, arg := range os.Args {
-		if arg == "--customer" {
-			return true
+	result := false
+	if os.Getenv("MOLTOPOS_CUSTOMER") == "true" {
+		result = true
+	} else {
+		for _, arg := range os.Args {
+			if arg == "--customer" {
+				result = true
+				break
+			}
 		}
 	}
-	return false
+	fmt.Printf("GetIsCustomerDisplay called: result=%v\n", result)
+	return result
 }
 
 func (a *App) GetAppVersion() string {
@@ -634,4 +677,68 @@ func (a *App) ImportSettings() (string, error) {
 	}
 
 	return "Settings imported successfully. Please restart the application to apply all changes.", nil
+}
+
+// Payment Methods
+func (a *App) GetPaymentMethods() ([]models.PaymentMethod, error) {
+	return a.syncService.GetPaymentMethods()
+}
+
+func (a *App) AddPaymentMethod(method models.PaymentMethod) error {
+	return a.syncService.AddPaymentMethod(method)
+}
+
+func (a *App) UpdatePaymentMethod(method models.PaymentMethod) error {
+	return a.syncService.UpdatePaymentMethod(method)
+}
+
+func (a *App) DeletePaymentMethod(id int) error {
+	return a.syncService.DeletePaymentMethod(id)
+}
+
+func (a *App) GeneratePromptPayQR(template string, amount float64) string {
+	return services.GeneratePromptPayQR(template, amount)
+}
+
+func (a *App) GeneratePromptPayTemplate(promptPayId string) string {
+	return services.GeneratePromptPayTemplate(promptPayId)
+}
+func (a *App) SelectFolder() (string, error) {
+	return runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "Select Video Folder",
+	})
+}
+
+func (a *App) GetVideoFiles(folderPath string) ([]string, error) {
+	fmt.Printf("GetVideoFiles: Checking folder: %s\n", folderPath)
+	var videos []string
+	if folderPath == "" {
+		return videos, nil
+	}
+
+	files, err := os.ReadDir(folderPath)
+	if err != nil {
+		fmt.Printf("GetVideoFiles: Error reading directory: %v\n", err)
+		return nil, err
+	}
+
+	extensions := map[string]bool{
+		".mp4":  true,
+		".webm": true,
+		".ogg":  true,
+		".mov":  true,
+	}
+
+	for _, file := range files {
+		if !file.IsDir() {
+			ext := filepath.Ext(file.Name())
+			if extensions[strings.ToLower(ext)] {
+				fullPath := filepath.Join(folderPath, file.Name())
+				videos = append(videos, fullPath)
+			}
+		}
+	}
+
+	fmt.Printf("GetVideoFiles: Found %d videos\n", len(videos))
+	return videos, nil
 }

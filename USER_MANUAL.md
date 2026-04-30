@@ -314,12 +314,30 @@ Settings are organized into tabs:
 
 ## 14. Customer Display
 
-When enabled, a secondary window opens on a configured monitor showing:
-- Current cart items and quantities.
-- Running total.
-- Store branding / logo.
+![Idle Screen](landing_assets/customer_display_idle.png)
 
-This is intended for customer-facing screens at the checkout counter.
+MoltoPos features a premium secondary screen experience designed to engage customers and streamline the checkout process.
+
+### 14.1 Idle Mode: Video & Ad Manager
+When the POS is idle (no active cart), the customer display transforms into a digital signage platform.
+- **Auto-Play Loop**: Automatically loops high-definition video advertisements.
+- **Content Management**: Place your `.mp4` video files in `C:\PosVids`. The system will automatically detect them, generate a playlist, and cycle through them.
+- **Branding**: Displays your store logo and a beautiful digital clock overlay.
+
+### 14.2 Checkout Mode: Live Transparency
+![Live Checkout](landing_assets/customer_display_cart.png)
+
+As soon as the cashier starts adding items to a cart:
+- **Live Sync**: Items, quantities, and prices appear instantly on the customer screen.
+- **Transparent Totals**: Shows Subtotal, VAT, and the Final Total in real-time.
+
+### 14.3 Payment Mode: Self-Generated QR
+![QR Payment View](landing_assets/qr_payment_customer.png)
+
+Accelerate payments with the integrated QR engine.
+- **Dynamic Generation**: When a cashier selects "QR / PromptPay" as a payment method, the system automatically generates a unique QR code for the specific order total.
+- **Scan-to-Pay**: The QR code is displayed prominently on the customer screen, allowing the customer to scan and pay instantly with their mobile banking app.
+- **Auto-Verification**: Once the payment is processed, the checkout session updates automatically.
 
 ---
 
