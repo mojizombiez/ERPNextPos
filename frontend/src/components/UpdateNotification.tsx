@@ -52,7 +52,7 @@ const UpdateNotification: React.FC = () => {
                     <span className="version-tag">v{updateInfo.version}</span>
                 </div>
                 <div className="update-body">
-                    <p>{updateInfo.description || "A new version of MWinPOS is available. Would you like to update now?"}</p>
+                    <p>{updateInfo.description || "A new version of MoltoPos is available. Would you like to update now?"}</p>
                 </div>
                 {error && <div className="update-error">{error}</div>}
                 <div className="update-actions">

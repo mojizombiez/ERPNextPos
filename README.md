@@ -1,10 +1,10 @@
-# ERPNext POS (MWinPOS)
+# ERPNext POS (MoltoPos)
 
 A premium, high-performance Point of Sale (POS) application designed for seamless integration with **ERPNext**. Built with an offline-first architecture to ensure business continuity even during network outages.
 
 ## 🚀 Overview
 
-MWinPOS leverages the power of **Wails (Go)** for backend system operations and **React (TypeScript)** for a stunning, glassmorphism-inspired user interface. It provides a robust, fast, and modern checkout experience tailored for retail and hospitality environments.
+MoltoPos leverages the power of **Wails (Go)** for backend system operations and **React (TypeScript)** for a stunning, glassmorphism-inspired user interface. It provides a robust, fast, and modern checkout experience tailored for retail and hospitality environments.
 
 ## ✨ Key Features
 

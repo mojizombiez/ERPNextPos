@@ -872,7 +872,7 @@ const SettingsPage = () => {
                                     <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '2rem', padding: '1.5rem 0', borderBottom: '1px solid var(--border-color)' }}>
                                         <div className="flex flex-col">
                                             <span style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.8 }}>Current Version</span>
-                                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>MWinPOS v{currentAppVersion}</span>
+                                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>MoltoPos v{currentAppVersion}</span>
                                         </div>
                                         <div className="flex flex-col gap-4">
                                             <div className="flex items-center gap-4">

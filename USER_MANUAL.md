@@ -1,4 +1,4 @@
-# MWinPOS — User Manual
+# MoltoPos — User Manual
 
 **Version:** 1.2.2  
 **Platform:** Windows Desktop (Wails / ERPNext POS)  
@@ -31,7 +31,7 @@
 
 ## 1. Getting Started
 
-MWinPOS is a Windows desktop Point-of-Sale application that integrates natively with **ERPNext**. It stores all data locally in an SQLite database and periodically syncs sales invoices to your ERPNext server.
+MoltoPos is a Windows desktop Point-of-Sale application that integrates natively with **ERPNext**. It stores all data locally in an SQLite database and periodically syncs sales invoices to your ERPNext server.
 
 ### First Launch
 
@@ -61,7 +61,7 @@ Every session starts at the **PIN Login** screen.
 
 ## 3. Checkout / POS Screen
 
-![MWinPOS Checkout Screen](landing_assets/checkout.png)
+![MoltoPos Checkout Screen](landing_assets/checkout.png)
 
 The main selling screen. It is divided into three panels:
 
@@ -88,7 +88,7 @@ The main selling screen. It is divided into three panels:
 | **Pay Now** | Finalise the order (disabled until fully paid) |
 
 ### 3.4 Product Bundles
-MWinPOS fully supports ERPNext **Product Bundles**. Products that are packaged together will show a "Bundle" badge. When added to the cart, the system correctly tracks it as a bundle and automatically handles the underlying component deduction when the invoice syncs to the server.
+MoltoPos fully supports ERPNext **Product Bundles**. Products that are packaged together will show a "Bundle" badge. When added to the cart, the system correctly tracks it as a bundle and automatically handles the underlying component deduction when the invoice syncs to the server.
 
 After a successful checkout, the system navigates to the **Final Process** screen showing the change amount and optionally printing a receipt.
 
@@ -107,7 +107,7 @@ Click the **Remaining Amount** row (or the **＋ Payment** area) to open the pay
 | Other (from POS Profile) | Custom |
 
 ### Gift Cards & Vouchers
-MWinPOS natively supports ERPNext Gift Cards and Cash Vouchers. 
+MoltoPos natively supports ERPNext Gift Cards and Cash Vouchers. 
 1. Select **Gift Card** as the payment method.
 2. Enter or scan the **Gift Card Code**.
 3. The system will ping the ERPNext server to validate the card and automatically apply the available balance to your remaining total.
@@ -173,7 +173,7 @@ Navigate to **Drawer** from the sidebar.
 
 ## 8. Stock Management
 
-![MWinPOS Stock Management](landing_assets/stock_grid.png)
+![MoltoPos Stock Management](landing_assets/stock_grid.png)
 
 Navigate to **Stock** from the sidebar.
 
@@ -189,7 +189,7 @@ Navigate to **Stock** from the sidebar.
 
 ## 9. Customer Management
 
-![MWinPOS Customer Management](landing_assets/customer_grid.png)
+![MoltoPos Customer Management](landing_assets/customer_grid.png)
 
 Navigate to **Customers** from the sidebar.
 
@@ -221,7 +221,7 @@ Navigate to **Delivery** from the sidebar.
 
 ## 12. Admin Panel
 
-![MWinPOS Admin Dashboard](landing_assets/dashboard.png)
+![MoltoPos Admin Dashboard](landing_assets/dashboard.png)
 
 Navigate to **Admin** from the sidebar. Requires a **Manager PIN** to enter.
 
@@ -325,7 +325,7 @@ This is intended for customer-facing screens at the checkout counter.
 
 ## 15. Barcode Scanner
 
-MWinPOS supports **USB HID barcode scanners** (plug-and-play):
+MoltoPos supports **USB HID barcode scanners** (plug-and-play):
 - On the Checkout screen, point the scanner at any product barcode.
 - The item is automatically added to the active cart.
 - If the barcode is not found, a dialog offers to create a new product with that barcode in Stock management.
@@ -374,7 +374,7 @@ MWinPOS supports **USB HID barcode scanners** (plug-and-play):
 
 ### 19. Responsive UI & Accessibility
 
-MWinPOS v1.2.2 features a fully **Responsive UI** architecture. All core components (Modals, PIN Keypads, Payment Numpads) use fluid units (`clamp`, `vw`, `vh`) to ensure:
+MoltoPos v1.2.2 features a fully **Responsive UI** architecture. All core components (Modals, PIN Keypads, Payment Numpads) use fluid units (`clamp`, `vw`, `vh`) to ensure:
 - **Tablet Optimization**: Perfectly usable on 10-inch POS tablets and touch monitors.
 - **Adaptive Modals**: Popup windows automatically resize and stack content to fit smaller screens.
 - **Fluid Inputs**: Numeric keypads and buttons scale dynamically, maintaining a premium touch-target feel on all devices.

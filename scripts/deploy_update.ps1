@@ -107,9 +107,9 @@ try {
 # 4. Upload the Binary (if not OnlyPublish)
 if (!$OnlyPublish) {
     if ($TargetOS -eq "windows") {
-        $uploadFileName = "MWinPOS-v$version.exe"
+        $uploadFileName = "MoltoPos-v$version.exe"
     } else {
-        $uploadFileName = "MWinPOS-v$version-linux"
+        $uploadFileName = "MoltoPos-v$version-linux"
     }
 
     $ftpUrlBinary = "ftp://$ftpHost${ftpDir}$uploadFileName"
@@ -127,8 +127,8 @@ if (!$OnlyPublish) {
         exit 1
     }
 } else {
-    $uploadFileName = "MWinPOS-v$version.exe"
-    if ($TargetOS -ne "windows") { $uploadFileName = "MWinPOS-v$version-linux" }
+    $uploadFileName = "MoltoPos-v$version.exe"
+    if ($TargetOS -ne "windows") { $uploadFileName = "MoltoPos-v$version-linux" }
 }
 
 # 5. Fetch existing update.json to maintain history

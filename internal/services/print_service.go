@@ -1,7 +1,7 @@
 package services
 
 import (
-	"MWinPOS/internal/models"
+	"MoltoPos/internal/models"
 	"fmt"
 	"os/exec"
 	"strings"

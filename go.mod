@@ -1,4 +1,4 @@
-module MWinPOS
+module MoltoPos
 
 go 1.23
 

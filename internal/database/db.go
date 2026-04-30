@@ -1,7 +1,7 @@
 package database
 
 import (
-	"MWinPOS/internal/models"
+	"MoltoPos/internal/models"
 	"log"
 	"os"
 	"path/filepath"
@@ -17,7 +17,7 @@ func InitDB() {
 
 	// Ensure data directory exists
 	appDataDir := os.Getenv("APPDATA")
-	dbFolder := filepath.Join(appDataDir, "MWinPOS")
+	dbFolder := filepath.Join(appDataDir, "MoltoPos")
 	if _, err := os.Stat(dbFolder); os.IsNotExist(err) {
 		os.MkdirAll(dbFolder, 0755)
 	}

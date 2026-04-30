@@ -41,7 +41,7 @@ A PowerShell script is provided to automate the build, upload, and generation of
 This script will:
 1. Parse `AppVersion` from `internal/services/update_service.go`
 2. Build the Windows executable
-3. Upload `MWinPOS-vX.X.X.exe` via FTP
+3. Upload `MoltoPos-vX.X.X.exe` via FTP
 4. Generate `update.json` locally and upload it via FTP
 
 ### Customizing the Download URL

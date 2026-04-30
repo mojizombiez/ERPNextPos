@@ -1,7 +1,7 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "MWinPOS",
-  "outputfilename": "GoProject",
+  "name": "MoltoPos",
+  "outputfilename": "MoltoPos",
   "frontend:install": "npm install",
   "frontend:build": "npm run build",
   "frontend:dev:watcher": "npm run dev",

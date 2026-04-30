@@ -1,8 +1,8 @@
 package services
 
 import (
-	"MWinPOS/internal/database"
-	"MWinPOS/internal/models"
+	"MoltoPos/internal/database"
+	"MoltoPos/internal/models"
 	"encoding/json"
 	"fmt"
 	"net/http"

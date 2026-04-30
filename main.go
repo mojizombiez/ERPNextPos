@@ -1,7 +1,7 @@
 package main
 
 import (
-	"MWinPOS/internal/database"
+	"MoltoPos/internal/database"
 	"context"
 	"embed"
 	"fmt"
@@ -40,7 +40,7 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 
-	title := "MWinPOS"
+	title := "MoltoPos"
 	if isCustomer {
 		title = "M Customer Display"
 	}
@@ -55,7 +55,7 @@ func main() {
 				// Handle /images/ requests by serving from APPDATA
 				if len(r.URL.Path) > 8 && r.URL.Path[:8] == "/images/" {
 					appDataDir := os.Getenv("APPDATA")
-					imagePath := filepath.Join(appDataDir, "MWinPOS", "images", r.URL.Path[8:])
+					imagePath := filepath.Join(appDataDir, "MoltoPos", "images", r.URL.Path[8:])
 					if _, err := os.Stat(imagePath); err == nil {
 						http.ServeFile(w, r, imagePath)
 						return

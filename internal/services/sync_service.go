@@ -1,9 +1,9 @@
 package services
 
 import (
-	"MWinPOS/internal/config"
-	"MWinPOS/internal/database"
-	"MWinPOS/internal/models"
+	"MoltoPos/internal/config"
+	"MoltoPos/internal/database"
+	"MoltoPos/internal/models"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -1144,7 +1144,7 @@ func (s *SyncService) GetNetworkPing() (int64, error) {
 
 func (s *SyncService) downloadImages(products []models.Product) {
 	appDataDir := os.Getenv("APPDATA")
-	logPath := filepath.Join(appDataDir, "MWinPOS", "sync_log.txt")
+	logPath := filepath.Join(appDataDir, "MoltoPos", "sync_log.txt")
 
 	logFile, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
@@ -1156,7 +1156,7 @@ func (s *SyncService) downloadImages(products []models.Product) {
 	logger := io.MultiWriter(os.Stdout, logFile)
 	fmt.Fprintf(logger, "\n--- Starting Image Download for %d products at %s ---\n", len(products), time.Now().Format(time.RFC3339))
 
-	imgFolder := filepath.Join(appDataDir, "MWinPOS", "images")
+	imgFolder := filepath.Join(appDataDir, "MoltoPos", "images")
 	if _, err := os.Stat(imgFolder); os.IsNotExist(err) {
 		os.MkdirAll(imgFolder, 0755)
 	}
@@ -1351,7 +1351,7 @@ func (s *SyncService) ClearAllData() error {
 
 	// 2. Clear images folder
 	appDataDir := os.Getenv("APPDATA")
-	imageDir := filepath.Join(appDataDir, "MWinPOS", "images")
+	imageDir := filepath.Join(appDataDir, "MoltoPos", "images")
 	if _, err := os.Stat(imageDir); err == nil {
 		files, err := os.ReadDir(imageDir)
 		if err == nil {

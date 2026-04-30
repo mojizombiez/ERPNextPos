@@ -1,8 +1,8 @@
 package main
 
 import (
-	"MWinPOS/internal/models"
-	"MWinPOS/internal/services"
+	"MoltoPos/internal/models"
+	"MoltoPos/internal/services"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -51,7 +51,7 @@ func (a *App) HardReset() error {
 
 	// 2. Identify data folder
 	appDataDir := os.Getenv("APPDATA")
-	dbFolder := filepath.Join(appDataDir, "MWinPOS")
+	dbFolder := filepath.Join(appDataDir, "MoltoPos")
 
 	// 3. Remove the entire folder
 	fmt.Printf("[RESET] Deleting data folder: %s\n", dbFolder)
@@ -528,7 +528,7 @@ func (a *App) SelectAndSaveImage() (string, error) {
 
 	// 2. Prepare Destination
 	appDataDir := os.Getenv("APPDATA")
-	imageDir := filepath.Join(appDataDir, "MWinPOS", "images")
+	imageDir := filepath.Join(appDataDir, "MoltoPos", "images")
 
 	// Ensure directory exists
 	if _, err := os.Stat(imageDir); os.IsNotExist(err) {
@@ -573,7 +573,7 @@ func (a *App) ExportSettings() error {
 	// 2. Open Save File Dialog
 	selection, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		Title:           "Export Settings",
-		DefaultFilename: "mwinpos_settings.json",
+		DefaultFilename: "MoltoPos_settings.json",
 		Filters: []runtime.FileFilter{
 			{
 				DisplayName: "JSON Files (*.json)",
