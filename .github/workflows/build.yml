@@ -33,7 +33,7 @@ jobs:
       - name: Build Application
         run: |
           # The script expects internal/services/update_service.go to have the version
-          wails build -platform linux/amd64
+          wails build -platform linux/amd64 -tags webkit2gtk_4.1
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
