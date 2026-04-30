@@ -136,19 +136,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onSwitchUser, onLock, isCollapsed, on
                     width: '40px',
                     height: '40px',
                     borderRadius: '12px',
-                    background: 'var(--accent-gradient)',
+                    background: 'white',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 8px 16px -4px rgba(139, 92, 246, 0.5)',
-                    flexShrink: 0
+                    boxShadow: '0 8px 16px -4px rgba(0,0,0,0.1)',
+                    flexShrink: 0,
+                    overflow: 'hidden'
                 }}>
-                    <ShoppingCart size={22} color="white" />
+                    <img src="/src/assets/images/logo-icon.png" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 {!isCollapsed && (
                     <div style={{ transition: 'opacity 0.2s', opacity: 1 }}>
                         <div style={{ fontWeight: 900, fontSize: '1.25rem', color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                            M
+                            MoltoPos
                         </div>
                         <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                             Premium POS

@@ -37,8 +37,11 @@ const CustomerDisplay: React.FC = () => {
 
                     {/* Welcome Text */}
                     <div className="mb-8">
+                        <div className="flex items-center justify-center mb-6">
+                            <img src="/src/assets/images/logo-icon.png" alt="Logo" style={{ width: '120px', height: '120px', borderRadius: '32px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }} />
+                        </div>
                         <h1 className="text-8xl font-black mb-4 tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-[var(--text-primary)] via-[var(--accent-primary)] to-[var(--text-primary)] animate-gradient">
-                            Welcome to M
+                            MoltoPos
                         </h1>
                         <div className="flex items-center justify-center gap-3 text-4xl text-[var(--text-secondary)] font-light tracking-[0.3em] uppercase">
                             <Sparkles size={32} className="text-[var(--accent-primary)] animate-pulse" />
