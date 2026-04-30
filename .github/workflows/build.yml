@@ -112,7 +112,7 @@ jobs:
           mv deploy/windows/MoltoPos.exe "deploy/windows/MoltoPos-v${VERSION}.exe"
           
           # Prepare Linux
-          mv deploy/linux/MoltoPos "deploy/linux/MoltoPos-v${VERSION}"
+          mv deploy/linux/MoltoPos "deploy/linux/MoltoPos-v${VERSION}-linux.AppImage"
           
           # Prepare Meta (update.json)
           mkdir -p upload_meta
@@ -124,6 +124,7 @@ jobs:
           cp manual.html upload_landing/
           cp USER_MANUAL.md upload_landing/
           cp USER_MANUAL_TH.md upload_landing/
+          cp update.json upload_landing/
           cp -r landing_assets upload_landing/
 
       - name: FTP Deploy Windows
