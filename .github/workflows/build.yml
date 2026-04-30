@@ -103,6 +103,14 @@ jobs:
           # Prepare Meta (update.json)
           mkdir -p upload_meta
           cp update.json upload_meta/update.json
+          
+          # Prepare Landing Page & Manuals
+          mkdir -p upload_landing
+          cp index.html upload_landing/
+          cp manual.html upload_landing/
+          cp USER_MANUAL.md upload_landing/
+          cp USER_MANUAL_TH.md upload_landing/
+          cp -r landing_assets upload_landing/
 
       - name: FTP Deploy Windows
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -132,4 +140,14 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./upload_meta/
           server-dir: ${{ secrets.FTP_DIR_UPDATE || '/erpnext/' }}
+          dangerous-clean-slate: false
+
+      - name: FTP Deploy Landing & Manuals
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./upload_landing/
+          server-dir: ${{ secrets.FTP_DIR_LANDING || '/erpnext/' }}
           dangerous-clean-slate: false
