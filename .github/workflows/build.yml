@@ -93,24 +93,43 @@ jobs:
       - name: Prepare Files for Upload
         run: |
           VERSION="1.3.0"
-          mkdir -p upload/erpnext/windows
-          mkdir -p upload/erpnext/linux
           
-          # Windows
-          cp deploy/windows/MoltoPos.exe "upload/erpnext/windows/MoltoPos-v${VERSION}.exe"
+          # Prepare Windows
+          mv deploy/windows/MoltoPos.exe "deploy/windows/MoltoPos-v${VERSION}.exe"
           
-          # Linux (assuming wails produces 'MoltoPos')
-          cp deploy/linux/MoltoPos "upload/erpnext/linux/MoltoPos-v${VERSION}"
+          # Prepare Linux
+          mv deploy/linux/MoltoPos "deploy/linux/MoltoPos-v${VERSION}"
           
-          # Also upload update.json to the root of erpnext
-          cp update.json upload/erpnext/update.json
+          # Prepare Meta (update.json)
+          mkdir -p upload_meta
+          cp update.json upload_meta/update.json
 
-      - name: FTP Deploy
+      - name: FTP Deploy Windows
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./upload/
-          server-dir: ./
+          local-dir: ./deploy/windows/
+          server-dir: ${{ secrets.FTP_DIR_WINDOWS }}
+          dangerous-clean-slate: false
+
+      - name: FTP Deploy Linux
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./deploy/linux/
+          server-dir: ${{ secrets.FTP_DIR_LINUX }}
+          dangerous-clean-slate: false
+
+      - name: FTP Deploy update.json
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./upload_meta/
+          server-dir: ${{ secrets.FTP_DIR_UPDATE || '/erpnext/' }}
           dangerous-clean-slate: false
