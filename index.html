@@ -842,21 +842,27 @@
             const versionText = document.getElementById('versionText');
             
             try {
-                const winResponse = await fetch('/erpnext/windows/update.json?t=' + new Date().getTime());
-                if (winResponse.ok) {
-                    const winData = await winResponse.json();
-                    downloadWinLink.href = winData.url;
-                    versionText.textContent = `Latest Release: v${winData.version}`;
-                }
-
-                const linResponse = await fetch('/erpnext/linux/update.json?t=' + new Date().getTime());
-                if (linResponse.ok) {
-                    const linData = await linResponse.json();
-                    downloadLinLink.href = linData.url;
+                // Fetch central update.json
+                const response = await fetch('/erpnext/update.json?t=' + new Date().getTime());
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Set Windows link
+                    if (data.url) downloadWinLink.href = data.url;
+                    
+                    // Set Linux link (using linux_url if available)
+                    if (data.linux_url) {
+                        downloadLinLink.href = data.linux_url;
+                    } else if (data.url) {
+                        // Fallback pattern if linux_url is missing
+                        downloadLinLink.href = data.url.replace('.exe', '-linux.AppImage').replace('/windows/', '/linux/');
+                    }
+                    
+                    versionText.textContent = `Latest Release: v${data.version}`;
                 }
             } catch (error) {
                 console.error("Update check failed:", error);
-                versionText.textContent = 'Version: Stable';
+                versionText.textContent = 'Version: Stable (v1.2.2)';
             }
         });
     </script>
