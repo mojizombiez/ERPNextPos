@@ -1,6 +1,6 @@
 # MoltoPos — User Manual
 
-**Version:** 1.2.2  
+**Version:** 1.3.0  
 **Platform:** Windows Desktop (Wails / ERPNext POS)  
 **Audience:** Cashiers, Managers, Store Administrators
 

@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const AppVersion = "1.2.2"
+const AppVersion = "1.3.0"
 
 type UpdateHistoryEntry struct {
 	Version     string `json:"version"`

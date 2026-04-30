@@ -34,10 +34,15 @@
                         "date":  "2026-04-30 14:59:20",
                         "description":  "v1.2.1: POS UI Optimization, Stock Management Style Consistency, and Thai Localization",
                         "version":  "1.2.1"
+                    },
+                    {
+                        "date":  "2026-04-30 18:45:00",
+                        "description":  "v1.2.2: Full i18n support (EN/TH), Fixed UI Overlaps, and Enhanced Large UI for Mini POS.",
+                        "version":  "1.2.2"
                     }
                 ],
-    "url": "https://nuget.moltothailand.com/erpnext/windows/MoltoPos-v1.2.2.exe",
-    "linux_url": "https://nuget.moltothailand.com/erpnext/linux/MoltoPos-v1.2.2-linux.AppImage",
-    "description": "v1.2.2: Full i18n support (EN/TH), Fixed UI Overlaps, and Enhanced Large UI for Mini POS.",
-    "version": "1.2.2"
+    "url": "https://nuget.moltothailand.com/erpnext/windows/MoltoPos-v1.3.0.exe",
+    "linux_url": "https://nuget.moltothailand.com/erpnext/linux/MoltoPos-v1.3.0-linux.AppImage",
+    "description": "v1.3.0: Official MoltoPos Rebranding. New high-resolution icons, premium UI assets, and updated documentation.",
+    "version": "1.3.0"
 }
