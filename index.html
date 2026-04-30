@@ -144,6 +144,37 @@
             text-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 1001;
+            padding: 10px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 28px;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
         .lang-switch {
             display: flex;
             gap: 0.5rem;
@@ -527,6 +558,9 @@
             .feature-grid {
                 grid-template-columns: 1fr;
             }
+            .feature-card-big, .feature-card-small {
+                grid-column: auto;
+            }
             .feature-card-big {
                 flex-direction: column;
                 padding: 3rem;
@@ -535,9 +569,30 @@
                 flex-direction: column;
                 text-align: center;
                 padding-top: 10rem;
+                gap: 2rem;
             }
             .hero-desc {
                 margin: 0 auto 3rem;
+            }
+            .hero-visual {
+                width: 100%;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 6rem 5%;
+            }
+            .section-header {
+                margin-bottom: 4rem;
+            }
+            .feature-card-big {
+                padding: 2rem;
+            }
+            .feature-visual-box {
+                width: 100%;
             }
         }
 
@@ -546,21 +601,72 @@
                 padding: 1rem 5%;
             }
             .nav-links {
-                display: none;
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                height: 100vh;
+                background: rgba(3, 7, 18, 0.95);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 1000;
+                border-left: 1px solid var(--glass-border);
+            }
+            .nav-links.active {
+                right: 0;
+            }
+            .nav-links a {
+                font-size: 1.25rem;
+            }
+            .menu-toggle {
+                display: flex;
+            }
+            .lang-switch {
+                margin-left: 0;
+                padding-left: 0;
+                border-left: none;
+                margin-top: 1rem;
             }
             .hero {
-                padding: 8rem 5% 4rem;
+                padding: 7rem 5% 4rem;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
             }
             .stats-bar {
                 flex-direction: column;
-                gap: 2rem;
-                padding: 2rem;
+                gap: 2.5rem;
+                padding: 2.5rem 1.5rem;
+                margin-top: -3rem;
             }
-            .feature-card-big {
-                padding: 2rem;
+            .stat-value {
+                font-size: 2rem;
             }
             .download-card {
-                padding: 3rem 1.5rem;
+                padding: 4rem 1.5rem;
+                border-radius: 32px;
+            }
+            .download-card h2 {
+                font-size: 2.25rem !important;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .nav-cta {
+                display: none !important; /* Hide 'Get Started' button in nav on mobile to save space */
+            }
+            footer {
+                padding: 4rem 5% 2rem;
+            }
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1.5rem;
             }
         }
     </style>
@@ -577,17 +683,24 @@
             <img src="landing_assets/favicon.png" alt="Logo" style="width: 42px; height: 42px; border-radius: 12px; box-shadow: 0 8px 16px rgba(139, 92, 246, 0.4);">
             MoltoPos
         </a>
-        <div class="nav-links">
-            <a href="#features" data-i18n="nav_features">Features</a>
-            <a href="#experience" data-i18n="nav_experience">Experience</a>
-            <a href="#download" data-i18n="nav_download">Download</a>
+        <div class="nav-links" id="navLinks">
+            <a href="#features" onclick="toggleMenu()" data-i18n="nav_features">Features</a>
+            <a href="#experience" onclick="toggleMenu()" data-i18n="nav_experience">Experience</a>
+            <a href="#download" onclick="toggleMenu()" data-i18n="nav_download">Download</a>
             <a href="manual.html" id="doc-link" data-i18n="nav_docs">Documentation</a>
             <div class="lang-switch">
                 <a href="?lang=en" id="lang-en" class="lang-btn">EN</a>
                 <a href="?lang=th" id="lang-th" class="lang-btn">TH</a>
             </div>
         </div>
-        <a href="#download" class="btn btn-primary" style="padding: 0.75rem 1.5rem; border-radius: 12px; font-size: 0.875rem;" data-i18n="nav_get_started">Get Started</a>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <a href="#download" class="btn btn-primary nav-cta" style="padding: 0.75rem 1.5rem; border-radius: 12px; font-size: 0.875rem;" data-i18n="nav_get_started">Get Started</a>
+            <div class="menu-toggle" id="menuToggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
     </nav>
 
     <header class="hero">
@@ -765,6 +878,16 @@
                 img.src = mode === 'grid' ? 'landing_assets/stock_grid.png' : 'landing_assets/stock_list.png';
             } else if (type === 'customer') {
                 img.src = mode === 'grid' ? 'landing_assets/customer_grid.png' : 'landing_assets/customer_list.png';
+            }
+        }
+
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const menuToggle = document.getElementById('menuToggle');
+            if (window.innerWidth <= 640) {
+                navLinks.classList.toggle('active');
+                menuToggle.classList.toggle('active');
+                document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
             }
         }
 
