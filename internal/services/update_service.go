@@ -137,7 +137,7 @@ del "%%~f0"
 		}
 
 		cmd := exec.Command("cmd", "/c", "start", "/b", updaterPath)
-		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: 0x08000000}
+		cmd.SysProcAttr = GetSysProcAttr()
 		err = cmd.Start()
 		if err != nil {
 			return err

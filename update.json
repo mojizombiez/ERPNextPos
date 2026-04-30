@@ -31,17 +31,12 @@
                         "version":  "1.2.0"
                     },
                     {
-                        "date":  "2026-04-28 13:55:00",
-                        "description":  "v1.2.1 - Responsive UI overhaul (modals/keypads), Offline Thai Fonts support, and Premium Appearance settings",
+                        "date":  "2026-04-30 14:59:20",
+                        "description":  "v1.2.1: POS UI Optimization, Stock Management Style Consistency, and Thai Localization",
                         "version":  "1.2.1"
-                    },
-                    {
-                        "date":  "2026-04-30 14:08:00",
-                        "description":  "v1.2.2 - Full Internationalization (EN/TH), Fixed Currency Overlaps, and Enhanced Large UI for Small Screens",
-                        "version":  "1.2.2"
                     }
                 ],
-    "url":  "https://nuget.moltothailand.com/erpnext/windows/MWinPOS-v1.2.1.exe",
-    "description":  "v1.2.1: Full Responsive UI overhaul, Offline Thai Fonts, and Premium Appearance settings",
-    "version":  "1.2.1"
+    "url":  "https://nuget.moltothailand.com/erpnext/windows/MWinPOS-v1.2.2.exe",
+    "description":  "v1.2.2: Full i18n support (EN/TH), Fixed UI Overlaps, and Enhanced Large UI for Mini POS.",
+    "version":  "1.2.2"
 }

@@ -32,7 +32,7 @@ func (s *PrintService) OpenCashDrawer(printerName string) error {
 func (s *PrintService) GetPrinters() ([]string, error) {
 	// Use powershell to list printers for Windows
 	cmd := exec.Command("powershell", "-WindowStyle", "Hidden", "-Command", "Get-Printer | Select-Object -ExpandProperty Name")
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: 0x08000000}
+	cmd.SysProcAttr = GetSysProcAttr()
 	output, err := cmd.Output()
 	if err != nil {
 		return nil, err
