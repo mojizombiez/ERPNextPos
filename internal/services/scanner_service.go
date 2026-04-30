@@ -3,7 +3,6 @@ package services
 import (
 	"os/exec"
 	"strings"
-	"syscall"
 )
 
 type ScannerService struct{}
