@@ -751,9 +751,9 @@
 
     <section id="features">
         <div class="section-header">
-            <span class="section-tag">Core Features</span>
-            <h2 class="section-title">Everything you need to grow your business.</h2>
-            <p style="color: var(--text-muted); font-size: 1.125rem;">Built with the latest technologies to provide a seamless experience across all your retail touchpoints.</p>
+            <span class="section-tag" data-i18n="feat_tag">Core Features</span>
+            <h2 class="section-title" data-i18n="feat_title">Everything you need to grow your business.</h2>
+            <p style="color: var(--text-muted); font-size: 1.125rem;" data-i18n="feat_desc">Built with the latest technologies to provide a seamless experience across all your retail touchpoints.</p>
         </div>
 
         <div class="feature-grid">
@@ -762,11 +762,11 @@
                     <div class="feature-icon">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                     </div>
-                    <h3>Smart Inventory Matrix</h3>
-                    <p>Manage your products with unprecedented flexibility. Toggle between optimized layouts to find what you need, faster.</p>
+                    <h3 data-i18n="feat_stock_title">Smart Inventory Matrix</h3>
+                    <p data-i18n="feat_stock_desc">Manage your products with unprecedented flexibility. Toggle between optimized layouts to find what you need, faster.</p>
                     <div class="view-switcher">
-                        <button class="switch-btn active" onclick="switchView('stock', 'grid')">Grid View</button>
-                        <button class="switch-btn" onclick="switchView('stock', 'list')">List View</button>
+                        <button class="switch-btn active" onclick="switchView('stock', 'grid')" data-i18n="btn_grid">Grid View</button>
+                        <button class="switch-btn" onclick="switchView('stock', 'list')" data-i18n="btn_list">List View</button>
                     </div>
                 </div>
                 <div class="feature-visual-box">
@@ -778,11 +778,11 @@
                 <div class="feature-icon" style="color: var(--secondary); background: rgba(16, 185, 129, 0.1);">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 </div>
-                <h3>CRM & Loyalty</h3>
-                <p>Build lasting relationships. Track customer history, loyalty points, and credit limits in real-time.</p>
+                <h3 data-i18n="feat_crm_title">CRM & Loyalty</h3>
+                <p data-i18n="feat_crm_desc">Build lasting relationships. Track customer history, loyalty points, and credit limits in real-time.</p>
                 <div class="view-switcher" style="margin-bottom: 1.5rem;">
-                    <button class="switch-btn active" onclick="switchView('customer', 'grid')">Cards</button>
-                    <button class="switch-btn" onclick="switchView('customer', 'list')">Compact</button>
+                    <button class="switch-btn active" onclick="switchView('customer', 'grid')" data-i18n="btn_cards">Cards</button>
+                    <button class="switch-btn" onclick="switchView('customer', 'list')" data-i18n="btn_compact">Compact</button>
                 </div>
                 <div class="feature-visual-box" style="border-width: 2px;">
                     <img id="customer-view-img" src="landing_assets/customer_grid.png" alt="Customer View">
@@ -793,8 +793,8 @@
                 <div class="feature-icon" style="color: var(--accent); background: rgba(245, 158, 11, 0.1);">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
                 </div>
-                <h3>Real-time Insights</h3>
-                <p>Dynamic dashboards provide a clear view of your sales performance, top products, and inventory health.</p>
+                <h3 data-i18n="feat_insights_title">Real-time Insights</h3>
+                <p data-i18n="feat_insights_desc">Dynamic dashboards provide a clear view of your sales performance, top products, and inventory health.</p>
                 <div style="margin-top: 1.5rem;" class="feature-visual-box" style="border-width: 2px;">
                     <img src="landing_assets/dashboard.png" alt="Dashboard View">
                 </div>
@@ -802,24 +802,58 @@
         </div>
     </section>
 
-    <section id="experience" style="background: rgba(139, 92, 246, 0.02); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
+    <section id="flexibility" style="background: rgba(16, 185, 129, 0.02); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
         <div class="section-header">
-            <span class="section-tag">Premium Experience</span>
-            <h2 class="section-title">Designed for Delight.</h2>
+            <span class="section-tag" data-i18n="flex_tag">Flexible Deployment</span>
+            <h2 class="section-title" data-i18n="flex_title">One App. Two Powerhouse Modes.</h2>
+            <p style="color: var(--text-muted); font-size: 1.125rem;" data-i18n="flex_desc">Whether you're a large enterprise or a local boutique, MoltoPos adapts to your workflow.</p>
+        </div>
+        <div class="feature-grid">
+             <div class="feature-card-small">
+                <div class="feature-icon" style="color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h3 data-i18n="mode_erp_title">ERPNext Native</h3>
+                <p data-i18n="mode_erp_desc">Connect directly to your ERPNext instance for real-time inventory sync, centralized accounting, and global reporting.</p>
+            </div>
+            <div class="feature-card-small">
+                <div class="feature-icon" style="color: var(--secondary); background: rgba(16, 185, 129, 0.1);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <h3 data-i18n="mode_standalone_title">Pure Standalone</h3>
+                <p data-i18n="mode_standalone_desc">No ERP? No problem. Use the built-in SQLite database for a fully independent, local-first POS experience.</p>
+            </div>
+            <div class="feature-card-big" style="display: flex; align-items: center; gap: 3rem;">
+                <div style="flex: 1;">
+                     <h3 data-i18n="lightweight_title">Ultra-Lightweight Engine</h3>
+                     <p data-i18n="lightweight_desc">Powered by a high-performance Go backend, MoltoPos is incredibly lightweight. A single ~20MB binary is all you need for near-instant startup and minimal resource usage.</p>
+                </div>
+                <div style="flex: 0.5; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; text-align: center; min-width: 180px;">
+                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--primary);">~20MB</div>
+                    <div style="font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;" data-i18n="binary_size">Binary Size</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience" style="background: rgba(139, 92, 246, 0.02); border-bottom: 1px solid var(--glass-border);">
+        <div class="section-header">
+            <span class="section-tag" data-i18n="exp_tag">Premium Experience</span>
+            <h2 class="section-title" data-i18n="exp_title">Designed for Delight.</h2>
         </div>
         <div style="max-width: 1000px; margin: 0 auto;">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 4rem;">
                 <div style="text-align: center;">
-                    <h4 style="font-size: 1.25rem; margin-bottom: 1rem;">Glassmorphism UI</h4>
-                    <p style="color: var(--text-muted);">A stunning modern interface that feels alive and responsive.</p>
+                    <h4 style="font-size: 1.25rem; margin-bottom: 1rem;" data-i18n="exp_glass_title">Glassmorphism UI</h4>
+                    <p style="color: var(--text-muted);" data-i18n="exp_glass_desc">A stunning modern interface that feels alive and responsive.</p>
                 </div>
                 <div style="text-align: center;">
-                    <h4 style="font-size: 1.25rem; margin-bottom: 1rem;">Typography</h4>
-                    <p style="color: var(--text-muted);">Crystal clear legibility with beautiful Thai and English fonts.</p>
+                    <h4 style="font-size: 1.25rem; margin-bottom: 1rem;" data-i18n="exp_typo_title">Typography</h4>
+                    <p style="color: var(--text-muted);" data-i18n="exp_typo_desc">Crystal clear legibility with beautiful Thai and English fonts.</p>
                 </div>
                 <div style="text-align: center;">
-                    <h4 style="font-size: 1.25rem; margin-bottom: 1rem;">Micro-Animations</h4>
-                    <p style="color: var(--text-muted);">Subtle feedback loops that make every interaction satisfying.</p>
+                    <h4 style="font-size: 1.25rem; margin-bottom: 1rem;" data-i18n="exp_anim_title">Micro-Animations</h4>
+                    <p style="color: var(--text-muted);" data-i18n="exp_anim_desc">Subtle feedback loops that make every interaction satisfying.</p>
                 </div>
             </div>
         </div>
@@ -908,6 +942,37 @@
                 stat_sync: "Native Sync",
                 stat_multi_val: "Multi",
                 stat_multi_label: "Language UI",
+                feat_tag: "Core Features",
+                feat_title: "Everything you need to grow your business.",
+                feat_desc: "Built with the latest technologies to provide a seamless experience across all your retail touchpoints.",
+                feat_stock_title: "Smart Inventory Matrix",
+                feat_stock_desc: "Manage your products with unprecedented flexibility. Toggle between optimized layouts to find what you need, faster.",
+                feat_crm_title: "CRM & Loyalty",
+                feat_crm_desc: "Build lasting relationships. Track customer history, loyalty points, and credit limits in real-time.",
+                feat_insights_title: "Real-time Insights",
+                feat_insights_desc: "Dynamic dashboards provide a clear view of your sales performance, top products, and inventory health.",
+                flex_tag: "Flexible Deployment",
+                flex_title: "One App. Two Powerhouse Modes.",
+                flex_desc: "Whether you're a large enterprise or a local boutique, MoltoPos adapts to your workflow.",
+                mode_erp_title: "ERPNext Native",
+                mode_erp_desc: "Connect directly to your ERPNext instance for real-time inventory sync, centralized accounting, and global reporting.",
+                mode_standalone_title: "Pure Standalone",
+                mode_standalone_desc: "No ERP? No problem. Use the built-in SQLite database for a fully independent, local-first POS experience.",
+                lightweight_title: "Ultra-Lightweight Engine",
+                lightweight_desc: "Powered by a high-performance Go backend, MoltoPos is incredibly lightweight. A single ~20MB binary is all you need for near-instant startup and minimal resource usage.",
+                binary_size: "Binary Size",
+                exp_tag: "Premium Experience",
+                exp_title: "Designed for Delight.",
+                exp_glass_title: "Glassmorphism UI",
+                exp_glass_desc: "A stunning modern interface that feels alive and responsive.",
+                exp_typo_title: "Typography",
+                exp_typo_desc: "Crystal clear legibility with beautiful Thai and English fonts.",
+                exp_anim_title: "Micro-Animations",
+                exp_anim_desc: "Subtle feedback loops that make every interaction satisfying.",
+                btn_grid: "Grid View",
+                btn_list: "List View",
+                btn_cards: "Cards",
+                btn_compact: "Compact",
                 cta_title: "Step into the future.",
                 cta_desc: "Download MoltoPos today and elevate your business experience.",
                 version_fetching: "Fetching Latest Release..."
@@ -927,6 +992,37 @@
                 stat_sync: "ซิงค์ข้อมูลอัตโนมัติ",
                 stat_multi_val: "หลายภาษา",
                 stat_multi_label: "UI รองรับภาษาไทย",
+                feat_tag: "ฟีเจอร์หลัก",
+                feat_title: "ทุกอย่างที่คุณต้องการเพื่อขยายธุรกิจ",
+                feat_desc: "สร้างขึ้นด้วยเทคโนโลยีล่าสุดเพื่อให้ประสบการณ์ที่ราบรื่นในทุกจุดขายของคุณ",
+                feat_stock_title: "คลังสินค้าอัจฉริยะ",
+                feat_stock_desc: "จัดการสินค้าของคุณด้วยความยืดหยุ่นอย่างไม่เคยมีมาก่อน สลับระหว่างเลย์เอาต์เพื่อค้นหาสิ่งที่คุณต้องการได้เร็วขึ้น",
+                feat_crm_title: "CRM & ระบบสมาชิก",
+                feat_crm_desc: "สร้างความสัมพันธ์ที่ยั่งยืน ติดตามประวัติลูกค้า คะแนนสะสม และวงเงินเครดิตแบบเรียลไทม์",
+                feat_insights_title: "วิเคราะห์ข้อมูลเรียลไทม์",
+                feat_insights_desc: "แดชบอร์ดที่ช่วยให้เห็นภาพรวมยอดขาย สินค้าขายดี และสถานะคลังสินค้าที่ชัดเจน",
+                flex_tag: "การติดตั้งที่ยืดหยุ่น",
+                flex_title: "หนึ่งแอป. สองโหมดทรงพลัง",
+                flex_desc: "ไม่ว่าคุณจะเป็นองค์กรขนาดใหญ่หรือร้านบูติกขนาดเล็ก MoltoPos ปรับให้เข้ากับเวิร์กโฟลว์ของคุณได้",
+                mode_erp_title: "เชื่อมต่อ ERPNext",
+                mode_erp_desc: "เชื่อมต่อโดยตรงกับ ERPNext เพื่อซิงค์สต็อกแบบเรียลไทม์ บัญชีส่วนกลาง และรายงานภาพรวมระดับโลก",
+                mode_standalone_title: "โหมดสแตนด์อโลน",
+                mode_standalone_desc: "ไม่มี ERP? ไม่มีปัญหา. ใช้ฐานข้อมูล SQLite ในตัวเพื่อประสบการณ์ POS ที่เป็นอิสระและเน้นการทำงานภายใน",
+                lightweight_title: "เครื่องยนต์น้ำหนักเบาพิเศษ",
+                lightweight_desc: "ขับเคลื่อนด้วยแบ็กเอนด์ Go ประสิทธิภาพสูง MoltoPos มีขนาดเล็กมาก เพียงแค่ไฟล์เดียวขนาด ~20MB ก็เพียงพอสำหรับการเริ่มต้นที่รวดเร็ว",
+                binary_size: "ขนาดไฟล์โปรแกรม",
+                exp_tag: "ประสบการณ์ระดับพรีเมียม",
+                exp_title: "ออกแบบมาเพื่อความประทับใจ",
+                exp_glass_title: "UI สไตล์ Glassmorphism",
+                exp_glass_desc: "อินเทอร์เฟซที่ทันสมัยและสวยงาม ให้ความรู้สึกที่มีชีวิตชีวาและตอบสนองได้ดี",
+                exp_typo_title: "ตัวอักษรที่สวยงาม",
+                exp_typo_desc: "อ่านง่ายชัดเจนด้วยฟอนต์ภาษาไทยและอังกฤษที่ได้รับการคัดสรรมาอย่างดี",
+                exp_anim_title: "ไมโครแอนิเมชัน",
+                exp_anim_desc: "แอนิเมชันเล็กๆ ที่ช่วยให้ทุกการโต้ตอบรู้สึกราบรื่นและน่าพึงพอใจ",
+                btn_grid: "แบบตาราง",
+                btn_list: "แบบรายการ",
+                btn_cards: "แบบการ์ด",
+                btn_compact: "แบบย่อ",
                 cta_title: "ก้าวสู่อนาคต",
                 cta_desc: "ดาวน์โหลด MoltoPos วันนี้ เพื่อยกระดับประสบการณ์ธุรกิจของคุณ",
                 version_fetching: "กำลังดึงข้อมูลเวอร์ชันล่าสุด..."
