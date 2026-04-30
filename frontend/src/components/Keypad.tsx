@@ -26,11 +26,11 @@ const Keypad: React.FC<KeypadProps> = ({
     compact = false,
     hideDisplay = false
 }) => {
-    const btnSize = compact ? 'clamp(48px, 12vh, 56px)' : 'clamp(56px, 15vh, 70px)';
-    const gridGap = compact ? 'clamp(0.25rem, 1vh, 0.5rem)' : 'clamp(0.5rem, 2vh, 1.5rem)';
-    const containerGap = compact ? 'clamp(0.5rem, 2vh, 1rem)' : 'clamp(1rem, 4vh, 2.5rem)';
-    const displayHeight = compact ? 'clamp(40px, 8vh, 50px)' : 'clamp(60px, 12vh, 80px)';
-    const btnFontSize = compact ? 'clamp(1rem, 2vh, 1.125rem)' : 'clamp(1.125rem, 3vh, 1.5rem)';
+    const btnSize = compact ? 'clamp(56px, 14vh, 64px)' : 'clamp(56px, 15vh, 70px)';
+    const gridGap = compact ? 'clamp(0.5rem, 1.5vh, 0.75rem)' : 'clamp(0.5rem, 2vh, 1.5rem)';
+    const containerGap = compact ? 'clamp(0.75rem, 2.5vh, 1.5rem)' : 'clamp(1rem, 4vh, 2.5rem)';
+    const displayHeight = compact ? 'clamp(50px, 10vh, 60px)' : 'clamp(60px, 12vh, 80px)';
+    const btnFontSize = compact ? 'clamp(1.5rem, 4vh, 1.75rem)' : 'clamp(1.125rem, 3vh, 1.5rem)';
     const handleNumberClick = (num: number | string) => {
         if (value.length < maxLength) {
             onValueChange(value + num);
@@ -142,7 +142,7 @@ const Keypad: React.FC<KeypadProps> = ({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '0.75rem',
+                        fontSize: '0.9rem',
                         fontWeight: 'bold',
                         color: '#f87171',
                         textTransform: 'uppercase',
@@ -196,7 +196,7 @@ const Keypad: React.FC<KeypadProps> = ({
                     }}
                     className="hover:opacity-70"
                 >
-                    <Delete size={28} />
+                    <Delete size={32} />
                 </button>
 
                 {mode === 'numeric' && (

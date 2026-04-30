@@ -50,7 +50,7 @@ const NumericKeypad: React.FC<NumericKeypadProps> = ({ totalAmount, remainingAmo
 
                 {/* 1. Payment Method Pills */}
                 <div className="w-full flex flex-col gap-2 mb-6">
-                    <span className="text-sm font-black uppercase tracking-widest text-slate-400 pl-1">{t('checkout.payment_method', 'Payment Method')}</span>
+                    <span className="text-lg font-black uppercase tracking-widest text-slate-400 pl-1">{t('checkout.payment_method', 'Payment Method')}</span>
                     <div className="grid grid-cols-3 min-[400px]:grid-cols-4 md:grid-cols-3 gap-2 w-full">
                         {paymentMethods.map(method => {
                             const isSelected = selectedMethod === method.id;
@@ -58,7 +58,7 @@ const NumericKeypad: React.FC<NumericKeypadProps> = ({ totalAmount, remainingAmo
                                 <button
                                     key={method.id}
                                     onClick={() => setSelectedMethod(method.id)}
-                                    className="flex flex-col items-center justify-center gap-1.5 px-1 py-3 rounded-2xl border text-[9px] min-[400px]:text-[10px] font-black uppercase tracking-wider transition-all duration-300 w-full"
+                                    className="flex flex-col items-center justify-center gap-2 px-1 py-4 rounded-2xl border text-sm font-black uppercase tracking-wider transition-all duration-300 w-full"
                                     style={isSelected ? {
                                         background: 'var(--accent-gradient)',
                                         color: 'white',
@@ -71,7 +71,7 @@ const NumericKeypad: React.FC<NumericKeypadProps> = ({ totalAmount, remainingAmo
                                     }}
                                 >
                                     <div className={isSelected ? 'opacity-100' : 'opacity-60'}>
-                                        {React.cloneElement(method.icon as React.ReactElement, { size: 18 })}
+                                        {React.cloneElement(method.icon as React.ReactElement, { size: 24 })}
                                     </div>
                                     <span className="truncate w-full px-1">{method.label}</span>
                                 </button>
@@ -85,8 +85,8 @@ const NumericKeypad: React.FC<NumericKeypadProps> = ({ totalAmount, remainingAmo
 
                     {/* Remaining */}
                     <div className="flex justify-between items-end border-b-2 border-slate-100 pb-3 mt-auto">
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#ef4444] px-1">{t('checkout.remaining')}</span>
-                        <span className="text-xl md:text-2xl font-black text-slate-800 leading-none">฿{remainingAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                        <span className="text-sm font-black uppercase tracking-[0.2em] text-[#ef4444] px-1">{t('checkout.remaining')}</span>
+                        <span className="text-2xl md:text-3xl font-black text-slate-800 leading-none">฿{remainingAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                     </div>
 
                     {/* Gift Card Input (Only if selected) */}
@@ -135,17 +135,17 @@ const NumericKeypad: React.FC<NumericKeypadProps> = ({ totalAmount, remainingAmo
 
                     {/* Amount Input */}
                     <div className="flex flex-col bg-white rounded-3xl p-4 md:p-5 shadow-sm border border-slate-100 my-2">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em] mb-1 pl-1">{t('checkout.amount_paid', 'Amount Paid')}</span>
+                        <span className="text-sm text-slate-400 font-bold uppercase tracking-[0.3em] mb-1 pl-1">{t('checkout.amount_paid', 'Amount Paid')}</span>
                         <div className="text-3xl md:text-5xl font-black tracking-tighter text-slate-900 flex items-center h-8 md:h-12 mt-1">
-                            <span className="text-slate-300 mr-2 text-xl md:text-3xl font-bold">฿</span>
+                            <span className="text-slate-300 mr-2 text-2xl md:text-4xl font-bold">฿</span>
                             {value || '0'}<span className="w-1 md:w-1.5 h-6 md:h-10 bg-blue-500 animate-pulse ml-2 opacity-50 rounded-full"></span>
                         </div>
                     </div>
 
                     {/* Change */}
                     <div className="flex justify-between items-end pt-2 mb-auto">
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-1">{t('checkout.change')}</span>
-                        <span className={`text-xl md:text-2xl font-black tracking-tighter leading-none ${change > 0 && selectedMethod === 'Cash' ? 'text-emerald-500' : 'text-slate-300'}`}>
+                        <span className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 px-1">{t('checkout.change')}</span>
+                        <span className={`text-2xl md:text-3xl font-black tracking-tighter leading-none ${change > 0 && selectedMethod === 'Cash' ? 'text-emerald-500' : 'text-slate-300'}`}>
                             ฿{selectedMethod === 'Cash' ? change.toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00'}
                         </span>
                     </div>
@@ -171,13 +171,13 @@ const NumericKeypad: React.FC<NumericKeypadProps> = ({ totalAmount, remainingAmo
                 <div className="w-full grid grid-cols-2 gap-2 mt-4 shrink-0">
                     <button
                         onClick={onClose}
-                        className="py-3 md:py-5 rounded-2xl bg-slate-100 text-slate-600 font-black uppercase tracking-widest text-[10px] md:text-sm hover:bg-slate-200 transition-colors border border-transparent hover:border-slate-300 w-full"
+                        className="py-4 md:py-6 rounded-2xl bg-slate-100 text-slate-600 font-black uppercase tracking-widest text-sm md:text-base hover:bg-slate-200 transition-colors border border-transparent hover:border-slate-300 w-full"
                     >
                         {t('common.cancel')}
                     </button>
                     <button
                         onClick={() => onApply(selectedMethod, numericValue, selectedMethod.toLowerCase().includes('gift') ? giftCardCode : undefined)}
-                        className="py-3 md:py-5 rounded-2xl bg-slate-900 text-white font-black uppercase tracking-widest text-[10px] md:text-sm hover:bg-slate-800 transition-all shadow-md shadow-slate-900/20 active:scale-95 w-full"
+                        className="py-4 md:py-6 rounded-2xl bg-slate-900 text-white font-black uppercase tracking-widest text-sm md:text-base hover:bg-slate-800 transition-all shadow-md shadow-slate-900/20 active:scale-95 w-full"
                     >
                         {t('checkout.apply_payment')}
                     </button>

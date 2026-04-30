@@ -199,6 +199,7 @@ const MainLayout: React.FC<MainLayoutProps> = () => {
             )}
             <Sidebar
                 onSwitchUser={() => setIsSwitchModalOpen(true)}
+                onLock={handleLock}
                 isCollapsed={isSidebarCollapsed}
                 onToggle={toggleSidebar}
             />

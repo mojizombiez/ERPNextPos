@@ -31,10 +31,10 @@ const PinCodeModal: React.FC<PinCodeModalProps> = ({ title, onSuccess, onCancel,
         setPin('');
     };
 
-    const validatePin = async () => {
+    const validatePin = async (code: string) => {
         setLoading(true);
         try {
-            const staff = await window.go.main.App.ValidatePin(pin);
+            const staff = await window.go.main.App.ValidatePin(code);
             if (staff) {
                 if (requireManager && staff.role !== 'Manager') {
                     setError(true);
@@ -58,9 +58,31 @@ const PinCodeModal: React.FC<PinCodeModalProps> = ({ title, onSuccess, onCancel,
 
     useEffect(() => {
         if (pin.length === 6) {
-            validatePin();
+            validatePin(pin);
         }
     }, [pin]);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Ignore if we're already validating (6 digits) or loading
+            if (loading || (pin.length >= 6 && e.key !== 'Backspace' && e.key !== 'Escape')) return;
+
+            if (e.key >= '0' && e.key <= '9') {
+                setPin(prev => {
+                    if (prev.length < 6) return prev + e.key;
+                    return prev;
+                });
+                setError(false);
+            } else if (e.key === 'Backspace') {
+                setPin(prev => prev.slice(0, -1));
+            } else if (e.key === 'Escape') {
+                onCancel();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [pin, loading, onCancel]);
 
     return (
         <div className="modal-overlay-standard" onClick={onCancel}>

@@ -704,6 +704,10 @@ body {
   max-width: 48rem;
 }
 
+.max-w-4xl {
+  max-width: 56rem;
+}
+
 .bg-primary {
   background-color: var(--bg-primary);
 }

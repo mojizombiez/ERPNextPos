@@ -378,27 +378,6 @@ const StockPage = () => {
                                     key={p.id}
                                     className={`glass-card group overflow-hidden border border-white/5 hover:border-white/10 transition-all duration-300 flex items-center p-3 gap-4 rounded-3xl ${!available ? 'opacity-50 grayscale' : ''}`}
                                 >
-                                    {/* Image Section */}
-                                    <div className="w-20 h-20 bg-white rounded-2xl overflow-hidden flex-shrink-0 border border-slate-100 flex items-center justify-center relative">
-                                        {p.localImagePath ? (
-                                            <img
-                                                src={`/images/${p.localImagePath.split(/[\\/]/).pop()}`}
-                                                className="w-full h-full object-contain"
-                                                alt={p.nameTH}
-                                                onError={(e) => {
-                                                    (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9InN0ZWVsdmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIyNCIgcng9IjIiIHJ5PSIyIi8+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiLz48cG9seWdvbiBwb2ludHM9IjIxIDE1IDE2IDEwIDUgMjEgMjEgMjEiLz48L3N2Zz4=';
-                                                }}
-                                            />
-                                        ) : (
-                                            <Package size={32} className="text-slate-200" />
-                                        )}
-                                        {!available && (
-                                            <div className="absolute inset-0 bg-slate-900/60 flex items-center justify-center">
-                                                <span className="text-[8px] font-black text-white uppercase tracking-tighter">SOLD OUT</span>
-                                            </div>
-                                        )}
-                                    </div>
-
                                     {/* Details Section */}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1">
@@ -544,32 +523,32 @@ const StockPage = () => {
                 isEditModalOpen && (
                     <div className="modal-overlay-standard" onClick={() => setIsEditModalOpen(false)}>
                         <div
-                            className="modal-card-standard modal-viewport-constraint animate-in fade-in zoom-in duration-500 max-w-3xl"
+                            className="modal-card-standard modal-viewport-constraint animate-in fade-in zoom-in duration-500 max-w-4xl"
                             onClick={e => e.stopPropagation()}
                         >
-                            <div className="flex justify-between items-center modal-header-sticky" style={{ backgroundColor: '#ffffff' }}>
+                            <div className="flex justify-between items-center modal-header-sticky" style={{ backgroundColor: '#ffffff', padding: '1.5rem 2rem' }}>
                                 <div>
-                                    <h2 className="text-3xl font-black text-slate-800 tracking-tight" style={{ color: '#1e293b' }}>
-                                        {editingProduct.id ? t('stock_modal.title') : t('stock_modal.new_identity', { defaultValue: 'New Identity' })}
+                                    <h2 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight" style={{ color: '#1e293b' }}>
+                                        {editingProduct.id ? t('stock_modal.title') : t('stock_modal.new_identity')}
                                     </h2>
-                                    <p className="text-sm font-black uppercase tracking-[0.2em] mt-1" style={{ color: '#94a3b8' }}>{t('stock_modal.subtitle')}</p>
+                                    <p className="text-xs md:text-sm font-black uppercase tracking-[0.2em] mt-1" style={{ color: '#94a3b8' }}>{t('stock_modal.subtitle')}</p>
                                 </div>
                                 <button
                                     onClick={() => setIsEditModalOpen(false)}
-                                    className="w-12 h-12 flex items-center justify-center rounded-2xl transition-all hover:bg-slate-100"
+                                    className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl transition-all hover:bg-slate-100"
                                     style={{ backgroundColor: '#f8fafc', color: '#cbd5e1' }}
                                 >
-                                    <X size={28} />
+                                    <X size={24} />
                                 </button>
                             </div>
 
-                            <div className="modal-scrollable-content" style={{ backgroundColor: '#ffffff' }}>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '1.5rem 2rem' }}>
-                                    {/* Section 0: Image Editor */}
-                                    <div style={{ gridColumn: 'span 12', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                                        <label className="text-sm font-black uppercase tracking-widest px-1" style={{ color: '#94a3b8' }}>{t('stock_modal.image_editor')}</label>
-                                        <div className="flex items-center gap-8 p-6" style={{ backgroundColor: '#f8fafc', borderRadius: '32px', border: '1px solid #f1f5f9' }}>
-                                            <div className="w-32 h-32 rounded-[24px] overflow-hidden bg-white border border-slate-100 flex items-center justify-center relative group shadow-sm">
+                            <div className="modal-scrollable-content" style={{ backgroundColor: '#ffffff', padding: '1.5rem 2rem' }}>
+                                <div className="flex flex-col lg:flex-row gap-10">
+                                    {/* Left Column: Image Editor */}
+                                    <div className="w-full lg:w-1/3 flex flex-col gap-4 shrink-0">
+                                        <label className="text-[10px] font-black uppercase tracking-widest px-1 text-slate-400">{t('stock_modal.image_editor')}</label>
+                                        <div className="flex flex-col items-center gap-6 p-6 bg-slate-50 rounded-[32px] border border-slate-100">
+                                            <div className="w-full h-[240px] rounded-[24px] overflow-hidden bg-white border border-slate-100 flex items-center justify-center relative shadow-sm">
                                                 {editingProduct.localImagePath ? (
                                                     <img
                                                         src={`/images/${editingProduct.localImagePath.split(/[\\/]/).pop()}`}
@@ -580,23 +559,23 @@ const StockPage = () => {
                                                         }}
                                                     />
                                                 ) : (
-                                                    <Package className="text-slate-200" size={48} strokeWidth={1.5} />
+                                                    <Package className="text-slate-200" size={80} strokeWidth={1} />
                                                 )}
                                             </div>
-                                            <div className="flex flex-col gap-3">
+                                            <div className="flex flex-col w-full gap-2">
                                                 <button
                                                     onClick={handleImageUpload}
-                                                    className="px-8 py-3 bg-white hover:bg-slate-50 text-slate-700 font-black text-sm uppercase tracking-widest rounded-2xl border border-slate-200 transition-all flex items-center gap-3 shadow-sm"
+                                                    className="w-full py-4 bg-white hover:bg-slate-50 text-slate-700 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-slate-200 transition-all flex items-center justify-center gap-2 shadow-sm"
                                                 >
-                                                    <Plus size={16} strokeWidth={3} className="text-[var(--accent-primary)]" />
+                                                    <Plus size={14} strokeWidth={3} className="text-blue-500" />
                                                     {t('stock_modal.upload_image')}
                                                 </button>
                                                 {editingProduct.localImagePath && (
                                                     <button
                                                         onClick={() => setEditingProduct({ ...editingProduct, localImagePath: '' })}
-                                                        className="px-8 py-3 bg-white hover:bg-red-50 text-red-500 font-black text-sm uppercase tracking-widest rounded-2xl border border-red-100 transition-all flex items-center gap-3 shadow-sm"
+                                                        className="w-full py-4 bg-white hover:bg-red-50 text-red-500 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-red-100 transition-all flex items-center justify-center gap-2 shadow-sm"
                                                     >
-                                                        <Trash2 size={16} />
+                                                        <Trash2 size={14} />
                                                         {t('stock_modal.remove_image')}
                                                     </button>
                                                 )}
@@ -604,154 +583,163 @@ const StockPage = () => {
                                         </div>
                                     </div>
 
-                                    {/* Section 1: Identifiers */}
-                                    <div style={{ gridColumn: 'span 5', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label className="text-sm font-black uppercase tracking-widest px-1" style={{ color: '#94a3b8' }}>{t('stock_modal.product_id')}</label>
-                                        <input
-                                            className="modal-input-standard font-bold text-sm"
-                                            value={editingProduct.itemCode}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, itemCode: e.target.value })}
-                                            placeholder="e.g. ITEM-001"
-                                            autoFocus
-                                        />
-                                    </div>
-                                    <div style={{ gridColumn: 'span 7', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label className="text-sm font-black uppercase tracking-widest px-1" style={{ color: '#94a3b8' }}>{t('stock_modal.barcode')}</label>
-                                        <input
-                                            className="modal-input-standard font-bold text-sm"
-                                            value={editingProduct.barcode}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, barcode: e.target.value })}
-                                            placeholder="Scan or Type..."
-                                        />
-                                    </div>
-
-                                    {/* Section 2: Identity */}
-                                    <div style={{ gridColumn: 'span 6', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label className="text-sm font-black uppercase tracking-widest px-1" style={{ color: '#94a3b8' }}>{t('stock_modal.name_th')}</label>
-                                        <input
-                                            className="modal-input-standard font-black text-lg"
-                                            value={editingProduct.nameTH}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, nameTH: e.target.value })}
-                                            placeholder="ชื่อสินค้าภาษาไทย"
-                                        />
-                                    </div>
-                                    <div style={{ gridColumn: 'span 6', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label className="text-sm font-black uppercase tracking-widest px-1" style={{ color: '#94a3b8' }}>{t('stock_modal.name_en')}</label>
-                                        <input
-                                            className="modal-input-standard font-bold text-base"
-                                            value={editingProduct.nameEN}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, nameEN: e.target.value })}
-                                            placeholder="English Name"
-                                        />
-                                    </div>
-
-                                    {/* Section 3: Financials & Logistics */}
-                                    <div style={{ gridColumn: 'span 3', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label className="text-sm font-black uppercase tracking-widest px-1" style={{ color: '#94a3b8' }}>{t('stock_modal.price')}</label>
-                                        <input
-                                            type="number"
-                                            className="modal-input-standard font-black text-2xl"
-                                            value={editingProduct.price}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, price: parseFloat(e.target.value) || 0 })}
-                                        />
-                                    </div>
-                                    <div style={{ gridColumn: 'span 3', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label className="text-sm font-black uppercase tracking-widest px-1" style={{ color: '#94a3b8' }}>{t('stock_modal.cost')}</label>
-                                        <input
-                                            type="number"
-                                            className="modal-input-standard font-black text-lg text-amber-500"
-                                            value={editingProduct.cost}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, cost: parseFloat(e.target.value) || 0 })}
-                                        />
-                                    </div>
-                                    <div style={{ gridColumn: 'span 3', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label className="text-sm font-black uppercase tracking-widest px-1" style={{ color: '#94a3b8' }}>{t('stock_modal.stock')}</label>
-                                        <input
-                                            type="number"
-                                            className="modal-input-standard font-black text-2xl"
-                                            value={editingProduct.remain}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, remain: parseInt(e.target.value) || 0 })}
-                                        />
-                                    </div>
-                                    <div style={{ gridColumn: 'span 3', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label className="text-sm font-black uppercase tracking-widest px-1" style={{ color: '#94a3b8' }}>{t('stock_modal.category')}</label>
-                                        <select
-                                            className="modal-input-standard font-bold appearance-none text-sm h-full"
-                                            value={editingProduct.productTypeId}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, productTypeId: parseInt(e.target.value) })}
-                                        >
-                                            {categories.map(cat => (
-                                                <option key={cat.id} value={cat.id} style={{ backgroundColor: '#ffffff', color: '#1e293b' }}>{cat.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    {/* Section 4: Bundle Components */}
-                                    {editingProduct.isBundle && editingProduct.bundleItems && editingProduct.bundleItems.length > 0 && (
-                                        <div style={{ gridColumn: 'span 12', display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '1rem' }}>
-                                            <label className="text-sm font-black uppercase tracking-widest px-1" style={{ color: '#94a3b8' }}>{t('stock_modal.bundle_components', { defaultValue: 'Bundle Components' })}</label>
-                                            <div className="flex flex-col gap-2 p-4" style={{ backgroundColor: '#f0f9ff', borderRadius: '24px', border: '1px solid #e0f2fe' }}>
-                                                {editingProduct.bundleItems.map((item: any, idx: number) => (
-                                                    <div key={idx} className="flex justify-between items-center p-3 bg-white rounded-xl shadow-sm border border-blue-50">
-                                                        <div className="flex flex-col">
-                                                            <span className="text-xs font-black text-slate-900">{item.item_name || item.item_code}</span>
-                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{item.item_code}</span>
-                                                        </div>
-                                                        <span className="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-black">{item.qty} Qty</span>
-                                                    </div>
-                                                ))}
+                                    {/* Right Column: Details */}
+                                    <div className="flex-1 flex flex-col gap-8">
+                                        {/* Identifiers */}
+                                        <div className="grid grid-cols-2 gap-6">
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[10px] font-black uppercase tracking-widest px-1 text-slate-400">{t('stock_modal.product_id')}</label>
+                                                <input
+                                                    className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                                                    value={editingProduct.itemCode}
+                                                    onChange={(e) => setEditingProduct({ ...editingProduct, itemCode: e.target.value })}
+                                                    placeholder="e.g. SKU-001"
+                                                    autoFocus
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[10px] font-black uppercase tracking-widest px-1 text-slate-400">{t('stock_modal.barcode')}</label>
+                                                <input
+                                                    className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                                                    value={editingProduct.barcode}
+                                                    onChange={(e) => setEditingProduct({ ...editingProduct, barcode: e.target.value })}
+                                                    placeholder="Scan or Type..."
+                                                />
                                             </div>
                                         </div>
-                                    )}
 
-                                    {/* Flags */}
-                                    <div style={{ gridColumn: 'span 12', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginTop: '1.5rem' }}>
-                                        <div style={{ padding: '1.25rem', backgroundColor: '#f8fafc', borderRadius: '20px', border: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                            <span className="text-sm font-black uppercase tracking-widest" style={{ color: '#94a3b8' }}>{t('stock_modal.availability')}</span>
-                                            <div className="flex items-center gap-4">
-                                                <div className="relative inline-flex items-center cursor-pointer">
-                                                    <input type="checkbox" className="sr-only peer" checked={editingProduct.isAvailable !== false} onChange={(e) => setEditingProduct({ ...editingProduct, isAvailable: e.target.checked })} />
-                                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
-                                                </div>
-                                                <span className="text-sm font-bold uppercase" style={{ color: '#64748b' }}>{t('stock_modal.ready_sale')}</span>
+                                        {/* Names */}
+                                        <div className="flex flex-col gap-6">
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[10px] font-black uppercase tracking-widest px-1 text-slate-400">{t('stock_modal.name_th')}</label>
+                                                <input
+                                                    className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-black text-lg"
+                                                    value={editingProduct.nameTH}
+                                                    onChange={(e) => setEditingProduct({ ...editingProduct, nameTH: e.target.value })}
+                                                    placeholder="ชื่อสินค้าภาษาไทย"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[10px] font-black uppercase tracking-widest px-1 text-slate-400">{t('stock_modal.name_en')}</label>
+                                                <input
+                                                    className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                                                    value={editingProduct.nameEN}
+                                                    onChange={(e) => setEditingProduct({ ...editingProduct, nameEN: e.target.value })}
+                                                    placeholder="English Name"
+                                                />
                                             </div>
                                         </div>
-                                        <div style={{ padding: '1.25rem', backgroundColor: '#f8fafc', borderRadius: '20px', border: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                            <span className="text-sm font-black uppercase tracking-widest" style={{ color: '#94a3b8' }}>{t('stock_modal.pos_service')}</span>
-                                            <div className="flex items-center gap-4">
-                                                <div className="relative inline-flex items-center cursor-pointer">
-                                                    <input type="checkbox" className="sr-only peer" checked={editingProduct.isPosSale !== false} onChange={(e) => setEditingProduct({ ...editingProduct, isPosSale: e.target.checked })} />
-                                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent-primary)]"></div>
-                                                </div>
-                                                <span className="text-sm font-bold uppercase" style={{ color: '#64748b' }}>{t('stock_modal.pos_permitted')}</span>
+
+                                        {/* Financials & Logistics */}
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[10px] font-black uppercase tracking-widest px-1 text-slate-400">{t('stock_modal.price')}</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-black text-xl"
+                                                    value={editingProduct.price}
+                                                    onChange={(e) => setEditingProduct({ ...editingProduct, price: parseFloat(e.target.value) || 0 })}
+                                                />
                                             </div>
-                                        </div>
-                                        <div style={{ padding: '1.25rem', backgroundColor: '#f8fafc', borderRadius: '20px', border: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                            <span className="text-sm font-black uppercase tracking-widest" style={{ color: '#94a3b8' }}>{t('stock_modal.vat_status')}</span>
-                                            <div className="flex items-center gap-4">
-                                                <div className="relative inline-flex items-center cursor-pointer">
-                                                    <input type="checkbox" className="sr-only peer" checked={editingProduct.isVat !== false} onChange={(e) => setEditingProduct({ ...editingProduct, isVat: e.target.checked })} />
-                                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
-                                                </div>
-                                                <span className="text-sm font-bold uppercase" style={{ color: '#64748b' }}>{t('stock_modal.vat_inclusive')}</span>
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[10px] font-black uppercase tracking-widest px-1 text-slate-400">{t('stock_modal.cost')}</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-black text-base text-amber-600"
+                                                    value={editingProduct.cost}
+                                                    onChange={(e) => setEditingProduct({ ...editingProduct, cost: parseFloat(e.target.value) || 0 })}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[10px] font-black uppercase tracking-widest px-1 text-slate-400">{t('stock_modal.stock')}</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-black text-xl"
+                                                    value={editingProduct.remain}
+                                                    onChange={(e) => setEditingProduct({ ...editingProduct, remain: parseInt(e.target.value) || 0 })}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[10px] font-black uppercase tracking-widest px-1 text-slate-400">{t('stock_modal.category')}</label>
+                                                <select
+                                                    className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-xs appearance-none"
+                                                    value={editingProduct.productTypeId}
+                                                    onChange={(e) => setEditingProduct({ ...editingProduct, productTypeId: parseInt(e.target.value) })}
+                                                >
+                                                    {categories.map(cat => (
+                                                        <option key={cat.id} value={cat.id} style={{ backgroundColor: '#ffffff', color: '#1e293b' }}>{cat.name}</option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+                                {/* Flags & Extras */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-10 border-t border-slate-50 mt-10">
+                                    <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col gap-4">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('stock_modal.availability')}</span>
+                                        <div className="flex items-center gap-4">
+                                            <div className="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" className="sr-only peer" checked={editingProduct.isAvailable !== false} onChange={(e) => setEditingProduct({ ...editingProduct, isAvailable: e.target.checked })} />
+                                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                                            </div>
+                                            <span className="text-xs font-black uppercase tracking-tight text-slate-600">{t('stock_modal.ready_sale')}</span>
+                                        </div>
+                                    </div>
+                                    <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col gap-4">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('stock_modal.pos_service')}</span>
+                                        <div className="flex items-center gap-4">
+                                            <div className="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" className="sr-only peer" checked={editingProduct.isPosSale !== false} onChange={(e) => setEditingProduct({ ...editingProduct, isPosSale: e.target.checked })} />
+                                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                            </div>
+                                            <span className="text-xs font-black uppercase tracking-tight text-slate-600">{t('stock_modal.pos_permitted')}</span>
+                                        </div>
+                                    </div>
+                                    <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col gap-4">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('stock_modal.vat_status')}</span>
+                                        <div className="flex items-center gap-4">
+                                            <div className="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" className="sr-only peer" checked={editingProduct.isVat !== false} onChange={(e) => setEditingProduct({ ...editingProduct, isVat: e.target.checked })} />
+                                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                                            </div>
+                                            <span className="text-xs font-black uppercase tracking-tight text-slate-600">{t('stock_modal.vat_inclusive')}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Bundle Components */}
+                                {editingProduct.isBundle && editingProduct.bundleItems && editingProduct.bundleItems.length > 0 && (
+                                    <div className="flex flex-col gap-4 mt-10">
+                                        <label className="text-[10px] font-black uppercase tracking-widest px-1 text-slate-400">{t('stock_modal.bundle_components')}</label>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-blue-50/50 rounded-2xl border border-blue-100">
+                                            {editingProduct.bundleItems.map((item: any, idx: number) => (
+                                                <div key={idx} className="flex justify-between items-center p-4 bg-white rounded-xl shadow-sm border border-blue-50">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-xs font-black text-slate-900">{item.item_name || item.item_code}</span>
+                                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{item.item_code}</span>
+                                                    </div>
+                                                    <span className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest">{item.qty} Qty</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
-                            <div className="modal-footer-sticky flex gap-6">
+                            <div className="modal-footer-sticky flex gap-4" style={{ padding: '1.5rem 2rem' }}>
                                 <button
-                                    className="flex-1 btn-cancel-modal"
+                                    className="flex-1 py-4 bg-slate-50 text-slate-400 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-slate-100 hover:bg-slate-100 transition-all"
                                     onClick={() => setIsEditModalOpen(false)}
                                 >
                                     {t('stock_modal.discard')}
                                 </button>
                                 <button
                                     onClick={saveProduct}
-                                    className="flex-[2] btn-primary-modal"
+                                    className="flex-[2] py-4 bg-red-500 text-white font-black text-[10px] uppercase tracking-widest rounded-2xl shadow-lg hover:bg-red-600 transition-all flex items-center justify-center gap-2"
                                 >
-                                    <Check size={18} strokeWidth={3} className="inline-block mr-2" style={{ marginTop: '-2px' }} />
+                                    <Check size={20} strokeWidth={3} />
                                     <span>{t('stock_modal.commit')}</span>
                                 </button>
                             </div>

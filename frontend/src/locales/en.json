@@ -142,6 +142,15 @@
         "total_due": "Total Due",
         "settled": "Settled",
         "submit_protocol": "Submit Protocol",
+        "search_existing": "Search Existing",
+        "create_new": "Or Create New On-The-Fly",
+        "customer_name": "Name",
+        "customer_phone": "Phone",
+        "register_select": "Register & Select",
+        "clear_selection": "Clear Selection (Walk-in)",
+        "customer_title": "Customer",
+        "customer_subtitle": "Selection & Registration"
+,
         "remove": "Remove",
         "amount": "Amount",
         "apply_payment": "Apply Payment",
@@ -253,35 +262,59 @@
         "settings_display": {
             "title": "Customer Display",
             "content": "Enable a second screen for customers showing the current cart and totals. Select which monitor to use and launch or close the customer display window from here."
-        },
-        "stock_modal": {
-            "title": "Refine Product",
-            "subtitle": "Product details and stock information",
-            "product_id": "Product ID / Code",
-            "barcode": "Barcode",
-            "name_th": "Name (Thai)",
-            "name_en": "Name (English)",
-            "price": "Selling Price (฿)",
-            "cost": "Base Cost (฿)",
-            "stock": "Current Stock",
-            "category": "Category",
-            "availability": "Availability",
-            "pos_service": "POS Module",
-            "vat_status": "VAT Status",
-            "ready_sale": "Ready Sale",
-            "pos_permitted": "POS Permitted",
-            "vat_inclusive": "VAT Inclusive",
-            "discard": "Discard Changes",
-            "commit": "Commit Data",
-            "image_editor": "Product Picture",
-            "upload_image": "Upload Image",
-            "remove_image": "Remove Image"
         }
+    },
+    "stock_modal": {
+        "title": "Refine Product",
+        "new_identity": "New Identity",
+        "subtitle": "Product details and stock information",
+        "items_total": "Items in Matrix",
+        "product_id": "Product ID / Code",
+        "barcode": "Barcode",
+        "name_th": "Name (Thai)",
+        "name_en": "Name (English)",
+        "price": "Selling Price (฿)",
+        "cost": "Base Cost (฿)",
+        "stock": "Current Stock",
+        "category": "Category",
+        "availability": "Availability",
+        "pos_service": "POS Module",
+        "vat_status": "VAT Status",
+        "ready_sale": "Ready Sale",
+        "pos_permitted": "POS Permitted",
+        "vat_inclusive": "VAT Inclusive",
+        "discard": "Discard Changes",
+        "commit": "Commit Data",
+        "image_editor": "Product Picture",
+        "upload_image": "Upload Image",
+        "remove_image": "Remove Image",
+        "bundle_components": "Bundle Components"
     },
     "stock": {
         "add_product": "Add Product",
         "scanning": "Scanning Matrix...",
         "no_items": "No Items Identified",
         "adjust_filters": "Try adjusting your search filters"
+    },
+    "discount_modal": {
+        "title": "Apply Manual Discount",
+        "subtitle": "Adjust order total manually",
+        "engine": "Promotion Engine",
+        "amount_label": "Discount Amount (THB)",
+        "reason_label": "Reason for Discount",
+        "net_total": "Net Total After Discount",
+        "cancel": "Cancel",
+        "apply": "Apply Discount",
+        "error_valid": "Please enter a valid amount",
+        "error_exceed": "Discount cannot exceed subtotal (฿{{total}})",
+        "reasons": {
+            "staff": "Staff Discount",
+            "manager": "Manager Special",
+            "promotion": "Promotion",
+            "damaged": "Damaged Item",
+            "satisfaction": "Customer Satisfaction",
+            "other": "Other"
+        }
     }
+
 }

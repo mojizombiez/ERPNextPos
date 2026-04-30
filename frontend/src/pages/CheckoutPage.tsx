@@ -407,7 +407,7 @@ const CheckoutPage = () => {
             <div className="flex flex-col gap-6 p-2">
                 {/* Search & Select */}
                 <div className="flex flex-col gap-3">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Search Existing</label>
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{t('checkout.search_existing')}</label>
                     <div className="relative">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
@@ -449,10 +449,10 @@ const CheckoutPage = () => {
 
                 {/* Quick Add Form */}
                 <div className="flex flex-col gap-4">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-center">Or Create New On-The-Fly</label>
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-center">{t('checkout.create_new')}</label>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1.5">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Name</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{t('checkout.customer_name')}</span>
                             <input
                                 className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold text-slate-800 outline-none focus:border-blue-500 transition-all"
                                 placeholder="Customer Name"
@@ -461,7 +461,7 @@ const CheckoutPage = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Phone</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{t('checkout.customer_phone')}</span>
                             <input
                                 className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold text-slate-800 outline-none focus:border-blue-500 transition-all"
                                 placeholder="08xxxxxxxx"
@@ -476,7 +476,7 @@ const CheckoutPage = () => {
                         className={`w-full py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all flex items-center justify-center gap-2 ${!newName || isCreating ? 'bg-slate-100 text-slate-300' : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-premium'}`}
                     >
                         {isCreating ? <RotateCcw className="animate-spin" size={16} /> : <UserPlus size={16} />}
-                        {isCreating ? 'Creating...' : 'Register & Select'}
+                        {isCreating ? t('common.processing') : t('checkout.register_select')}
                     </button>
                     <button
                         onClick={() => {
@@ -486,7 +486,7 @@ const CheckoutPage = () => {
                         className="py-3.5 rounded-2xl text-xs font-black text-slate-400 uppercase tracking-[0.2em] hover:bg-red-50 hover:text-[#ef4444] transition-all border border-transparent hover:border-red-100 flex items-center justify-center gap-2"
                     >
                         <X size={14} strokeWidth={3} />
-                        Clear Selection (Walk-in)
+                        {t('checkout.clear_selection')}
                     </button>
                 </div>
             </div>
@@ -1009,8 +1009,8 @@ const CheckoutPage = () => {
                             {activeSession?.manualDiscount ? (
                                 <div className="flex-1 flex items-center justify-between">
                                     <div className="min-w-0">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-0.5">Manual Discount</p>
-                                        <h4 className="font-black text-slate-900 tracking-tight text-xs uppercase truncate">{activeSession.discountReason || 'Discount'}</h4>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-0.5">{t('discount_modal.title')}</p>
+                                        <h4 className="font-black text-slate-900 tracking-tight text-xs uppercase truncate">{activeSession.discountReason || t('discount_modal.reasons.other')}</h4>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <span className="text-sm font-black text-red-500">-฿{activeSession.manualDiscount?.toLocaleString()}</span>
@@ -1021,7 +1021,7 @@ const CheckoutPage = () => {
                                 </div>
                             ) : (
                                 <div className="flex-1 flex justify-between items-center">
-                                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">{t('checkout.manual_discount')}</span>
+                                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">{t('discount_modal.title')}</span>
                                     <button
                                         onClick={openDiscountModal}
                                         className="px-3 py-1.5 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-black active:scale-95 transition-all"
@@ -1167,8 +1167,8 @@ const CheckoutPage = () => {
                                     <Users size={24} />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Customer</h2>
-                                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest mt-0.5">Selection & Registration</p>
+                                    <h2 className="text-xl font-black text-slate-900 tracking-tighter uppercase">{t('checkout.customer_title')}</h2>
+                                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest mt-0.5">{t('checkout.customer_subtitle')}</p>
                                 </div>
                             </div>
                             <button

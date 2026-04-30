@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MWinPOS - The Next-Gen Retail POS Solution</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Kanit:wght@300;400;600;800&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #8b5cf6;
             --primary-dark: #7c3aed;
             --secondary: #10b981;
             --accent: #f59e0b;
-            --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg: #030712;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --text: #f9fafb;
+            --text-muted: #9ca3af;
             --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-glow: 0 0 20px rgba(139, 92, 246, 0.3);
         }
 
         * {
@@ -25,16 +26,24 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg);
             color: var(--text);
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Animated Background */
-        .bg-glow {
+        h1, h2, h3, .logo {
+            font-family: 'Outfit', 'Kanit', sans-serif;
+        }
+
+        /* Animated Background Elements */
+        .bg-blobs {
             position: fixed;
             top: 0;
             left: 0;
@@ -42,63 +51,78 @@
             height: 100vh;
             z-index: -1;
             overflow: hidden;
+            filter: blur(80px);
+            opacity: 0.5;
         }
 
-        .glow-1 {
+        .blob {
             position: absolute;
-            top: -20%;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+        }
+
+        .blob-1 {
+            background: rgba(139, 92, 246, 0.2);
+            top: -10%;
             left: -10%;
-            width: 60%;
-            height: 60%;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
-            animation: move 20s infinite alternate;
+            animation: float 20s infinite alternate;
         }
 
-        .glow-2 {
-            position: absolute;
+        .blob-2 {
+            background: rgba(16, 185, 129, 0.15);
             bottom: -10%;
-            right: -5%;
-            width: 50%;
-            height: 50%;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
-            animation: move 25s infinite alternate-reverse;
+            right: -10%;
+            animation: float 25s infinite alternate-reverse;
         }
 
-        @keyframes move {
-            from { transform: translate(0, 0); }
-            to { transform: translate(10%, 10%); }
+        .blob-3 {
+            background: rgba(245, 158, 11, 0.1);
+            top: 40%;
+            left: 30%;
+            animation: float 18s infinite alternate;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(5%, 10%) scale(1.1); }
+            100% { transform: translate(-5%, -5%) scale(0.9); }
         }
 
         /* Navbar */
         nav {
-            padding: 2rem 10%;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 10%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: absolute;
-            width: 100%;
-            z-index: 100;
+            z-index: 1000;
+            background: rgba(3, 7, 18, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
         }
 
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 800;
-            letter-spacing: -1px;
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            color: white;
+            text-decoration: none;
         }
 
-        .logo-box {
-            width: 40px;
-            height: 40px;
+        .logo-icon {
+            width: 42px;
+            height: 42px;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 8px 16px rgba(139, 92, 246, 0.4);
         }
 
         .nav-links {
@@ -110,46 +134,68 @@
             color: var(--text-muted);
             text-decoration: none;
             font-weight: 600;
-            transition: color 0.3s;
+            font-size: 0.9375rem;
+            transition: all 0.3s;
         }
 
         .nav-links a:hover {
-            color: var(--text);
+            color: white;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
         /* Hero Section */
         .hero {
-            padding: 10rem 10% 5rem;
+            padding: 12rem 10% 8rem;
             display: flex;
             align-items: center;
             gap: 4rem;
             min-height: 100vh;
+            position: relative;
         }
 
         .hero-content {
             flex: 1;
+            z-index: 10;
         }
 
-        .badge {
-            display: inline-block;
+        .badge-new {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             padding: 0.5rem 1rem;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 99px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
+            color: #c4b5fd;
+            margin-bottom: 2rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+        }
+
+        .badge-new .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         h1 {
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
-            line-height: 1.1;
+            font-size: clamp(3rem, 6vw, 5rem);
+            line-height: 1;
             font-weight: 800;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(to bottom right, #fff 30%, #94a3b8);
+            margin-bottom: 2rem;
+            letter-spacing: -2px;
+            background: linear-gradient(to right, #fff, #9ca3af);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -157,8 +203,8 @@
         .hero-desc {
             font-size: 1.25rem;
             color: var(--text-muted);
-            margin-bottom: 2.5rem;
-            max-width: 500px;
+            margin-bottom: 3rem;
+            max-width: 550px;
         }
 
         .hero-visual {
@@ -166,11 +212,26 @@
             position: relative;
         }
 
+        .hero-mockup-container {
+            position: relative;
+            padding: 12px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8);
+            overflow: hidden;
+            transform: perspective(1000px) rotateY(-5deg);
+            transition: transform 0.5s;
+        }
+
+        .hero-mockup-container:hover {
+            transform: perspective(1000px) rotateY(0deg);
+        }
+
         .hero-img {
             width: 100%;
-            border-radius: 32px;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
-            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            display: block;
         }
 
         /* Buttons */
@@ -178,260 +239,505 @@
             display: inline-flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 1rem 2rem;
-            border-radius: 14px;
+            padding: 1.125rem 2.25rem;
+            border-radius: 16px;
             font-weight: 700;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             border: none;
+            font-size: 1rem;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
         }
 
         .btn-primary:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.6);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.5);
         }
 
         .btn-outline {
-            background: var(--glass);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
             color: white;
+            backdrop-filter: blur(5px);
         }
 
         .btn-outline:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
         }
 
-        /* Features */
-        .features {
+        /* Sections General */
+        section {
             padding: 10rem 10%;
+        }
+
+        .section-header {
             text-align: center;
+            max-width: 800px;
+            margin: 0 auto 6rem;
+        }
+
+        .section-tag {
+            color: var(--primary);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            display: block;
         }
 
         .section-title {
-            font-size: 2.5rem;
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
             font-weight: 800;
-            margin-bottom: 4rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
         }
 
+        /* Features */
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2.5rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
         }
 
-        .feature-card {
+        .feature-card-big {
+            grid-column: span 2;
             background: var(--card-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 2.5rem;
-            text-align: left;
-            transition: all 0.3s;
+            border-radius: 40px;
+            padding: 4rem;
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            overflow: hidden;
             position: relative;
+        }
+
+        .feature-info {
+            flex: 1;
+        }
+
+        .feature-visual-box {
+            flex: 1.5;
+            background: #000;
+            border-radius: 20px;
+            border: 4px solid #1f2937;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
             overflow: hidden;
         }
 
-        .feature-card:hover {
-            transform: translateY(-10px);
+        .feature-visual-box img {
+            width: 100%;
+            display: block;
+        }
+
+        .feature-card-small {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 2.5rem;
+            transition: all 0.4s;
+        }
+
+        .feature-card-small:hover {
             border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.05);
         }
 
         .feature-icon {
-            width: 60px;
-            height: 60px;
+            width: 64px;
+            height: 64px;
             background: rgba(139, 92, 246, 0.1);
-            border-radius: 16px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--primary);
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card p {
-            color: var(--text-muted);
-        }
-
-        .feature-img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
+        /* Comparison Slider / Switcher */
+        .view-switcher {
+            margin-top: 2rem;
+            background: rgba(0,0,0,0.3);
             border-radius: 12px;
-            margin-top: 1.5rem;
-            opacity: 0.8;
-            transition: opacity 0.3s;
+            padding: 4px;
+            display: inline-flex;
+            gap: 4px;
         }
 
-        .feature-card:hover .feature-img {
-            opacity: 1;
+        .switch-btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8125rem;
         }
 
-        /* Downloads */
-        .downloads {
-            padding: 10rem 10%;
-            background: radial-gradient(circle at center, rgba(139, 92, 246, 0.05), transparent);
+        .switch-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Stats */
+        .stats-bar {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 3rem;
+            display: flex;
+            justify-content: space-around;
+            backdrop-filter: blur(10px);
+            margin-top: -5rem;
+            position: relative;
+            z-index: 20;
+        }
+
+        .stat-item {
             text-align: center;
         }
 
-        .download-box {
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            padding: 4rem;
-            border-radius: 40px;
-            backdrop-filter: blur(20px);
-        }
-
-        .version-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: var(--primary);
-            color: white;
-            border-radius: 6px;
+        .stat-value {
+            font-size: 2.5rem;
             font-weight: 800;
-            font-size: 0.75rem;
-            margin-bottom: 1rem;
+            color: white;
+            display: block;
         }
 
-        .download-links {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            margin-top: 2.5rem;
-            flex-wrap: wrap;
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Download Section */
+        .cta-section {
+            background: linear-gradient(to bottom, transparent, rgba(139, 92, 246, 0.05));
+            text-align: center;
+        }
+
+        .download-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, rgba(31, 41, 55, 0.8), rgba(17, 24, 39, 0.8));
+            border: 1px solid var(--glass-border);
+            padding: 5rem 4rem;
+            border-radius: 56px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, transparent, var(--primary), transparent);
         }
 
         /* Footer */
         footer {
-            padding: 5rem 10%;
+            padding: 6rem 10% 4rem;
             border-top: 1px solid var(--glass-border);
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
             color: var(--text-muted);
-            font-size: 0.875rem;
+            font-size: 0.9375rem;
         }
 
-        @media (max-width: 768px) {
+        .footer-links {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .ai-icon {
+            color: var(--secondary);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            .feature-card-big {
+                flex-direction: column;
+                padding: 3rem;
+            }
             .hero {
                 flex-direction: column;
                 text-align: center;
-                padding-top: 8rem;
+                padding-top: 10rem;
             }
             .hero-desc {
-                margin: 0 auto 2.5rem;
+                margin: 0 auto 3rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            nav {
+                padding: 1rem 5%;
             }
             .nav-links {
                 display: none;
+            }
+            .hero {
+                padding: 8rem 5% 4rem;
+            }
+            .stats-bar {
+                flex-direction: column;
+                gap: 2rem;
+                padding: 2rem;
+            }
+            .feature-card-big {
+                padding: 2rem;
+            }
+            .download-card {
+                padding: 3rem 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="bg-glow">
-        <div class="glow-1"></div>
-        <div class="glow-2"></div>
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
 
     <nav>
-        <div class="logo">
-            <div class="logo-box">M</div>
+        <a href="#" class="logo">
+            <div class="logo-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
             MWinPOS
-        </div>
+        </a>
         <div class="nav-links">
             <a href="#features">Features</a>
+            <a href="#experience">Experience</a>
             <a href="#download">Download</a>
-            <a href="manual.html?lang=en">Docs</a>
+            <a href="manual.html?lang=en">Documentation</a>
         </div>
-        <a href="#download" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">Get Started</a>
+        <a href="#download" class="btn btn-primary" style="padding: 0.75rem 1.5rem; border-radius: 12px; font-size: 0.875rem;">Get Started</a>
     </nav>
 
     <header class="hero">
         <div class="hero-content">
-            <span class="badge">Version 1.2.1 Available</span>
-            <h1>Modern POS for Modern Business.</h1>
-            <p class="hero-desc">The complete point-of-sale solution designed for speed, beauty, and reliability. Powered by Go and React.</p>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                <a href="#download" class="btn btn-primary">Download Now</a>
+            <div class="badge-new">
+                <div class="dot"></div>
+                v1.2.2 • Enhanced Discount & Large UI
+            </div>
+            <h1>Smart POS for Modern Retail.</h1>
+            <p class="hero-desc">Experience the ultimate point-of-sale system built for speed, beauty, and offline-first reliability. Powered by Go & React.</p>
+            <div style="display: flex; gap: 1.25rem; flex-wrap: wrap;">
+                <a href="#download" class="btn btn-primary">
+                    Download Free
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </a>
                 <a href="#features" class="btn btn-outline">Explore Features</a>
             </div>
         </div>
         <div class="hero-visual">
-            <img src="landing_assets/pos_hero_mockup_1777361068433.png" alt="MWinPOS Interface" class="hero-img">
+            <div class="hero-mockup-container">
+                <img src="landing_assets/checkout.png" alt="MWinPOS Interface" class="hero-img">
+            </div>
+            <!-- Decorative dots -->
+            <div style="position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background-image: radial-gradient(var(--primary) 2px, transparent 2px); background-size: 15px 15px; opacity: 0.2;"></div>
         </div>
     </header>
 
-    <section class="features" id="features">
-        <h2 class="section-title">Why MWinPOS?</h2>
-        <div class="feature-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9m3 3H5m16 6h-9m3 3H5"/></svg>
-                </div>
-                <h3>Smart Checkout</h3>
-                <p>Ultra-fast product lookup and transaction processing with a beautiful, responsive grid.</p>
-                <img src="landing_assets/inventory_feature_mockup_1777361088430.png" alt="Checkout" class="feature-img">
+    <section style="padding-top: 0;">
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-value">50ms</span>
+                <span class="stat-label">Response Time</span>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-                </div>
-                <h3>Advanced Inventory</h3>
-                <p>Keep track of your stock across multiple locations with real-time sync and smart alerts.</p>
-                <img src="landing_assets/inventory_feature_mockup_1777361088430.png" alt="Stock" class="feature-img">
+            <div class="stat-item">
+                <span class="stat-value">100%</span>
+                <span class="stat-label">Offline Ready</span>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                </div>
-                <h3>Fully Customizable</h3>
-                <p>Personalize your experience with custom themes, fonts (Kanit, Prompt), and multi-language support.</p>
-                <img src="landing_assets/customization_feature_mockup_1777361105901.png" alt="Appearance" class="feature-img">
+            <div class="stat-item">
+                <span class="stat-value">ERPNext</span>
+                <span class="stat-label">Native Sync</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">Multi</span>
+                <span class="stat-label">Language UI</span>
             </div>
         </div>
     </section>
 
-    <section class="downloads" id="download">
-        <div class="download-box">
-            <h2>Ready to transform your retail?</h2>
-            <p style="color: var(--text-muted); margin-bottom: 2rem;">Download MWinPOS for your preferred platform and get started in minutes.</p>
+    <section id="features">
+        <div class="section-header">
+            <span class="section-tag">Core Features</span>
+            <h2 class="section-title">Everything you need to grow your business.</h2>
+            <p style="color: var(--text-muted); font-size: 1.125rem;">Built with the latest technologies to provide a seamless experience across all your retail touchpoints.</p>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card-big">
+                <div class="feature-info">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    </div>
+                    <h3>Smart Inventory Matrix</h3>
+                    <p>Manage your products with unprecedented flexibility. Toggle between optimized layouts to find what you need, faster.</p>
+                    <div class="view-switcher">
+                        <button class="switch-btn active" onclick="switchView('stock', 'grid')">Grid View</button>
+                        <button class="switch-btn" onclick="switchView('stock', 'list')">List View</button>
+                    </div>
+                </div>
+                <div class="feature-visual-box">
+                    <img id="stock-view-img" src="landing_assets/stock_grid.png" alt="Stock View">
+                </div>
+            </div>
+
+            <div class="feature-card-small">
+                <div class="feature-icon" style="color: var(--secondary); background: rgba(16, 185, 129, 0.1);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <h3>CRM & Loyalty</h3>
+                <p>Build lasting relationships. Track customer history, loyalty points, and credit limits in real-time.</p>
+                <div class="view-switcher" style="margin-bottom: 1.5rem;">
+                    <button class="switch-btn active" onclick="switchView('customer', 'grid')">Cards</button>
+                    <button class="switch-btn" onclick="switchView('customer', 'list')">Compact</button>
+                </div>
+                <div class="feature-visual-box" style="border-width: 2px;">
+                    <img id="customer-view-img" src="landing_assets/customer_grid.png" alt="Customer View">
+                </div>
+            </div>
+
+            <div class="feature-card-small">
+                <div class="feature-icon" style="color: var(--accent); background: rgba(245, 158, 11, 0.1);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                </div>
+                <h3>Real-time Insights</h3>
+                <p>Dynamic dashboards provide a clear view of your sales performance, top products, and inventory health.</p>
+                <div style="margin-top: 1.5rem;" class="feature-visual-box" style="border-width: 2px;">
+                    <img src="landing_assets/dashboard.png" alt="Dashboard View">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience" style="background: rgba(139, 92, 246, 0.02); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
+        <div class="section-header">
+            <span class="section-tag">Premium Experience</span>
+            <h2 class="section-title">Designed for Delight.</h2>
+        </div>
+        <div style="max-width: 1000px; margin: 0 auto;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 4rem;">
+                <div style="text-align: center;">
+                    <h4 style="font-size: 1.25rem; margin-bottom: 1rem;">Glassmorphism UI</h4>
+                    <p style="color: var(--text-muted);">A stunning modern interface that feels alive and responsive.</p>
+                </div>
+                <div style="text-align: center;">
+                    <h4 style="font-size: 1.25rem; margin-bottom: 1rem;">Typography</h4>
+                    <p style="color: var(--text-muted);">Crystal clear legibility with beautiful Thai and English fonts.</p>
+                </div>
+                <div style="text-align: center;">
+                    <h4 style="font-size: 1.25rem; margin-bottom: 1rem;">Micro-Animations</h4>
+                    <p style="color: var(--text-muted);">Subtle feedback loops that make every interaction satisfying.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="download" class="cta-section">
+        <div class="download-card">
+            <h2 style="font-size: 3rem; margin-bottom: 1rem;">Step into the future.</h2>
+            <p style="color: var(--text-muted); font-size: 1.25rem; margin-bottom: 3rem;">Download MWinPOS today and elevate your business experience.</p>
             
-            <span class="version-badge" id="versionText">Checking Latest Version...</span>
-            
-            <div class="download-links">
+            <div style="display: inline-block; padding: 0.5rem 1.25rem; background: var(--primary); border-radius: 8px; font-weight: 800; font-size: 0.75rem; margin-bottom: 2rem; box-shadow: var(--neon-glow);" id="versionText">
+                Fetching Latest Release...
+            </div>
+
+            <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
                 <a id="downloadWinLink" href="#" class="btn btn-primary">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
-                    Windows
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+                    Windows x64
                 </a>
                 <a id="downloadLinLink" href="#" class="btn btn-outline">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.137 20.164 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-                    Linux
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.137 20.164 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                    Linux AppImage
                 </a>
             </div>
 
-            <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 2rem;">
-                <a href="manual.html?lang=en" style="color: var(--text-muted); text-decoration: none; font-size: 0.875rem;">English Manual</a>
-                <a href="manual.html?lang=th" style="color: var(--text-muted); text-decoration: none; font-size: 0.875rem;">คู่มือภาษาไทย</a>
+            <div style="margin-top: 4rem; display: flex; justify-content: center; gap: 2.5rem;">
+                <a href="manual.html?lang=en" style="color: var(--text-muted); text-decoration: none; font-size: 0.9375rem; font-weight: 600;">English Manual</a>
+                <a href="manual.html?lang=th" style="color: var(--text-muted); text-decoration: none; font-size: 0.9375rem; font-weight: 600;">คู่มือการใช้งาน (Thai)</a>
             </div>
         </div>
     </section>
 
     <footer>
+        <div class="footer-links">
+            <a href="#">About</a>
+            <a href="#">Support</a>
+            <a href="#">Terms</a>
+            <a href="#">Privacy</a>
+        </div>
         <p>&copy; 2026 MWinPOS Solution. All rights reserved.</p>
-        <p style="margin-top: 0.5rem; opacity: 0.5;">Modernized with Antigravity AI</p>
+        <div class="ai-badge">
+            <svg class="ai-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            Modernized by Antigravity AI
+        </div>
     </footer>
 
     <script>
+        function switchView(type, mode) {
+            const img = document.getElementById(type + '-view-img');
+            const btns = img.parentElement.parentElement.querySelectorAll('.switch-btn');
+            
+            btns.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (type === 'stock') {
+                img.src = mode === 'grid' ? 'landing_assets/stock_grid.png' : 'landing_assets/stock_list.png';
+            } else if (type === 'customer') {
+                img.src = mode === 'grid' ? 'landing_assets/customer_grid.png' : 'landing_assets/customer_list.png';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             const downloadWinLink = document.getElementById('downloadWinLink');
             const downloadLinLink = document.getElementById('downloadLinLink');
@@ -452,7 +758,7 @@
                 }
             } catch (error) {
                 console.error("Update check failed:", error);
-                versionText.textContent = 'Version check unavailable';
+                versionText.textContent = 'Version: Stable';
             }
         });
     </script>

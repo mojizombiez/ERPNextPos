@@ -23,11 +23,12 @@ import { useTranslation } from 'react-i18next';
 
 interface SidebarProps {
     onSwitchUser: () => void;
+    onLock?: () => void;
     isCollapsed: boolean;
     onToggle: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onSwitchUser, isCollapsed, onToggle }) => {
+const Sidebar: React.FC<SidebarProps> = ({ onSwitchUser, onLock, isCollapsed, onToggle }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { currentUser, logout } = useAuth();
@@ -57,8 +58,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onSwitchUser, isCollapsed, onToggle }
     }, []);
 
     const handleLogout = () => {
-        logout();
-        navigate('/');
+        if (onLock) {
+            onLock();
+        } else {
+            logout();
+            navigate('/');
+        }
     };
 
     return (

@@ -34,6 +34,11 @@
                         "date":  "2026-04-28 13:55:00",
                         "description":  "v1.2.1 - Responsive UI overhaul (modals/keypads), Offline Thai Fonts support, and Premium Appearance settings",
                         "version":  "1.2.1"
+                    },
+                    {
+                        "date":  "2026-04-30 14:08:00",
+                        "description":  "v1.2.2 - Full Internationalization (EN/TH), Fixed Currency Overlaps, and Enhanced Large UI for Small Screens",
+                        "version":  "1.2.2"
                     }
                 ],
     "url":  "https://nuget.moltothailand.com/erpnext/windows/MWinPOS-v1.2.1.exe",

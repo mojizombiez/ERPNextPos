@@ -1,6 +1,6 @@
 # MWinPOS — User Manual
 
-**Version:** 1.2.1  
+**Version:** 1.2.2  
 **Platform:** Windows Desktop (Wails / ERPNext POS)  
 **Audience:** Cashiers, Managers, Store Administrators
 
@@ -60,6 +60,8 @@ Every session starts at the **PIN Login** screen.
 ---
 
 ## 3. Checkout / POS Screen
+
+![MWinPOS Checkout Screen](landing_assets/checkout.png)
 
 The main selling screen. It is divided into three panels:
 
@@ -171,6 +173,8 @@ Navigate to **Drawer** from the sidebar.
 
 ## 8. Stock Management
 
+![MWinPOS Stock Management](landing_assets/stock_grid.png)
+
 Navigate to **Stock** from the sidebar.
 
 - View all products with their current ERPNext **item code**, name, price, and category.
@@ -184,6 +188,8 @@ Navigate to **Stock** from the sidebar.
 ---
 
 ## 9. Customer Management
+
+![MWinPOS Customer Management](landing_assets/customer_grid.png)
 
 Navigate to **Customers** from the sidebar.
 
@@ -214,6 +220,8 @@ Navigate to **Delivery** from the sidebar.
 ---
 
 ## 12. Admin Panel
+
+![MWinPOS Admin Dashboard](landing_assets/dashboard.png)
 
 Navigate to **Admin** from the sidebar. Requires a **Manager PIN** to enter.
 
@@ -366,7 +374,7 @@ MWinPOS supports **USB HID barcode scanners** (plug-and-play):
 
 ### 19. Responsive UI & Accessibility
 
-MWinPOS v1.2.1 features a fully **Responsive UI** architecture. All core components (Modals, PIN Keypads, Payment Numpads) use fluid units (`clamp`, `vw`, `vh`) to ensure:
+MWinPOS v1.2.2 features a fully **Responsive UI** architecture. All core components (Modals, PIN Keypads, Payment Numpads) use fluid units (`clamp`, `vw`, `vh`) to ensure:
 - **Tablet Optimization**: Perfectly usable on 10-inch POS tablets and touch monitors.
 - **Adaptive Modals**: Popup windows automatically resize and stack content to fit smaller screens.
 - **Fluid Inputs**: Numeric keypads and buttons scale dynamically, maintaining a premium touch-target feel on all devices.
