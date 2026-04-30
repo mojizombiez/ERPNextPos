@@ -36,7 +36,8 @@
                         "version":  "1.2.1"
                     }
                 ],
-    "url":  "https://nuget.moltothailand.com/erpnext/windows/MWinPOS-v1.2.2.exe",
-    "description":  "v1.2.2: Full i18n support (EN/TH), Fixed UI Overlaps, and Enhanced Large UI for Mini POS.",
-    "version":  "1.2.2"
+    "url": "https://nuget.moltothailand.com/erpnext/windows/MWinPOS-v1.2.2.exe",
+    "linux_url": "https://nuget.moltothailand.com/erpnext/linux/MWinPOS-v1.2.2-linux.AppImage",
+    "description": "v1.2.2: Full i18n support (EN/TH), Fixed UI Overlaps, and Enhanced Large UI for Mini POS.",
+    "version": "1.2.2"
 }

@@ -22,7 +22,8 @@ type UpdateHistoryEntry struct {
 
 type UpdateInfo struct {
 	Version         string               `json:"version"`
-	URL             string               `json:"url"`
+	URL             string               `json:"url"` // Default/Windows URL
+	LinuxURL        string               `json:"linux_url"`
 	Description     string               `json:"description"`
 	IncludeBranches []string             `json:"includeBranches"` // Optional: only these branches
 	ExcludeBranches []string             `json:"excludeBranches"` // Optional: skip these branches
@@ -59,6 +60,11 @@ func (s *UpdateService) CheckForUpdates(updateUrl string, currentBranchId string
 	var info UpdateInfo
 	if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
 		return nil, err
+	}
+
+	// Platform Override: If on Linux and linux_url exists, use it as primary URL for this client
+	if runtime.GOOS == "linux" && info.LinuxURL != "" {
+		info.URL = info.LinuxURL
 	}
 
 	// 1. Version Comparison
